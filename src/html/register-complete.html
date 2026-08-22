@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Completar Registro - GLauncher</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/login-styles.css"> <!-- Reutilizamos estilos de login -->
-    <link rel="stylesheet" href="css/register-complete.css"> <!-- Estilos específicos -->
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../src/css/login-styles.css"> <!-- Reutilizamos estilos de login -->
+    <link rel="stylesheet" href="../src/css/register-complete.css"> <!-- Estilos específicos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
 </head>
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="images/favicon.png" alt="Logo de GLauncher" class="logo">
+            <img src="../assets/images/favicon.png" alt="Logo de GLauncher" class="logo">
             <h1>GLauncher</h1>
         </div>
         <nav class="auth-buttons">
-            <a href="index.html" class="auth-button"><i class="fas fa-home"></i> Volver al Inicio</a>
+            <a href="../../index.html" class="auth-button"><i class="fas fa-home"></i> Volver al Inicio</a>
         </nav>
     </header>
 
@@ -38,7 +38,7 @@
                 <div class="form-step active" id="step-1">
                     <div class="profile-picture-uploader">
                         <label for="profile-picture-input">
-                            <img id="profile-preview" src="images/avatars/default-avatar.png" alt="Vista previa del avatar">
+                            <img id="profile-preview" src="src/assets/src/assets/images/avatars/default-avatar.png" alt="Vista previa del avatar">
                             <div class="upload-overlay"><i class="fas fa-camera"></i></div>
                         </label>
                         <input type="file" id="profile-picture-input" name="profile_picture" accept="image/*" style="display: none;">
@@ -98,7 +98,7 @@
         <p>GLauncher &copy; 2026. Todos los derechos reservados.</p>
     </footer>
 
-    <script src="js/global-script.js" defer></script>
-    <script src="js/register-complete.js" defer></script>
+    <script src="../js/global-script.js" defer></script>
+    <script src="../js/register-complete.js" defer></script>
 </body>
 </html>

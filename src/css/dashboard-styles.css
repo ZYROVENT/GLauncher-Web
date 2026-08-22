@@ -259,7 +259,7 @@
     padding: 40px;
     position: relative;
     box-shadow: var(--shadow-pink);
-    background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('../images/minecraft_title.png');
+    background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('../../assets/images/minecraft_title.png');
     background-size: cover;
     background-position: center;
     overflow: hidden;

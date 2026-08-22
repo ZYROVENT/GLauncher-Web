@@ -12,7 +12,7 @@
     <meta property="og:title" content="GLauncher - Launcher de Minecraft Optimizado">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://glauncher.vercel.app/">
-    <meta property="og:image" content="https://glauncher.vercel.app/images/glauncher%20logo.png">
+    <meta property="og:image" content="https://glauncher.vercel.app/src/assets/images/glauncher%20logo.png">
     <meta name="apple-mobile-web-app-title" content="GLauncher" />
     
     <!-- Datos Estructurados (JSON-LD) para forzar el nombre del sitio -->
@@ -74,9 +74,9 @@
     <!-- Estilos optimizados para carga asíncrona -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></noscript>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" type="image/png" href="images/favicon.png">
-    <link rel="stylesheet" href="css/index-styles.css">
+    <link rel="stylesheet" href="src/css/styles.css">
+    <link rel="icon" type="image/png" href="src/assets/images/favicon.png">
+    <link rel="stylesheet" href="src/css/index-styles.css">
     <link href="https://fonts.cdnfonts.com/css/minecraftia" rel="stylesheet">
     <style>
         /* Estilos para la transición suave del contenido del panel */
@@ -160,17 +160,17 @@
 
     <header class="header">
         <div class="logo-container">
-            <img src="images/favicon.png" alt="Logo de GLauncher" class="logo">
-            <img src="images/minecraft_title.png" alt="Título de GLauncher" class="logo-title-img">
+            <img src="src/assets/images/favicon.png" alt="Logo de GLauncher" class="logo">
+            <img src="src/assets/images/minecraft_title.png" alt="Título de GLauncher" class="logo-title-img">
         </div>
         <nav class="auth-buttons">
             <a href="index.html" class="auth-button active">Inicio</a> 
-            <a href="noticias.html" class="auth-button">Noticias</a>
-            <a href="shop.html" class="auth-button">Tienda</a>
-            <a href="download.html" class="auth-button">Descargas</a>
-            <a href="dashboard.html" class="auth-button">Dashboard</a>
-            <a href="login.html" class="auth-button">Iniciar Sesión</a>
-            <a href="register.html" class="auth-button">Registrar</a>
+            <a href="src/html/noticias.html" class="auth-button">Noticias</a>
+            <a href="src/html/shop.html" class="auth-button">Tienda</a>
+            <a href="src/html/download.html" class="auth-button">Descargas</a>
+            <a href="src/html/dashboard.html" class="auth-button">Dashboard</a>
+            <a href="src/html/login.html" class="auth-button">Iniciar Sesión</a>
+            <a href="src/html/register.html" class="auth-button">Registrar</a>
             <a href="https://www.youtube.com/@zyrorent" target="_blank" class="auth-button youtube-button" title="Visita mi canal de YouTube">
                 <i class="fab fa-youtube"></i> Canal
             </a>
@@ -212,7 +212,7 @@
 
                     <div class="launcher-visual-right">
                         <!-- Optimización: Width/Height explícitos para evitar CLS -->
-                        <img src="images/favicon.png" alt="Logo de GLauncher" class="launcher-gui-img" width="350" height="350">
+                        <img src="src/assets/images/favicon.png" alt="Logo de GLauncher" class="launcher-gui-img" width="350" height="350">
                     </div>
                 </div>
             </div>
@@ -252,27 +252,27 @@
 
                 <div class="features-grid">
                     <!-- Cada tarjeta ahora tiene data-attributes para el panel interactivo -->
-                    <div class="feature-card" data-title="Soporte de Mods" data-description="Instala y gestiona fácilmente tus mods de Forge y Fabric. GLauncher detecta automáticamente las versiones para una compatibilidad perfecta." data-image="images/features/feature-mods.png">
+                    <div class="feature-card" data-title="Soporte de Mods" data-description="Instala y gestiona fácilmente tus mods de Forge y Fabric. GLauncher detecta automáticamente las versiones para una compatibilidad perfecta." data-image="src/assets/images/features/feature-mods.png">
                         <i class="fas fa-puzzle-piece feature-icon"></i>
                         <h4>Soporte de Mods</h4>
                     </div>
-                    <div class="feature-card" data-title="Multi-Cuenta" data-description="Cambia entre tus cuentas de Minecraft (Premium y No-Premium) con un solo clic. Ideal para jugar con amigos en diferentes servidores." data-image="images/features/feature-accounts.png">
+                    <div class="feature-card" data-title="Multi-Cuenta" data-description="Cambia entre tus cuentas de Minecraft (Premium y No-Premium) con un solo clic. Ideal para jugar con amigos en diferentes servidores." data-image="src/assets/images/features/feature-accounts.png">
                         <i class="fas fa-users feature-icon"></i>
                         <h4>Multi-Cuenta</h4>
                     </div>
-                    <div class="feature-card" data-title="Máximo Rendimiento" data-description="Activa nuestras optimizaciones preconfiguradas para aumentar tus FPS al máximo. Perfecto para PvP y PCs de bajos recursos." data-image="images/features/feature-performance.png">
+                    <div class="feature-card" data-title="Máximo Rendimiento" data-description="Activa nuestras optimizaciones preconfiguradas para aumentar tus FPS al máximo. Perfecto para PvP y PCs de bajos recursos." data-image="src/assets/images/features/feature-performance.png">
                         <i class="fas fa-rocket feature-icon"></i>
                         <h4>Máximo Rendimiento</h4>
                     </div>
-                    <div class="feature-card" data-title="GMusic y Reproductor" data-description="Escucha tu música o nuestra shop integrada directamente desde el launcher sin afectar el rendimiento del juego. ¡Control total sobre tu ambiente sonoro!" data-image="images/features/feature-music.png">
+                    <div class="feature-card" data-title="GMusic y Reproductor" data-description="Escucha tu música o nuestra shop integrada directamente desde el launcher sin afectar el rendimiento del juego. ¡Control total sobre tu ambiente sonoro!" data-image="src/assets/images/features/feature-music.png">
                         <i class="fas fa-music feature-icon"></i>
                         <h4>GMusic y Reproductor</h4>
                     </div>
-                    <div class="feature-card" data-title="Chat de Amigos" data-description="Mantente conectado con tus amigos a través de nuestro sistema de chat integrado. Mira quién está en línea y únete a sus partidas fácilmente." data-image="images/features/feature-chat.png">
+                    <div class="feature-card" data-title="Chat de Amigos" data-description="Mantente conectado con tus amigos a través de nuestro sistema de chat integrado. Mira quién está en línea y únete a sus partidas fácilmente." data-image="src/assets/images/features/feature-chat.png">
                         <i class="fas fa-comments feature-icon"></i>
                         <h4>Chat de Amigos</h4>
                     </div>
-                    <div class="feature-card" data-title="Nuestra Interfaz" data-description="Nuestra interfaz aunque sea simple siempre la podemos ajustar a tu gusto. Podes enviarnos un Gmail, Discord o un Whatsapp para notificarnos que añadir y te lo añadimos." data-image="images/features/feature-gui.png">
+                    <div class="feature-card" data-title="Nuestra Interfaz" data-description="Nuestra interfaz aunque sea simple siempre la podemos ajustar a tu gusto. Podes enviarnos un Gmail, Discord o un Whatsapp para notificarnos que añadir y te lo añadimos." data-image="src/assets/images/features/feature-gui.png">
                         <i class="fas fa-shield-alt feature-icon"></i>
                         <h4>Nuestra Interfaz</h4>
                     </div>
@@ -399,7 +399,7 @@
                 <!-- Tarjeta del Creador -->
                 <div class="about-card creator-card">
                     <div class="creator-header">
-                        <img src="images/avatars/channel.png" alt="◈𝐙𝐘𝐑𝐎𝐕𝐄𝐍𝐓◈" class="creator-img" loading="lazy">
+                        <img src="src/assets/images/avatars/channel.png" alt="◈𝐙𝐘𝐑𝐎𝐕𝐄𝐍𝐓◈" class="creator-img" loading="lazy">
                         <div class="creator-badges">
                             <span class="badge developer">Desarrollador</span>
                             <span class="badge founder">Fundador</span>
@@ -470,7 +470,7 @@
 
     <!-- Barra de Navegación Inferior (Solo para Móviles) -->
     <nav class="bottom-nav">
-        <a href="index.html" class="active"><i class="fas fa-home"></i><span>Inicio</span></a>
+        <a href="../../index.html" class="active"><i class="fas fa-home"></i><span>Inicio</span></a>
         <a href="shop.html"><i class="fa-solid fa-shop"></i><span>shop</span></a>
         <a href="noticias.html"><i class="fas fa-newspaper"></i><span>Noticias</span></a>
         <a href="download.html"><i class="fas fa-download"></i><span>Descargas</span></a>
@@ -488,9 +488,9 @@
     <!-- Librería Lenis para Smooth Scroll -->
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
 
-    <script src="js/global-script.js" defer></script>
+    <script src="src/js/global-script.js" defer></script>
     <!-- Scripts específicos para la página de inicio -->
-    <script src="js/index-script.js" defer></script>
+    <script src="src/js/index-script.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const featureCards = document.querySelectorAll('.feature-card');
