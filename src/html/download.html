@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>GLauncher - Centro de Descargas</title>
-    <link rel="stylesheet" href="css/styles.css"> 
-    <link rel="icon" type="image/png" href="images/favicon.png">
-    <link rel="stylesheet" href="css/download-styles.css"> 
+    <link rel="stylesheet" href="../css/styles.css"> 
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <link rel="stylesheet" href="../css/download-styles.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -18,14 +18,14 @@
 
     <header class="header">
         <div class="logo-container">
-            <img src="images/favicon.png" alt="Logo de GLauncher" class="logo">
-            <img src="images/minecraft_title.png" alt="Título de GLauncher" class="logo-title-img">
+            <img src="../assets/images/favicon.png" alt="Logo de GLauncher" class="logo">
+            <img src="../assets/images/minecraft_title.png" alt="Título de GLauncher" class="logo-title-img">
         </div>
         <nav class="auth-buttons">
-            <a href="index.html" class="auth-button active">Inicio</a> 
+            <a href="../../index.html" class="auth-button">Inicio</a> 
             <a href="noticias.html" class="auth-button">Noticias</a>
             <a href="shop.html" class="auth-button">Tienda</a>
-            <a href="download.html" class="auth-button">Descargas</a>
+            <a href="download.html" class="auth-button active">Descargas</a>
             <a href="dashboard.html" class="auth-button">Dashboard</a>
             <a href="login.html" class="auth-button">Iniciar Sesión</a>
             <a href="register.html" class="auth-button">Registrar</a>
@@ -120,19 +120,19 @@
     </footer>
     
     <!-- Elementos de audio para los efectos de sonido -->
-    <audio id="tab-switch-sound" src="sounds/click_sound.mp3" preload="auto"></audio>
-    <audio id="card-hover-sound" src="sounds/ui-tick-2.mp3" preload="auto"></audio>
+    <audio id="tab-switch-sound" src="../assets/sounds/click_sound.mp3" preload="auto"></audio>
+    <audio id="card-hover-sound" src="../assets/sounds/ui-tick-2.mp3" preload="auto"></audio>
 
     <!-- Barra de Navegación Inferior (Solo para Móviles) -->
     <nav class="bottom-nav">
-        <a href="index.html" class="active"><i class="fas fa-home"></i><span>Inicio</span></a>
+        <a href="../../index.html" class="active"><i class="fas fa-home"></i><span>Inicio</span></a>
         <a href="shop.html"><i class="fa-solid fa-shop"></i><span>shop</span></a>
         <a href="noticias.html"><i class="fas fa-newspaper"></i><span>Noticias</span></a>
         <a href="download.html"><i class="fas fa-download"></i><span>Descargas</span></a>
         <a href="dashboard.html"><i class="fas fa-user-circle"></i><span>Perfil</span></a>
     </nav>
 
-    <script src="js/global-script.js"></script>
+    <script src="../js/global-script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const tabButtons = document.querySelectorAll('.tab-button');

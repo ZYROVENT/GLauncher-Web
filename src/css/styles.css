@@ -3,7 +3,7 @@
 /* Fuente Local para Títulos */
 @font-face {
     font-family: 'MinecraftTitle';
-    src: url('../fonts/Minecraft.ttf') format('truetype');
+    src: url('../assets/fonts/Minecraft.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -329,7 +329,7 @@ h1, h2, h3, h4 {
 
 
 /* ==================================================================================
- * 5. ESTILOS HOME (INDEX.HTML) - DISEÑO LANZADOR
+ * 5. ESTILOS HOME (../../index.html) - DISEÑO LANZADOR
  * ==================================================================================
  */
 
@@ -845,7 +845,7 @@ h1, h2, h3, h4 {
 }
 
 /* ==================================================================================
- * 14. ESTILOS PARA EL MURO DE LA COMUNIDAD (INDEX.HTML)
+ * 14. ESTILOS PARA EL MURO DE LA COMUNIDAD (../../index.html)
  * ==================================================================================
  */
 .launch-messages-section {
@@ -1035,7 +1035,7 @@ h1, h2, h3, h4 {
 }
 
 /* ==================================================================================
- * 16. ESTILOS PARA LA SECCIÓN DE SOPORTE (INDEX.HTML)
+ * 16. ESTILOS PARA LA SECCIÓN DE SOPORTE (../../index.html)
  * ==================================================================================
  */
 .support-section {

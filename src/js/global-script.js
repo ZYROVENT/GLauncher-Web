@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.remove('is-loading');
 
     // 1. Crear el elemento de audio para el sonido de clic
-    const clickSound = new Audio('/sounds/click_sound.mp3');
+    const clickSound = new Audio('/src/assets/sounds/click_sound.mp3');
     clickSound.preload = 'auto';
     clickSound.volume = 0.4; // Ajusta el volumen para que no sea muy invasivo
 
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ========================================================
-    // LÓGICA PARA MENSAJES DE LANZAMIENTO (INDEX.HTML)
+    // LÓGICA PARA MENSAJES DE LANZAMIENTO (../../index.html)
     // ========================================================
 
     let currentPage = 1;
@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Función de inicialización para index.html
+    // Función de inicialización para ../../index.html
     async function initializeLaunchMessages() {
         const postButton = document.getElementById('post-launch-message-btn');
         const loadMoreBtn = document.getElementById('load-more-btn');

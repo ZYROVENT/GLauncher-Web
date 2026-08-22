@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('logout-btn').addEventListener('click', () => {
             localStorage.removeItem('glauncher_token');
             window.showNotification('Has cerrado sesión.', 'success');
-            setTimeout(() => window.location.href = '/index.html', 1500);
+            setTimeout(() => window.location.href = '/../../index.html', 1500);
         });
 
         document.getElementById('launch-game-btn').addEventListener('click', () => {
@@ -525,11 +525,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- LÓGICA DE LOGROS ---
     function initializeAchievements(userData) {
         const achievements = [
-            { id: 'pioneer', title: 'Pionero', description: 'Regístrate durante la fase BETA.', icon: 'images/achievements/pioneer.png', recommended: true, isUnlocked: (data) => new Date(data.registration_date) < new Date('2026-01-01') },
-            { id: 'collector', title: 'Primer Comprador', description: 'Adquiere tu primer cosmético en la tienda.', icon: 'images/achievements/collector.png', recommended: true, isUnlocked: (data) => data.owned_cosmetics.length > 0 },
-            { id: 'veteran', title: 'Veterano', description: 'Lleva más de 3 meses en la comunidad.', icon: 'images/achievements/explorer.png', recommended: false, isUnlocked: (data) => (new Date() - new Date(data.registration_date)) / (1000 * 60 * 60 * 24 * 30) >= 3 },
-            { id: 'fashionista', title: 'Fashionista', description: 'Consigue 5 o más cosméticos.', icon: 'images/achievements/socialite.png', recommended: true, isUnlocked: (data) => data.owned_cosmetics.length >= 5 },
-            { id: 'rich', title: 'Adinerado', description: 'Acumula 1,000 GCoins.', icon: 'images/achievements/pioneer.png', recommended: false, isUnlocked: (data) => data.gcoins >= 1000 },
+            { id: 'pioneer', title: 'Pionero', description: 'Regístrate durante la fase BETA.', icon: 'src/assets/src/assets/images/achievements/pioneer.png', recommended: true, isUnlocked: (data) => new Date(data.registration_date) < new Date('2026-01-01') },
+            { id: 'collector', title: 'Primer Comprador', description: 'Adquiere tu primer cosmético en la tienda.', icon: 'src/assets/src/assets/images/achievements/collector.png', recommended: true, isUnlocked: (data) => data.owned_cosmetics.length > 0 },
+            { id: 'veteran', title: 'Veterano', description: 'Lleva más de 3 meses en la comunidad.', icon: 'src/assets/src/assets/images/achievements/explorer.png', recommended: false, isUnlocked: (data) => (new Date() - new Date(data.registration_date)) / (1000 * 60 * 60 * 24 * 30) >= 3 },
+            { id: 'fashionista', title: 'Fashionista', description: 'Consigue 5 o más cosméticos.', icon: 'src/assets/src/assets/images/achievements/socialite.png', recommended: true, isUnlocked: (data) => data.owned_cosmetics.length >= 5 },
+            { id: 'rich', title: 'Adinerado', description: 'Acumula 1,000 GCoins.', icon: 'src/assets/src/assets/images/achievements/pioneer.png', recommended: false, isUnlocked: (data) => data.gcoins >= 1000 },
         ];
 
         const grid = document.getElementById('achievements-grid');
@@ -699,10 +699,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initializeDemoAchievements() {
         const achievements = [
-            { id: 'pioneer', title: 'Pionero', description: 'Regístrate durante la fase BETA.', icon: 'images/achievements/pioneer.png', unlocked: true },
-            { id: 'collector', title: 'Primer Comprador', description: 'Adquiere tu primer cosmético en la tienda.', icon: 'images/achievements/collector.png', unlocked: false },
-            { id: 'veteran', title: 'Veterano', description: 'Lleva más de 3 meses en la comunidad.', icon: 'images/achievements/explorer.png', unlocked: false },
-            { id: 'fashionista', title: 'Fashionista', description: 'Consigue 5 o más cosméticos.', icon: 'images/achievements/socialite.png', unlocked: false },
+            { id: 'pioneer', title: 'Pionero', description: 'Regístrate durante la fase BETA.', icon: 'src/assets/src/assets/images/achievements/pioneer.png', unlocked: true },
+            { id: 'collector', title: 'Primer Comprador', description: 'Adquiere tu primer cosmético en la tienda.', icon: 'src/assets/src/assets/images/achievements/collector.png', unlocked: false },
+            { id: 'veteran', title: 'Veterano', description: 'Lleva más de 3 meses en la comunidad.', icon: 'src/assets/src/assets/images/achievements/explorer.png', unlocked: false },
+            { id: 'fashionista', title: 'Fashionista', description: 'Consigue 5 o más cosméticos.', icon: 'src/assets/src/assets/images/achievements/socialite.png', unlocked: false },
         ];
         const grid = document.getElementById('achievements-grid');
         const filterButtons = document.querySelectorAll('.achievements-filter-controls .filter-btn');
