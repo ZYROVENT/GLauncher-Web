@@ -3,20 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GLauncher - 404 No Encontrado</title>
+    <title>GLauncher - 404 Far Lands</title>
     <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="../css/styles.css">
+    <!-- Fuentes estilo Minecraft / Píxel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-pink: #ff007f;
+            --neon-green: #39ff14;
+            --mc-gui-bg: #c6c6c6;
+            --mc-gui-dark: #373737;
+            --mc-gui-border-light: #ffffff;
+            --mc-gui-border-shadow: #555555;
+            --mc-slot-bg: #8b8b8b;
+            --mc-slot-border-dark: #373737;
+            --mc-slot-border-light: #ffffff;
+            --mc-exp-green: #80ff20;
+            --main-bg-color: #0c0e14;
+        }
+
+        * {
+            box-sizing: border-box;
+            image-rendering: pixelated;
+            user-select: none;
+        }
+
         body {
+            margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             background-color: var(--main-bg-color);
             background-image: 
-                radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.05) 0%, transparent 60%),
-                linear-gradient(rgba(13, 17, 23, 0.95), rgba(13, 17, 23, 0.95));
-            overflow: hidden;
+                radial-gradient(circle at 50% 50%, rgba(0, 243, 255, 0.08) 0%, transparent 70%),
+                repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 2px, transparent 2px, transparent 4px);
+            overflow-x: hidden;
+            position: relative;
+            font-family: 'Press Start 2P', 'Silkscreen', monospace;
+            color: #ffffff;
+        }
+
+        #particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
         }
 
         .main-content {
@@ -25,161 +65,630 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-        }
-
-        .error-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 60px;
-            background: rgba(22, 27, 34, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid rgba(0, 255, 255, 0.1);
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
-            max-width: 800px;
-            width: 100%;
-            position: relative;
-            animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .error-code {
-            font-size: 12em;
-            font-weight: 900;
-            color: transparent;
-            -webkit-text-stroke: 2px var(--neon-pink);
-            text-shadow: 0 0 20px var(--neon-pink);
-            margin: -20px 0 0 0;
-            line-height: 1;
             position: relative;
             z-index: 1;
         }
-        
-        .error-code::before {
-            content: '404';
-            position: absolute;
-            left: 0;
-            top: 0;
+
+        /* Ventana GUI Principal estilo Minecraft */
+        .mc-gui-window {
+            background-color: var(--mc-gui-dark);
+            border: 4px solid #000000;
+            box-shadow: 
+                inset -4px -4px 0px var(--mc-gui-border-shadow),
+                inset 4px 4px 0px #555555,
+                0 0 40px rgba(0, 243, 255, 0.25);
+            padding: 24px;
+            max-width: 680px;
             width: 100%;
-            height: 100%;
-            color: var(--neon-pink);
-            opacity: 0.1;
-            filter: blur(10px);
-            animation: neon-flicker 3s infinite alternate;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        
-        .error-message {
-            font-size: 2.5em;
-            color: var(--neon-blue);
-            margin-top: -10px;
+
+        /* Titulo superior de la GUI estilo Minecraft */
+        .mc-gui-header {
+            width: 100%;
+            background-color: #262626;
+            border: 3px solid #000;
+            box-shadow: inset -2px -2px 0 #4a4a4a, inset 2px 2px 0 #111;
+            padding: 10px;
             margin-bottom: 20px;
-            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #aaaaaa;
+            font-size: 0.7em;
+        }
+
+        .mc-gui-header .title {
+            color: #ffffff;
+            text-shadow: 2px 2px 0 #000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mc-gui-header .window-controls {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        /* Ojos de Magma Cube en la cabecera */
+        .mc-gui-header .window-controls .magma-eye-dot {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            background-color: #ffaa00;
+            border: 2px solid #380d0d;
+            box-shadow: inset -3px -3px 0 #ffff00, 0 0 6px rgba(255, 170, 0, 0.7);
+            transition: transform 0.1s ease;
+            animation: magma-eye-blink 4s infinite ease-in-out;
+            transform-origin: center;
+        }
+
+        .mc-gui-header .window-controls:hover .magma-eye-dot {
+            box-shadow: inset -3px -3px 0 #ffffff, 0 0 10px #ffaa00;
+        }
+
+        @keyframes magma-eye-blink {
+            0%, 88%, 100% {
+                transform: scaleY(1);
+                background-color: #ffaa00;
+            }
+            92%, 96% {
+                transform: scaleY(0.15);
+                background-color: #380d0d;
+                box-shadow: none;
+            }
+        }
+
+        /* GIF del Bloque con contenedor de glitch */
+        .gif-glitch-container {
+            position: relative;
+            display: inline-block;
+            margin: 10px 0 20px 0;
+            padding: 12px;
+            background: #1e1e1e;
+            border: 3px solid #000;
+            box-shadow: inset -3px -3px 0 #3a3a3a, inset 3px 3px 0 #0a0a0a;
+        }
+
+        .grass-block-gif {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            image-rendering: pixelated;
+            filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.7));
+            animation: float 4s ease-in-out infinite, glitch-wiggle 3s infinite;
+        }
+
+        /* Código 404 Estilo Minecraft */
+        .error-code {
+            font-size: 4em;
+            color: var(--neon-pink);
+            text-shadow: 4px 4px 0px #000000, -2px -2px 0px #55002b;
+            margin: 0 0 15px 0;
             letter-spacing: 2px;
+            line-height: 1;
         }
-        
+
+        .error-message {
+            font-size: 1.1em;
+            color: #ffff55; /* Color amarillo texto Minecraft */
+            text-shadow: 2px 2px 0px #3f3f00, -1px -1px 0 #000;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            line-height: 1.4;
+        }
+
         .error-description {
-            font-size: 1.3em;
-            color: var(--text-color-dark);
-            max-width: 600px;
-            margin-bottom: 40px;
-            line-height: 1.6;
+            font-size: 0.75em;
+            color: #e0e0e0;
+            text-shadow: 2px 2px 0px #000000;
+            max-width: 500px;
+            margin-bottom: 30px;
+            line-height: 1.8;
+            font-family: 'Silkscreen', monospace;
         }
-        
-        .home-btn {
-            background-color: var(--neon-green);
-            color: var(--main-bg-color);
-            padding: 18px 40px;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1.2em;
-            box-shadow: 0 0 20px rgba(57, 255, 20, 0.4);
-            transition: all 0.3s ease;
+
+        /* Botón Estilo Menú de Minecraft */
+        .mc-button {
             display: inline-flex;
             align-items: center;
-            gap: 15px;
-            text-decoration: none;
-            border: 2px solid transparent;
-        }
-        
-        .home-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 40px rgba(57, 255, 20, 0.6);
-            background-color: transparent;
-            color: var(--neon-green);
-            border-color: var(--neon-green);
-        }
-
-        .broken-link-icon {
-            font-size: 6em;
-            color: var(--neon-blue);
-            margin-bottom: 20px;
-            animation: float 4s ease-in-out infinite;
-            filter: drop-shadow(0 0 15px var(--neon-blue));
-        }
-
-        .footer {
-            background: transparent;
-            border: none;
-            box-shadow: none;
-            position: absolute;
-            bottom: 0;
+            justify-content: center;
+            gap: 12px;
             width: 100%;
-            padding: 20px;
-            color: rgba(255, 255, 255, 0.3);
+            max-width: 360px;
+            padding: 14px 20px;
+            background-color: #707070;
+            border: 3px solid #000000;
+            box-shadow: 
+                inset -3px -3px 0px 0px #3b3b3b,
+                inset 3px 3px 0px 0px #a8a8a8;
+            color: #e0e0e0;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.85em;
+            text-decoration: none;
+            cursor: pointer;
+            text-shadow: 2px 2px 0px #000000;
+            transition: all 0.1s ease;
+            margin-bottom: 25px;
         }
 
+        .mc-button:hover {
+            background-color: #8c8c8c;
+            color: #ffffa0; /* Texto Amarillo Selección Minecraft */
+            box-shadow: 
+                inset -3px -3px 0px 0px #4a4a4a,
+                inset 3px 3px 0px 0px #c6c6c6,
+                0 0 15px rgba(57, 255, 20, 0.4);
+        }
+
+        .mc-button:active {
+            box-shadow: 
+                inset 3px 3px 0px 0px #3b3b3b,
+                inset -3px -3px 0px 0px #a8a8a8;
+            transform: translateY(2px);
+        }
+
+        /* Inventario Hotbar de 9 Slots */
+        .mc-hotbar-container {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .mc-hotbar {
+            display: flex;
+            background-color: #8b8b8b;
+            border: 3px solid #000;
+            box-shadow: 
+                inset -2px -2px 0 #373737,
+                inset 2px 2px 0 #ffffff;
+            padding: 3px;
+            gap: 3px;
+        }
+
+        .mc-slot {
+            width: 42px;
+            height: 42px;
+            background-color: #8b8b8b;
+            border: 2px solid #373737;
+            box-shadow: inset 2px 2px 0 #373737, inset -2px -2px 0 #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        .mc-slot:hover {
+            background-color: #a0a0a0;
+        }
+
+        .mc-slot.active {
+            border: 3px solid #ffffff;
+            box-shadow: inset -2px -2px 0 #000, inset 2px 2px 0 #000;
+            margin: -1px;
+        }
+
+        .mc-slot .item-count {
+            position: absolute;
+            bottom: 2px;
+            right: 3px;
+            font-size: 0.55em;
+            color: #ffffff;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        /* Tooltip de Ítem */
+        .mc-tooltip {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(16, 0, 16, 0.92);
+            border: 2px solid #2b005e;
+            box-shadow: inset 0 0 5px #5000ff;
+            padding: 6px 10px;
+            font-size: 0.6em;
+            color: #55ffff;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 10;
+        }
+
+        .mc-hotbar-container:hover .mc-tooltip {
+            opacity: 1;
+        }
+
+        /* Footer */
+        .footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 15px;
+            color: #777777;
+            font-size: 0.6em;
+            text-shadow: 1px 1px 0 #000;
+        }
+
+        /* Animaciones */
         @keyframes float {
             0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
         }
 
         @keyframes pop-in {
-            0% { transform: scale(0.8); opacity: 0; }
+            0% { transform: scale(0.85); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes glitch-wiggle {
+            0%, 90%, 100% { transform: translate(0, 0); filter: drop-shadow(0 0 12px rgba(0, 243, 255, 0.6)); }
+            92% { transform: translate(-3px, 1px); filter: drop-shadow(-4px 0 var(--neon-pink)); }
+            95% { transform: translate(3px, -2px); filter: drop-shadow(4px 0 var(--neon-blue)); }
+            97% { transform: translate(-1px, 2px); }
+        }
+
+        /* --- ESTILOS DEL MAGMA CUBE --- */
+        .gif-glitch-container {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .gif-glitch-container:hover {
+            transform: scale(1.05);
+        }
+
+        .magma-cube-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90px;
+            height: 90px;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 5;
+            transition: opacity 0.2s ease;
+        }
+
+        .magma-cube-wrapper.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .magma-cube {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Núcleo de lava brillante interno */
+        .magma-core {
+            position: absolute;
+            top: 15%;
+            left: 15%;
+            width: 70%;
+            height: 70%;
+            background: radial-gradient(circle, #ffe600 0%, #ff5500 60%, #cc0000 100%);
+            box-shadow: 0 0 20px #ff5500, inset 0 0 10px #ffff00;
+            border-radius: 2px;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+        }
+
+        /* Ojos del Magma Cube (Píxeles Naranja y Amarillo) */
+        .magma-eyes {
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            display: flex;
+            justify-content: space-between;
+            z-index: 3;
+        }
+
+        .magma-eye {
+            width: 18px;
+            height: 18px;
+            background-color: #ffaa00;
+            border: 2px solid #380d0d;
+            box-shadow: inset -4px -4px 0 #ffff00;
+        }
+
+        /* Capas del Magma Cube (8 rebanadas de roca volcánica) */
+        .magma-layer {
+            width: 100%;
+            height: 10px;
+            background-color: #2b0a0a;
+            border: 2px solid #120404;
+            box-shadow: inset 2px 2px 0 #4a1212, inset -2px -2px 0 #120404;
+            z-index: 2;
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.4);
+            position: relative;
+        }
+
+        /* Animación de Salto estilo Acordeón/Muelle del Magma Cube */
+        .magma-cube.jumping .magma-core {
+            opacity: 1;
+        }
+
+        .magma-cube.jumping .magma-layer:nth-child(1) { transform: translateY(-28px); }
+        .magma-cube.jumping .magma-layer:nth-child(2) { transform: translateY(-20px); }
+        .magma-cube.jumping .magma-layer:nth-child(3) { transform: translateY(-12px); }
+        .magma-cube.jumping .magma-layer:nth-child(4) { transform: translateY(-4px); }
+        .magma-cube.jumping .magma-layer:nth-child(5) { transform: translateY(4px); }
+        .magma-cube.jumping .magma-layer:nth-child(6) { transform: translateY(12px); }
+        .magma-cube.jumping .magma-layer:nth-child(7) { transform: translateY(20px); }
+        .magma-cube.jumping .magma-layer:nth-child(8) { transform: translateY(28px); }
+
+        .magma-cube-wrapper.leap {
+            animation: magma-leap-anim 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        @keyframes magma-leap-anim {
+            0% { transform: translate(-50%, -50%) scale(1, 1); }
+            30% { transform: translate(-50%, -120px) scale(0.9, 1.2); }
+            70% { transform: translate(-50%, -120px) scale(1.1, 0.9); }
+            100% { transform: translate(-50%, -50%) scale(1, 1); }
+        }
+
+        @media (max-width: 600px) {
+            .mc-gui-window { padding: 15px; }
+            .error-code { font-size: 2.8em; }
+            .error-message { font-size: 0.85em; }
+            .mc-button { font-size: 0.7em; padding: 12px; }
         }
     </style>
 </head>
 <body>
+    <canvas id="particle-canvas"></canvas>
+
     <main class="main-content">
-        <div class="error-container">
-            <i class="fas fa-cube broken-link-icon"></i>
+        <div class="mc-gui-window">
+            
+            <!-- Cabecera de Ventana GUI con el Link Roto -->
+            <div class="mc-gui-header">
+                <div class="title" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 85%;">
+                    <i class="fas fa-link" style="color: #ff5555;"></i> <span id="broken-link">https://glauncher.app/undefined-chunk</span>
+                </div>
+                <div class="window-controls" id="header-eyes" title="Ojos de Magma Cube (¡Haz clic para guiñar!)">
+                    <span class="magma-eye-dot"></span>
+                    <span class="magma-eye-dot"></span>
+                </div>
+            </div>
+
+            <!-- Cubo GIF de Minecraft con Glitch -->
+            <div class="gif-glitch-container" id="block-container" title="Haz clic para invocar al Magma Cube">
+                <img src="https://media.tenor.com/do1MMrPly-wAAAAi/minecraft-grass-block.gif" alt="Minecraft Grass Block" class="grass-block-gif" id="grass-block">
+                
+                <!-- Cubo de Magma interactivo (Oculto inicialmente) -->
+                <div class="magma-cube-wrapper" id="magma-cube-wrapper">
+                    <div class="magma-cube" id="magma-cube">
+                        <div class="magma-core"></div>
+                        <div class="magma-eyes">
+                            <div class="magma-eye"></div>
+                            <div class="magma-eye"></div>
+                        </div>
+                        <div class="magma-layer"></div>
+                        <div class="magma-layer"></div>
+                        <div class="magma-layer"></div>
+                        <div class="magma-layer"></div>
+                        <div class="magma-layer"></div>
+                        <div class="magma-layer"></div>
+                        <div class="magma-layer"></div>
+                        <div class="magma-layer"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mensaje de Error Píxel -->
             <h1 class="error-code">404</h1>
-            <h2 class="error-message">Chunk No Cargado</h2>
+            <h2 class="error-message">¡HAS LLEGADO A LAS FAR LANDS!</h2>
+            
             <p class="error-description">
-                Has llegado a los límites del mapa. La página que buscas no existe o ha sido eliminada por un Enderman.
+                Has viajado más allá de las fronteras conocidas del mundo (X/Z: ±12,550,821). La matriz del terreno está completamente distorsionada y no hay bloques sólidos por aquí.
             </p>
-            <a href="../../index.html" class="home-btn">
-                <i class="fas fa-home"></i> Volver al Spawn
+
+            <!-- Botón estilo Minecraft -->
+            <a href="../../index.html" class="mc-button" id="spawn-btn">
+                <i class="fas fa-compass"></i> VOLVER AL SPAWN
             </a>
+
         </div>
     </main>
 
     <footer class="footer">
-        <p>GLauncher &copy; 2026. Todos los derechos reservados.</p>
+        <p>GLauncher &copy; 2026 — Minecraft GUI Edition</p>
     </footer>
 
     <script src="../js/global-script.js"></script>
     <script>
-        // Efecto de partículas flotantes
-        document.addEventListener('DOMContentLoaded', () => {
-            const body = document.body;
-            for(let i=0; i<30; i++) {
-                const particle = document.createElement('div');
-                particle.style.position = 'absolute';
-                particle.style.width = Math.random() * 4 + 'px';
-                particle.style.height = particle.style.width;
-                particle.style.background = Math.random() > 0.5 ? 'var(--neon-blue)' : 'var(--neon-pink)';
-                particle.style.left = Math.random() * 100 + 'vw';
-                particle.style.top = Math.random() * 100 + 'vh';
-                particle.style.borderRadius = '50%';
-                particle.style.opacity = Math.random() * 0.5;
-                particle.style.pointerEvents = 'none';
-                particle.style.animation = `float ${Math.random() * 10 + 5}s linear infinite`;
-                body.appendChild(particle);
+        // --- MOSTRAR URL MAL PUESTA DINÁMICAMENTE ---
+        const brokenLinkEl = document.getElementById('broken-link');
+        if (brokenLinkEl && window.location.href) {
+            brokenLinkEl.textContent = window.location.href;
+        }
+
+        // --- SINTETIZADOR DE SONIDOS 8-BIT (Web Audio API) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function play8BitSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
             }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'click') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.08);
+            } else if (type === 'hover') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.04);
+            } else if (type === 'magma_jump') {
+                // Sonido de muelle / salto grave de Magma Cube
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(110, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(320, audioCtx.currentTime + 0.18);
+                osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.35);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.35);
+            }
+        }
+
+        // --- INTERACCIÓN DEL MAGMA CUBE ---
+        const blockContainer = document.getElementById('block-container');
+        const grassBlock = document.getElementById('grass-block');
+        const magmaWrapper = document.getElementById('magma-cube-wrapper');
+        const magmaCube = document.getElementById('magma-cube');
+
+        let isMagmaActive = false;
+
+        // Ojos de Magma Cube en la cabecera
+        const headerEyes = document.getElementById('header-eyes');
+        if (headerEyes) {
+            headerEyes.addEventListener('click', () => {
+                play8BitSound('hover');
+                const dots = headerEyes.querySelectorAll('.magma-eye-dot');
+                dots.forEach(dot => {
+                    dot.style.transform = 'scaleY(0.15)';
+                    setTimeout(() => { dot.style.transform = ''; }, 300);
+                });
+            });
+        }
+
+        blockContainer.addEventListener('click', () => {
+            if (!isMagmaActive) {
+                // Aparece el Magma Cube en lugar del bloque de hierba
+                isMagmaActive = true;
+                grassBlock.style.opacity = '0';
+                magmaWrapper.classList.add('active');
+            }
+
+            // Disparar animación de salto con apertura de capas (acordeón)
+            play8BitSound('magma_jump');
+            magmaWrapper.classList.remove('leap');
+            magmaCube.classList.remove('jumping');
+            
+            // Forzar reflow para reiniciar animación
+            void magmaWrapper.offsetWidth;
+
+            magmaWrapper.classList.add('leap');
+            magmaCube.classList.add('jumping');
+
+            setTimeout(() => {
+                magmaCube.classList.remove('jumping');
+            }, 500);
         });
+
+        // --- CANVAS DE PARTÍCULAS PÍXEL ---
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        const particleCount = 50;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class PixelParticle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.floor(Math.random() * 5) + 3; // Tamaño Píxel
+                this.vx = (Math.random() - 0.5) * 1.5;
+                this.vy = (Math.random() - 0.5) * 1.5;
+                this.color = Math.random() > 0.5 ? '#00f3ff' : (Math.random() > 0.5 ? '#39ff14' : '#ff007f');
+                this.alpha = Math.random() * 0.6 + 0.2;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Salto glitch aleatorio
+                if (Math.random() < 0.008) {
+                    this.x += (Math.random() - 0.5) * 30;
+                }
+
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.alpha;
+                ctx.fillRect(Math.floor(this.x), Math.floor(this.y), this.size, this.size);
+                ctx.globalAlpha = 1.0;
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new PixelParticle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        // --- INTERACTIVIDAD BOTÓN ---
+        const spawnBtn = document.getElementById('spawn-btn');
+
+        spawnBtn.addEventListener('mouseenter', () => play8BitSound('hover'));
+        spawnBtn.addEventListener('click', () => play8BitSound('click'));
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            initParticles();
+        });
+
+        resizeCanvas();
+        initParticles();
+        animate();
     </script>
 </body>
 </html>
