@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GLauncher - 1er B</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #0a0a0f;
+            --card-bg: rgba(22, 22, 32, 0.85);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f0f4f8;
+            --text-muted: #8a99ad;
+            --warning-yellow: #ffd000;
+            --hazard-orange: #ff6b00;
+            --toxic-green: #39ff14;
+            --toxic-glow: rgba(57, 255, 20, 0.4);
+            --danger-red: #ff2a5f;
+            --love-pink: #ff52a0;
+            --purple-accent: #b55fe6;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --font-code: 'Consolas', 'Courier New', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-code);
+            background-color: var(--main-bg);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(57, 255, 20, 0.08) 0%, transparent 60%),
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 24px 24px, 24px 24px;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 40px 15px 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            transition: background-color 0.2s ease;
+            user-select: none;
+        }
+
+        body.alarm-active {
+            animation: flash-red-alarm 0.4s infinite alternate;
+        }
+
+        @keyframes flash-red-alarm {
+            0% { background-color: var(--main-bg); }
+            100% { background-color: #3b000f; }
+        }
+
+        #percentage-display {
+            display: none;
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 10, 15, 0.95);
+            border: 2px solid var(--toxic-green);
+            color: var(--toxic-green);
+            padding: 14px 32px;
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            font-weight: 900;
+            border-radius: 50px;
+            z-index: 2500;
+            box-shadow: 0 0 30px var(--toxic-glow);
+            letter-spacing: 3px;
+            text-shadow: 0 0 12px var(--toxic-green);
+            backdrop-filter: blur(8px);
+        }
+
+        .hero-container {
+            background: rgba(18, 18, 26, 0.9);
+            border: 3px solid var(--warning-yellow);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 208, 0, 0.15);
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+            max-width: 900px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 40px;
+            backdrop-filter: blur(12px);
+        }
+
+        .hero-container > *:not(#slime-canvas) {
+            position: relative;
+            z-index: 5;
+        }
+
+        #slime-canvas {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            filter: url('#goo');
+            cursor: grab;
+            touch-action: none;
+        }
+
+        #slime-canvas:active {
+            cursor: grabbing;
+        }
+
+        .warning-banner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(90deg, #ffd000, #ff8c00, #ffd000);
+            background-size: 200% 100%;
+            animation: moveBanner 4s linear infinite;
+            color: #000;
+            font-weight: 900;
+            font-size: 0.85rem;
+            padding: 6px 0;
+            z-index: 10;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        @keyframes moveBanner {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 0%; }
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 4vw, 2.3rem);
+            text-transform: uppercase;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            color: var(--warning-yellow);
+            letter-spacing: 2px;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.8);
+            line-height: 1.3;
+        }
+
+        .hero-subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 1.8rem;
+            letter-spacing: 1px;
+        }
+
+        .scan-btn {
+            position: relative;
+            padding: 18px 36px;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            background: linear-gradient(135deg, #39ff14 0%, #1db900 100%);
+            color: #000;
+            font-family: var(--font-code);
+            font-weight: 900;
+            font-size: 1.15rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+            box-shadow: 0 8px 25px var(--toxic-glow), 0 5px 0 #127500;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .scan-btn:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 12px 30px var(--toxic-glow), 0 5px 0 #127500;
+            filter: brightness(1.1);
+        }
+
+        .scan-btn:active {
+            transform: translateY(3px) scale(0.98);
+            box-shadow: 0 2px 10px var(--toxic-glow), 0 2px 0 #127500;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 10, 0.92);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            backdrop-filter: blur(12px);
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            border: 3px solid var(--danger-red);
+            padding: 35px 25px;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 0 50px rgba(255, 42, 95, 0.4);
+            animation: modal-pop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modal-pop { 
+            from { transform: scale(0.7) translateY(30px); opacity: 0; } 
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .section-box {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(18, 18, 26, 0.75);
+            border: 2px solid var(--card-border);
+            padding: 2.2rem 1.8rem;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 35px;
+            backdrop-filter: blur(8px);
+            transition: border-color 0.3s;
+        }
+
+        .section-box:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .section-title {
+            text-transform: uppercase;
+            margin-bottom: 1.8rem;
+            text-align: center;
+            padding-bottom: 14px;
+            border-bottom: 2px dashed rgba(255, 255, 255, 0.15);
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            letter-spacing: 1.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .status-card {
+            background: var(--card-bg);
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            padding: 18px 16px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 90px;
+        }
+
+        .status-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 3px;
+            background: currentColor;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .status-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .status-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-tag {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        .status-card h3 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1.3;
+        }
+
+        .reveal-badge {
+            display: none;
+            margin-top: 12px;
+            font-size: 0.95rem;
+            font-weight: 900;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.5);
+            width: 100%;
+            border: 1px solid currentColor;
+            letter-spacing: 0.5px;
+        }
+
+        .status-card.revealed {
+            background: rgba(30, 30, 45, 0.95);
+        }
+
+        .status-card.revealed .reveal-badge { 
+            display: block; 
+            animation: cardReveal 0.3s ease-out forwards;
+        }
+
+        @keyframes cardReveal {
+            from { opacity: 0; transform: translateY(6px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .section-cachos { border-color: rgba(255, 42, 95, 0.3); }
+        .section-cachos .section-title, .section-cachos .status-card { color: var(--danger-red); }
+
+        .section-parejas { border-color: rgba(255, 82, 160, 0.3); }
+        .section-parejas .section-title, .section-parejas .status-card { color: var(--love-pink); }
+
+        .section-academicos { border-color: rgba(255, 107, 0, 0.3); }
+        .section-academicos .section-title, .section-academicos .status-card { color: var(--hazard-orange); }
+
+        .section-profe { border-color: rgba(181, 95, 230, 0.3); }
+        .section-profe .section-title, .section-profe .status-card { color: var(--purple-accent); }
+    </style>
+</head>
+<body>
+    <div id="percentage-display">0% PENDEJO</div>
+
+    <!-- Modal de Resultado -->
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <h2 style="color: var(--danger-red); font-size: 1.5rem; margin-bottom: 15px;">
+                <i class="fas fa-exclamation-triangle"></i> ANÁLISIS COMPLETADO
+            </h2>
+            <p style="color: #fff; font-size: 1.15rem; font-weight: 800; margin-bottom: 10px;">
+                Nivel de pendejez crítico (100%) detectado.
+            </p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px; line-height: 1.4;">
+                Se ha enviado una alerta epidemiológica a Santa Bárbara de Barinas. Recomiendan formatear el salón 1er B inmediatamente.
+            </p>
+            <button class="scan-btn" style="background: var(--danger-red); box-shadow: 0 5px 0 #900; color: white;" onclick="resetScan()">
+                <i class="fas fa-times-circle"></i> Cerrar y Aceptar Realidad
+            </button>
+        </div>
+    </div>
+
+    <div class="hero-container">
+        <div class="warning-banner">
+            <i class="fas fa-biohazard"></i> ADVERTENCIA: SECCIÓN CON DEFICIENCIA INTEGRAL Y CEREBRAL <i class="fas fa-biohazard"></i>
+        </div>
+        <canvas id="slime-canvas"></canvas>
+        <h1>1er B: El año y sección más estúpida y subnormal de Santa Bárbara</h1>
+        <p class="hero-subtitle">⚠️ ERROR 404: Coeficiente Intelectual No Encontrado En El Aula ⚠️</p>
+        <button class="scan-btn" id="scan-btn">
+            <i class="fas fa-radiation"></i> Escanear Pendejez
+        </button>
+    </div>
+
+    <!-- Sección de Cachos -->
+    <div class="section-box section-cachos">
+        <h2 class="section-title"><i class="fas fa-bullhorn"></i> Top Monta-Cachos de la Sección</h2>
+        <div class="grid-layout">
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag">Especimen #1</span>
+                <h3>Ivana Pulido</h3>
+                <div class="reveal-badge">Altura Cacho: 1.0 CM</div>
+            </div>
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag">Especimen #2</span>
+                <h3>Juan Diego</h3>
+                <div class="reveal-badge">Ni se sabe pero bueno</div>
+            </div>
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag">Especimen #3</span>
+                <h3>Jacksneider</h3>
+                <div class="reveal-badge">Altura Cacho: 9.0 CM</div>
+            </div>
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag">Especimen #4</span>
+                <h3>Camila Horta</h3>
+                <div class="reveal-badge">Altura Cacho: 5.0 M</div>
+            </div>
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag">Especimen #5</span>
+                <h3>Edwin</h3>
+                <div class="reveal-badge">Altura Cacho: 2.0 CM</div>
+            </div>
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag">Especimen #6</span>
+                <h3>Antony Molina</h3>
+                <div class="reveal-badge">Altura Cacho: 15.0 CM</div>
+            </div>
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag">Especimen #7</span>
+                <h3>Christofer Garabito</h3>
+                <div class="reveal-badge">Altura Cacho: 5.0 CM</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Parejas -->
+    <div class="section-box section-parejas">
+        <h2 class="section-title"><i class="fas fa-heartbeat"></i> Las Parejas Enamoradas</h2>
+        <div class="grid-layout">
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag">Pareja #1</span>
+                <h3>Ivana Pulido</h3>
+                <div class="reveal-badge"><i class="fas fa-heart"></i> Yair 17</div>
+            </div>
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag">Pareja #2</span>
+                <h3>Camila Horta</h3>
+                <div class="reveal-badge"><i class="fas fa-heart"></i> Santiago Rojas</div>
+            </div>
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag">Pareja #3</span>
+                <h3>Christofer</h3>
+                <div class="reveal-badge"><i class="fas fa-heart"></i> Camila Granderson</div>
+            </div>
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag">Pareja #4</span>
+                <h3>Joe</h3>
+                <div class="reveal-badge"><i class="fas fa-heart"></i> Nancy</div>
+            </div>
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag">Pareja #5</span>
+                <h3>Edwin</h3>
+                <div class="reveal-badge"><i class="fas fa-heart"></i> Su Tío XD</div>
+            </div>
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag">Pareja #6</span>
+                <h3>Manuel</h3>
+                <div class="reveal-badge"><i class="fas fa-heart"></i> Yannelids</div>
+            </div>
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag">Pareja #7</span>
+                <h3>Danna</h3>
+                <div class="reveal-badge"><i class="fas fa-heart"></i> Pablo (5to B Calajo)</div>
+            </div>
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag">Pareja #8</span>
+                <h3>Camila Diaz</h3>
+                <div class="reveal-badge"><i class="fas fa-heart"></i> Carlos Delgado</div>
+            </div>
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag">Pareja #9</span>
+                <h3>Gabriel</h3>
+                <div class="reveal-badge"><i class="fas fa-heart"></i> Arismar</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección Académica -->
+    <div class="section-box section-academicos">
+        <h2 class="section-title"><i class="fas fa-graduation-cap"></i> Desempeño Académico</h2>
+        <div class="grid-layout">
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag" style="color: var(--danger-red)">EL QUE RASPÓ</span>
+                <h3>Antony Molina</h3>
+                <div class="reveal-badge" style="color: var(--danger-red); border-color: var(--danger-red)">NOTA: 01 / 20</div>
+            </div>
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag" style="color: var(--toxic-green)">LA INTELIGENTE</span>
+                <h3>Yannelids</h3>
+                <div class="reveal-badge" style="color: var(--toxic-green); border-color: var(--toxic-green)">NOTA: 20 / 20</div>
+            </div>
+            <div class="status-card" onclick="toggleCard(this)">
+                <span class="card-tag" style="color: var(--warning-yellow)">EN DEFENSA PROPIA</span>
+                <h3>Gabriel</h3>
+                <div class="reveal-badge" style="color: var(--warning-yellow); border-color: var(--warning-yellow)">NOTA: 10 / 20 (Al fin)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección Profe -->
+    <div class="section-box section-profe">
+        <h2 class="section-title"><i class="fas fa-skull-crossbones"></i> El Profe Más Odiado</h2>
+        <div class="status-card" onclick="toggleCard(this)" style="width: 100%;">
+            <span class="card-tag">Nivel de Odio: Máximo</span>
+            <h3 style="font-size: 1.2rem;">Profe Ingrid | Cagadas y Matrimonio XD</h3>
+            <div class="reveal-badge" style="color: var(--purple-accent); border-color: var(--purple-accent); margin-top: 15px;">
+                MOTIVO: Dicta demasiado, manda kilómetros de texto, exámenes infinitos y tarea los domingos.
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtro SVG para el efecto Slime Viscoso -->
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display:none;">
+        <defs>
+            <filter id="goo">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+                <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+            </filter>
+        </defs>
+    </svg>
+
+    <script>
+        const btn = document.getElementById('scan-btn');
+        const body = document.body;
+        const percentText = document.getElementById('percentage-display');
+        const modal = document.getElementById('result-modal');
+        
+        // --- Slime Liquid Canvas Simulation ---
+        const canvas = document.getElementById('slime-canvas');
+        const ctx = canvas.getContext('2d');
+        let points = [];
+        let targetLevel = 0; 
+        let currentLevel = 0;
+        let tilt = 0;
+        const numPoints = 26;
+        let mouse = { x: 0, y: 0, active: false, dragging: false };
+
+        function initCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            points = [];
+            for(let i = 0; i <= numPoints; i++) {
+                points.push({
+                    x: (canvas.width / numPoints) * i,
+                    y: canvas.height,
+                    vy: 0,
+                    elasticity: 0.07 + Math.random() * 0.05
+                });
+            }
+        }
+
+        window.addEventListener('resize', initCanvas);
+        initCanvas();
+
+        function updateSlime() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            currentLevel += (targetLevel - currentLevel) * 0.05;
+            const baseY = canvas.height - (currentLevel * canvas.height);
+
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height);
+
+            points.forEach((p, i) => {
+                const targetY = baseY + (Math.sin(Date.now() * 0.003 + i * 0.4) * 6) + (i - numPoints/2) * tilt;
+                
+                if (mouse.active) {
+                    const dx = p.x - mouse.x;
+                    const dist = Math.abs(dx);
+                    if (dist < 100) {
+                        const force = (100 - dist) / 100;
+                        if (mouse.dragging) {
+                            p.y += (mouse.y - p.y) * force * 0.5;
+                        } else {
+                            p.y += (mouse.y - p.y) * force * 0.15;
+                        }
+                    }
+                }
+
+                const diff = targetY - p.y;
+                p.vy += diff * p.elasticity;
+                p.vy *= 0.88; 
+                p.y += p.vy;
+
+                if (i === 0) ctx.lineTo(p.x, p.y);
+                else {
+                    const prev = points[i-1];
+                    const cx = (prev.x + p.x) / 2;
+                    const cy = (prev.y + p.y) / 2;
+                    ctx.quadraticCurveTo(prev.x, prev.y, cx, cy);
+                }
+            });
+
+            ctx.lineTo(canvas.width, points[points.length-1].y);
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.lineTo(0, canvas.height);
+            ctx.closePath();
+
+            ctx.fillStyle = '#39ff14';
+            ctx.globalAlpha = 0.75;
+            ctx.fill();
+            
+            ctx.strokeStyle = '#a2ff00';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            requestAnimationFrame(updateSlime);
+        }
+        updateSlime();
+
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top,
+                rawX: clientX
+            };
+        }
+
+        function handleStart(e) {
+            mouse.dragging = true;
+            const pos = getPos(e);
+            mouse.x = pos.x;
+            mouse.y = pos.y;
+            mouse.active = true;
+        }
+
+        function handleMove(e) {
+            if (!mouse.active && !mouse.dragging) return;
+            const pos = getPos(e);
+            mouse.x = pos.x;
+            mouse.y = pos.y;
+            tilt = (pos.rawX / window.innerWidth - 0.5) * 6;
+        }
+
+        function handleEnd() {
+            mouse.dragging = false;
+            mouse.active = false;
+        }
+
+        canvas.addEventListener('mousedown', handleStart);
+        window.addEventListener('mouseup', handleEnd);
+        canvas.addEventListener('mousemove', handleMove);
+        canvas.addEventListener('mouseleave', handleEnd);
+
+        canvas.addEventListener('touchstart', (e) => { handleStart(e); }, { passive: true });
+        window.addEventListener('touchend', handleEnd);
+        canvas.addEventListener('touchmove', (e) => { handleMove(e); }, { passive: true });
+
+        let audioCtx = null;
+        let alarmInterval = null;
+
+        function playSyntheticAlarm() {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                alarmInterval = setInterval(() => {
+                    if (!audioCtx) return;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.15);
+                    
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.15);
+                }, 200);
+            } catch (err) {
+                console.log('Audio Context indisponible', err);
+            }
+        }
+
+        function stopSyntheticAlarm() {
+            if (alarmInterval) {
+                clearInterval(alarmInterval);
+                alarmInterval = null;
+            }
+        }
+
+        let isScanning = false;
+
+        btn.addEventListener('click', () => {
+            if (isScanning) return;
+            isScanning = true;
+
+            playSyntheticAlarm();
+
+            body.classList.add('alarm-active');
+            percentText.style.display = 'block';
+            
+            let count = 0;
+            const interval = setInterval(() => {
+                count += Math.floor(Math.random() * 6) + 2;
+                if (count >= 100) {
+                    count = 100;
+                    clearInterval(interval);
+                    
+                    setTimeout(() => {
+                        percentText.style.display = 'none';
+                        modal.style.display = 'flex';
+                        stopSyntheticAlarm();
+                        body.classList.remove('alarm-active');
+                    }, 400);
+                }
+                percentText.innerText = count + "% PENDEJO";
+                targetLevel = count / 100;
+            }, 80);
+        });
+
+        function resetScan() {
+            modal.style.display = 'none';
+            targetLevel = 0;
+            isScanning = false;
+        }
+
+        function toggleCard(card) {
+            card.classList.toggle('revealed');
+        }
+
+        window.addEventListener('deviceorientation', (event) => {
+            if (event.gamma !== null) {
+                tilt = event.gamma * 0.15;
+            }
+        });
+    </script>
+</body>
+</html>
