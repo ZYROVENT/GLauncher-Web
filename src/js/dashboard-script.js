@@ -908,29 +908,75 @@ document.addEventListener('DOMContentLoaded', () => {
         populateStats({ gcoins: 0, owned_cosmetics: [], created_at: Date.now(), play_time_seconds: 0 });
     }
 
+    // --- RECARGA DE LISTA DE AMIGOS ---
+    async function reloadFriendsList() {
+        try {
+            const friendsResponse = await fetch(`${BACKEND_URL}/api/friends`, { 
+                headers: { 'Authorization': `Bearer ${token}` } 
+            });
+            if (friendsResponse.ok) {
+                const updatedFriends = await friendsResponse.json();
+                renderFriendsList(updatedFriends);
+            }
+        } catch (e) {
+            console.warn("Error al actualizar lista de amigos:", e);
+        }
+    }
+    window.reloadFriendsList = reloadFriendsList;
+
     // --- NOTIFICACIONES REALTIME PUSHER ---
     function initializeRealtimeNotifications(userData, friendsData) {
         if (typeof Pusher === 'undefined') return;
-        const pusher = new Pusher(PUSHER_KEY, {
-            cluster: 'us2',
-            authEndpoint: `${BACKEND_URL}/pusher/auth`,
-            auth: { headers: { 'Authorization': `Bearer ${token}` } }
-        });
+        try {
+            const pusher = new Pusher(PUSHER_KEY, {
+                cluster: 'us2'
+            });
 
-        const presenceChannel = pusher.subscribe('presence-glauncher-users');
-        const friendIds = new Set((friendsData.friends || []).map(f => f.id));
+            // Suscripción al canal personal del usuario (por ID y por username)
+            const userChanId = pusher.subscribe(`user-${userData.id}`);
+            const userChanName = pusher.subscribe(`user-${userData.username}`);
 
-        presenceChannel.bind('pusher:member_added', (member) => {
-            if (friendIds.has(member.id) && member.id !== userData.id) {
-                window.showNotification(`🟢 ¡${member.info.username} se ha conectado!`, 'success');
-            }
-        });
+            const handleFriendRequest = (data) => {
+                const senderName = data.from?.username || data.username || 'Un jugador';
+                window.showNotification(`📩 ¡${senderName} te ha enviado una solicitud de amistad!`, 'info');
+                reloadFriendsList();
+            };
 
-        presenceChannel.bind('pusher:member_removed', (member) => {
-            if (friendIds.has(member.id)) {
-                window.showNotification(`🔴 ¡${member.info.username} se ha desconectado!`, 'info');
-            }
-        });
+            const handleFriendAccepted = (data) => {
+                const friendName = data.by?.username || data.username || 'Un jugador';
+                window.showNotification(`🎉 ¡${friendName} aceptó tu solicitud de amistad!`, 'success');
+                reloadFriendsList();
+            };
+
+            userChanId.bind('friend-request', handleFriendRequest);
+            userChanName.bind('friend-request', handleFriendRequest);
+            userChanId.bind('friend-accepted', handleFriendAccepted);
+            userChanName.bind('friend-accepted', handleFriendAccepted);
+
+            // Escuchar actualizaciones de estado
+            const statusChannel = pusher.subscribe('user-status-channel');
+            statusChannel.bind('status-update', (data) => {
+                if (data.userId !== userData.id) {
+                    const friendEl = document.querySelector(`.friend-item[data-user-id="${data.userId}"]`);
+                    if (friendEl) {
+                        friendEl.dataset.userStatus = data.status;
+                        updateStatusIndicator(friendEl.querySelector('.status-indicator'), data.status);
+                    }
+                }
+            });
+
+            // Canal global de amigos
+            const globalChannel = pusher.subscribe('global-friends-channel');
+            globalChannel.bind('friend-updated', () => {
+                reloadFriendsList();
+            });
+
+        } catch (err) {
+            console.warn("Aviso Pusher:", err);
+        }
+
+        // Auto-actualización periódica de solicitudes y amigos cada 6 segundos
+        setInterval(reloadFriendsList, 6000);
     }
 
     // Iniciar carga del Dashboard
