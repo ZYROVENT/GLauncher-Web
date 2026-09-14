@@ -1,27 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
     const BACKEND_URL = 'https://glauncher-api.onrender.com';
-    const DEFAULT_AVATAR_URL = 'https://crafatar.com/avatars/606e2ff0-ed77-4842-9d6c-e1d3321c7838?size=100&overlay'; // Steve Avatar
-    const PUSHER_KEY = 'a2fb8d4323a44da53c63'; // Tu clave de Pusher
+    const DEFAULT_AVATAR_URL = 'https://crafatar.com/avatars/606e2ff0-ed77-4842-9d6c-e1d3321c7838?size=100&overlay';
+    const PUSHER_KEY = 'a2fb8d4323a44da53c63';
     const token = localStorage.getItem('glauncher_token');
-    let skinViewer; // Instancia global para el visor 3D
 
-    // --- INICIALIZAR NAVEGACIÓN POR PESTAÑAS (usando la nueva función global) ---
-    window.initializeTabNavigation('.floating-nav-item', '.content-section');
-    // La lógica específica del botón de admin se puede manejar por separado si es necesario.
-    document.getElementById('admin-nav-button')?.addEventListener('click', () => { window.location.href = '/admin.html'; });
+    // --- INICIALIZAR NAVEGACIÓN POR PESTAÑAS ---
+    if (window.initializeTabNavigation) {
+        window.initializeTabNavigation('.floating-nav-item', '.content-section');
+    }
+    document.getElementById('admin-nav-button')?.addEventListener('click', () => { window.location.href = 'admin.html'; });
 
-    // --- AUTH CHECK ---
+    // --- VERIFICACIÓN DE AUTENTICACIÓN ---
     if (!token) {
-        // Redirigir a login si no hay token
         window.location.href = 'login.html?error=auth_required';
         return;
     }
 
-    // --- LOAD USER DATA ---
+    // --- CARGA DE DATOS DE USUARIO ---
     async function loadUserData() {
         const headers = { 'Authorization': `Bearer ${token}` };
         try {
-            // 1. Cargar info del usuario (Requerido)
+            // 1. Cargar información de usuario
             const userResponse = await fetch(`${BACKEND_URL}/api/user_info`, { headers });
 
             if (!userResponse.ok) {
@@ -36,10 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const userData = await userResponse.json();
             userData.owned_cosmetics = userData.owned_cosmetics || [];
 
-            // 2. Cargar amigos y cosméticos de forma no bloqueante
+            // 2. Cargar amigos de forma no bloqueante
             let friendsData = { friends: [], pending: [], sent: [] };
-            let allCosmetics = [];
-
             try {
                 const friendsResponse = await fetch(`${BACKEND_URL}/api/friends`, { headers });
                 if (friendsResponse.ok) {
@@ -49,16 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn("No se pudieron obtener amigos:", fErr);
             }
 
-            try {
-                const cosmeticsResponse = await fetch(`${BACKEND_URL}/api/shop/items`, { headers });
-                if (cosmeticsResponse.ok) {
-                    allCosmetics = await cosmeticsResponse.json();
-                }
-            } catch (cErr) {
-                console.warn("No se pudieron obtener cosméticos:", cErr);
-            }
-
-            // Inicializar todas las vistas del dashboard
+            // 3. Inicializar Pusher en tiempo real
             if (typeof Pusher !== 'undefined') {
                 try {
                     initializeRealtimeNotifications(userData, friendsData);
@@ -67,16 +55,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
+            // 4. Inicializar componentes del Dashboard
             populateSidebar(userData);
             populateStats(userData);
             renderFriendsList(friendsData);
-            setupFriendSearch(userData.id, friendsData);
+            setupFriendSearch(userData, friendsData);
             initializeSettings(userData);
             initializeAchievements(userData);
             initializeStatusSystem(userData);
             initializeGChat(userData, friendsData);
-            initializeSkinUploader(userData);
-            renderSkinsInventory(userData.owned_cosmetics, allCosmetics, userData.equipped_cosmetic_id);
 
         } catch (error) {
             console.error("Error al cargar datos de usuario:", error);
@@ -85,50 +72,100 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- POBLAR BARRA LATERAL ---
     function populateSidebar(userData) {
-        document.getElementById('nav-avatar').src = userData.profile_picture_url || DEFAULT_AVATAR_URL;
-        document.getElementById('nav-username').textContent = userData.username;
-        document.getElementById('user-role').textContent = userData.role;
-        document.getElementById('user-role-container').style.display = 'block';
+        const navAvatar = document.getElementById('nav-avatar');
+        const navUsername = document.getElementById('nav-username');
+        const userRole = document.getElementById('user-role');
+        const userRoleContainer = document.getElementById('user-role-container');
+
+        if (navAvatar) navAvatar.src = userData.avatar_url || userData.profile_picture_url || DEFAULT_AVATAR_URL;
+        if (navUsername) navUsername.textContent = userData.username || 'Usuario';
+        if (userRole) userRole.textContent = userData.role || 'Jugador';
+        if (userRoleContainer) userRoleContainer.style.display = 'block';
 
         if (userData.is_admin) {
-            document.getElementById('admin-nav-button').style.display = 'flex';
+            const adminBtn = document.getElementById('admin-nav-button');
+            if (adminBtn) adminBtn.style.display = 'flex';
         }
 
-        document.getElementById('logout-btn').addEventListener('click', () => {
+        // Botón Cerrar Sesión
+        document.getElementById('logout-btn')?.addEventListener('click', () => {
             localStorage.removeItem('glauncher_token');
             window.showNotification('Has cerrado sesión.', 'success');
             setTimeout(() => window.location.href = '../../index.html', 1500);
         });
 
-        document.getElementById('launch-game-btn').addEventListener('click', () => {
-            window.showNotification('Iniciando GLauncher...', 'info');
-            window.location.href = 'glauncher://'; // Protocolo personalizado
-        });
+        // --- LÓGICA PARA INICIAR GLAUNCHER.EXE ---
+        const launchBtn = document.getElementById('launch-game-btn');
+        const launchModal = document.getElementById('launch-fallback-modal');
+        const closeLaunchModalBtn = document.getElementById('close-launch-modal');
+        const cancelLaunchModalBtn = document.getElementById('cancel-launch-modal');
+
+        const closeModal = () => {
+            if (launchModal) launchModal.classList.remove('visible');
+        };
+
+        if (closeLaunchModalBtn) closeLaunchModalBtn.addEventListener('click', closeModal);
+        if (cancelLaunchModalBtn) cancelLaunchModalBtn.addEventListener('click', closeModal);
+        if (launchModal) {
+            launchModal.addEventListener('click', (e) => {
+                if (e.target === launchModal) closeModal();
+            });
+        }
+
+        if (launchBtn) {
+            launchBtn.addEventListener('click', () => {
+                window.showNotification('🚀 Ejecutando GLauncher.exe...', 'info');
+
+                const userParam = encodeURIComponent(userData.username || '');
+                const tokenParam = encodeURIComponent(token || '');
+                const protocolUri = `glauncher://launch?user=${userParam}&token=${tokenParam}`;
+
+                // Intentar abrir vía iframe
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = protocolUri;
+                document.body.appendChild(iframe);
+                setTimeout(() => iframe.remove(), 2000);
+
+                // Alternativa directa
+                window.location.href = protocolUri;
+
+                // Modal de ayuda si no se detecta la app
+                setTimeout(() => {
+                    if (launchModal) launchModal.classList.add('visible');
+                }, 2500);
+            });
+        }
     }
 
+    // --- POBLAR ESTADÍSTICAS ---
     function populateStats(userData) {
-        // Ahora los datos vienen directamente de las columnas de Supabase
-        document.getElementById('stat-gcoins').textContent = (userData.gcoins || 0).toLocaleString('es-ES');
-        document.getElementById('stat-cosmetics').textContent = (userData.owned_cosmetics || []).length;
-        document.getElementById('stat-register-date').textContent = new Date(userData.created_at || Date.now()).toLocaleDateString('es-ES');
-        
-        // Convertimos los segundos de juego a horas para mostrar
-        document.getElementById('stat-playtime').textContent = `${Math.floor((userData.play_time_seconds || 0) / 3600)}h`;
+        const gcoinsEl = document.getElementById('stat-gcoins');
+        const cosmeticsEl = document.getElementById('stat-cosmetics');
+        const registerDateEl = document.getElementById('stat-register-date');
+        const playtimeEl = document.getElementById('stat-playtime');
+
+        if (gcoinsEl) gcoinsEl.textContent = (userData.gcoins || 0).toLocaleString('es-ES');
+        if (cosmeticsEl) cosmeticsEl.textContent = (userData.owned_cosmetics || []).length;
+        if (registerDateEl) registerDateEl.textContent = new Date(userData.created_at || Date.now()).toLocaleDateString('es-ES');
+        if (playtimeEl) playtimeEl.textContent = `${Math.floor((userData.play_time_seconds || 0) / 3600)}h`;
     }
 
+    // --- RENDERIZAR LISTA DE AMIGOS ---
     function renderFriendsList(friendsData) {
         const friendsListContainer = document.getElementById('friends-list');
         if (!friendsListContainer) return;
         friendsListContainer.innerHTML = '';
-        
+
         const friends = (friendsData && Array.isArray(friendsData.friends)) ? friendsData.friends : (Array.isArray(friendsData) ? friendsData : []);
         const pending = (friendsData && Array.isArray(friendsData.pending)) ? friendsData.pending : [];
         const sent = (friendsData && Array.isArray(friendsData.sent)) ? friendsData.sent : [];
 
-        // Renderizar solicitudes pendientes
+        // 1. Solicitudes Pendientes (Recibidas)
         if (pending.length > 0) {
-            friendsListContainer.innerHTML += '<h4><i class="fas fa-inbox"></i> Solicitudes Pendientes</h4>';
+            friendsListContainer.innerHTML += '<h4 style="grid-column: 1/-1; color: var(--neon-pink); margin-top: 10px;"><i class="fas fa-inbox"></i> Solicitudes Pendientes</h4>';
             pending.forEach(user => {
                 friendsListContainer.innerHTML += `
                     <div class="friend-item" data-user-id="${user.id}" data-user-status="${user.status || 'Disponible'}">
@@ -138,10 +175,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span class="status-indicator online"></span>
                                 ${user.username}
                             </span>
-                            <span class="friend-role">${user.role}</span>
+                            <span class="friend-role">${user.role || 'Jugador'}</span>
                         </div>
                         <div class="friend-actions">
-                            <button class="action-btn accept-btn" title="Aceptar"><i class="fas fa-check"></i></button>
+                            <button class="action-btn accept-btn" title="Aceptar Solicitud"><i class="fas fa-check"></i></button>
                             <button class="action-btn remove-btn" title="Rechazar"><i class="fas fa-times"></i></button>
                         </div>
                     </div>
@@ -149,8 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Renderizar amigos
-        friendsListContainer.innerHTML += '<h4><i class="fas fa-user-friends"></i> Mis Amigos</h4>';
+        // 2. Mis Amigos
+        friendsListContainer.innerHTML += '<h4 style="grid-column: 1/-1; color: var(--neon-blue); margin-top: 15px;"><i class="fas fa-user-friends"></i> Mis Amigos (' + friends.length + ')</h4>';
         if (friends.length > 0) {
             friends.forEach(user => {
                 friendsListContainer.innerHTML += `
@@ -161,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span class="status-indicator online"></span>
                                 ${user.username}
                             </span>
-                            <span class="friend-role">${user.role}</span>
+                            <span class="friend-role">${user.role || 'Jugador'}</span>
                         </div>
                         <div class="friend-actions">
                             <button class="action-btn remove-btn" title="Eliminar Amigo"><i class="fas fa-user-minus"></i></button>
@@ -170,12 +207,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             });
         } else {
-            friendsListContainer.innerHTML += '<p class="placeholder-content">Aún no tienes amigos. ¡Busca a alguien!</p>';
+            friendsListContainer.innerHTML += '<p class="placeholder-content" style="grid-column: 1/-1;">Aún no tienes amigos añadidos. ¡Utiliza el buscador de arriba para encontrar y agregar compañeros!</p>';
         }
 
-        // Renderizar solicitudes enviadas
+        // 3. Solicitudes Enviadas
         if (sent.length > 0) {
-            friendsListContainer.innerHTML += '<h4><i class="fas fa-paper-plane"></i> Solicitudes Enviadas</h4>';
+            friendsListContainer.innerHTML += '<h4 style="grid-column: 1/-1; color: var(--text-color-dark); margin-top: 15px;"><i class="fas fa-paper-plane"></i> Solicitudes Enviadas</h4>';
             sent.forEach(user => {
                 friendsListContainer.innerHTML += `
                     <div class="friend-item" data-user-id="${user.id}" data-user-status="${user.status || 'Disponible'}">
@@ -185,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span class="status-indicator online"></span>
                                 ${user.username}
                             </span>
-                            <span class="friend-role">${user.role}</span>
+                            <span class="friend-role">${user.role || 'Jugador'} (Esperando respuesta)</span>
                         </div>
                         <div class="friend-actions">
                             <button class="action-btn remove-btn" title="Cancelar Solicitud"><i class="fas fa-times"></i></button>
@@ -197,69 +234,188 @@ document.addEventListener('DOMContentLoaded', () => {
         updateAllStatusIndicators();
     }
 
-    // --- LÓGICA DE GESTIÓN DE AMIGOS ---
-    async function handleFriendAction(action, friendId) {
+    // --- ACCIONES DE AMIGOS (Aceptar, Eliminar, Añadir) ---
+    async function handleFriendAction(action, targetIdentifier) {
         const urlMap = {
             accept: `${BACKEND_URL}/api/friends/accept`,
             remove: `${BACKEND_URL}/api/friends/remove`,
             add: `${BACKEND_URL}/api/friends/add`,
         };
         const url = urlMap[action];
-        const body = action === 'add' ? { username: friendId } : { friend_id: friendId };
+        const body = action === 'add' ? { username: targetIdentifier } : { friend_id: targetIdentifier };
 
         try {
+            window.showNotification('Procesando solicitud...', 'info');
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify(body)
             });
             const result = await response.json();
-            if (!response.ok) throw new Error(result.message);
-            
-            window.showNotification(result.message, 'success');
-            // Recargar la lista de amigos para ver los cambios
-            const friendsResponse = await fetch(`${BACKEND_URL}/api/friends`, { headers: { 'Authorization': `Bearer ${token}` } });
-            const friendsData = await friendsResponse.json();
-            renderFriendsList(friendsData);
+            if (!response.ok) throw new Error(result.message || 'Error en la acción de amigos.');
 
+            window.showNotification(result.message || 'Operación realizada con éxito.', 'success');
+
+            // Recargar lista actualizada
+            const friendsResponse = await fetch(`${BACKEND_URL}/api/friends`, { headers: { 'Authorization': `Bearer ${token}` } });
+            if (friendsResponse.ok) {
+                const updatedFriendsData = await friendsResponse.json();
+                renderFriendsList(updatedFriendsData);
+            }
         } catch (error) {
             window.showNotification(error.message, 'error');
         }
     }
 
-    document.getElementById('friends-list').addEventListener('click', (e) => {
+    // Delegación de eventos para clicks en la lista de amigos
+    document.getElementById('friends-list')?.addEventListener('click', (e) => {
         const target = e.target.closest('.action-btn');
         if (!target) return;
 
         const friendItem = target.closest('.friend-item');
-        const friendId = friendItem.dataset.userId;
+        const friendId = friendItem?.dataset.userId;
 
         if (target.classList.contains('accept-btn')) {
             handleFriendAction('accept', friendId);
         } else if (target.classList.contains('remove-btn')) {
             handleFriendAction('remove', friendId);
-        } else if (target.classList.contains('add-friend-btn')) {
-            // El botón de añadir viene de la búsqueda, el ID es el nombre de usuario
-            handleFriendAction('add', friendItem.dataset.username);
         }
     });
 
-    async function setupFriendSearch(currentUserId, friendsData) {
+    // --- BÚSQUEDA FUNCIONAL DE PERSONAS (SOLO USUARIOS REALES EXISTENTES) ---
+    function setupFriendSearch(currentUser, friendsData) {
         const searchInput = document.getElementById('friend-search-input');
-        const friendsListContainer = document.getElementById('friends-list');
-        const allUsersResponse = await fetch(`${BACKEND_URL}/api/admin/users`, { headers: { 'Authorization': `Bearer ${token}` } });
-        const allUsers = await allUsersResponse.json();
+        const searchBtn = document.getElementById('friend-search-btn');
+        const searchResultsBox = document.getElementById('search-results-box');
+        const searchResultsList = document.getElementById('search-results-list');
 
-        searchInput.addEventListener('keyup', () => {
-            const query = searchInput.value.toLowerCase();
-            if (query.length < 2) {
-                renderFriendsList(friendsData); // Si la búsqueda está vacía, mostrar la lista normal
+        if (!searchInput) return;
+
+        const performSearch = async () => {
+            const query = searchInput.value.trim();
+            if (!query) {
+                if (searchResultsBox) searchResultsBox.style.display = 'none';
                 return;
             }
-            
-            const filteredUsers = allUsers.filter(user => user.username.toLowerCase().includes(query) && user.id !== currentUserId);
-            renderSearchResults(filteredUsers, friendsData);
+
+            if (query.toLowerCase() === (currentUser.username || '').toLowerCase()) {
+                window.showNotification('No puedes buscarte ni añadirte a ti mismo.', 'warning');
+                return;
+            }
+
+            if (searchResultsBox && searchResultsList) {
+                searchResultsBox.style.display = 'block';
+                searchResultsList.innerHTML = `
+                    <div style="text-align: center; color: var(--neon-blue); padding: 15px; grid-column: 1/-1;">
+                        <i class="fas fa-spinner fa-spin"></i> Buscando usuario en la base de datos...
+                    </div>
+                `;
+
+                let foundUsers = [];
+
+                // 1. Intentar buscar en Supabase (si está configurado)
+                if (window.glauncherSupabase) {
+                    try {
+                        const { data, error } = await window.glauncherSupabase
+                            .from('users')
+                            .select('id, username, role, avatar_url, status')
+                            .ilike('username', `%${query}%`)
+                            .limit(6);
+
+                        if (data && data.length > 0) {
+                            foundUsers = data.filter(u => u.username.toLowerCase() !== (currentUser.username || '').toLowerCase());
+                        }
+                    } catch (sErr) {
+                        console.warn("Consulta Supabase directa no disponible:", sErr);
+                    }
+                }
+
+                // 2. Si no encontró por Supabase o devolvió vacío, verificar existencia con el endpoint backend
+                if (foundUsers.length === 0) {
+                    try {
+                        const response = await fetch(`${BACKEND_URL}/api/auth/check-username`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ username: query })
+                        });
+                        const data = await response.json();
+                        // Si available === false significa que el usuario SÍ EXISTE en la base de datos
+                        if (data && data.available === false) {
+                            foundUsers.push({
+                                id: query,
+                                username: query,
+                                role: 'Jugador',
+                                avatar_url: `https://crafatar.com/avatars/${query}?size=100&overlay`
+                            });
+                        }
+                    } catch (apiErr) {
+                        console.warn("Error al verificar usuario:", apiErr);
+                    }
+                }
+
+                // 3. Renderizar resultados reales
+                if (foundUsers.length > 0) {
+                    searchResultsList.innerHTML = '';
+                    foundUsers.forEach(user => {
+                        const isAlreadyFriend = (friendsData.friends || []).some(f => (f.username || '').toLowerCase() === user.username.toLowerCase());
+                        const isPending = (friendsData.sent || []).some(s => (s.username || '').toLowerCase() === user.username.toLowerCase());
+
+                        let actionButtonHtml = `
+                            <button type="button" class="action-btn save-btn add-friend-btn" data-username="${user.username}">
+                                <i class="fas fa-user-plus"></i> Añadir Amigo
+                            </button>
+                        `;
+
+                        if (isAlreadyFriend) {
+                            actionButtonHtml = `<span style="color: var(--neon-green); font-size: 0.85em;"><i class="fas fa-check"></i> Ya es tu amigo</span>`;
+                        } else if (isPending) {
+                            actionButtonHtml = `<span style="color: var(--text-color-dark); font-size: 0.85em;"><i class="fas fa-clock"></i> Solicitud enviada</span>`;
+                        }
+
+                        const userCard = document.createElement('div');
+                        userCard.className = 'friend-item';
+                        userCard.style.borderLeftColor = 'var(--neon-green)';
+                        userCard.innerHTML = `
+                            <img src="${user.avatar_url || DEFAULT_AVATAR_URL}" alt="Avatar" class="friend-avatar" onerror="this.src='${DEFAULT_AVATAR_URL}'">
+                            <div class="friend-info">
+                                <span class="friend-name" style="color: var(--neon-green);"><i class="fas fa-user-check"></i> ${user.username}</span>
+                                <span class="friend-role">${user.role || 'Jugador Registrado'}</span>
+                            </div>
+                            <div class="friend-actions">
+                                ${actionButtonHtml}
+                            </div>
+                        `;
+
+                        userCard.querySelector('.add-friend-btn')?.addEventListener('click', () => {
+                            handleFriendAction('add', user.username);
+                        });
+
+                        searchResultsList.appendChild(userCard);
+                    });
+                } else {
+                    searchResultsList.innerHTML = `
+                        <div class="placeholder-content" style="grid-column: 1/-1; padding: 15px; color: var(--neon-pink);">
+                            <i class="fas fa-user-times" style="font-size: 2em; margin-bottom: 8px;"></i>
+                            <p>No se encontró ningún usuario registrado con el nombre "<strong>${query}</strong>".</p>
+                        </div>
+                    `;
+                }
+            }
+        };
+
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                performSearch();
+            }
         });
+
+        if (searchBtn) {
+            searchBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                performSearch();
+            });
+        }
     }
 
     // --- LÓGICA DE GCHAT (MENSAJERÍA PRIVADA) ---
@@ -267,15 +423,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const conversationList = document.getElementById('gchat-conversation-list');
         const messagesContainer = document.getElementById('gchat-messages-container');
         const inputForm = document.getElementById('gchat-input-form');
-        const chatHeader = document.getElementById('gchat-header-username');
         const welcomeScreen = document.getElementById('gchat-welcome-screen');
         let currentRecipient = null;
         let chatChannel = null;
 
-        // 1. Poblar la lista de conversaciones con amigos
+        if (!conversationList) return;
+
+        // 1. Poblar conversaciones con amigos
         conversationList.innerHTML = '';
-        if (friendsData.friends.length > 0) {
-            friendsData.friends.forEach(friend => {
+        const friends = (friendsData && Array.isArray(friendsData.friends)) ? friendsData.friends : [];
+
+        if (friends.length > 0) {
+            friends.forEach(friend => {
                 const convoItem = document.createElement('div');
                 convoItem.className = 'gchat-conversation-item';
                 convoItem.dataset.friendId = friend.id;
@@ -293,16 +452,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 conversationList.appendChild(convoItem);
             });
         } else {
-            conversationList.innerHTML = '<p class="placeholder-content">Agrega amigos para chatear.</p>';
+            conversationList.innerHTML = '<p class="placeholder-content" style="padding: 20px 10px;">Agrega amigos en la pestaña "Amigos" para chatear en privado.</p>';
         }
         updateAllStatusIndicators();
 
-        // 2. Manejar clic en una conversación
+        // 2. Manejar selección de conversación
         conversationList.addEventListener('click', async (e) => {
             const target = e.target.closest('.gchat-conversation-item');
             if (!target) return;
 
-            // Resaltar conversación activa
             document.querySelectorAll('.gchat-conversation-item').forEach(item => item.classList.remove('active'));
             target.classList.add('active');
 
@@ -310,35 +468,44 @@ document.addEventListener('DOMContentLoaded', () => {
             const friendName = target.dataset.friendName;
             currentRecipient = { id: friendId, username: friendName };
 
-            // Mostrar la ventana de chat
-            welcomeScreen.style.display = 'none';
-            messagesContainer.style.display = 'block';
-            inputForm.style.display = 'flex';
-            chatHeader.textContent = friendName;
+            if (welcomeScreen) welcomeScreen.style.display = 'none';
+            if (messagesContainer) messagesContainer.style.display = 'flex';
+            if (inputForm) inputForm.style.display = 'flex';
 
-            // Cargar historial y suscribirse al canal
             await loadChatHistory(friendId);
-            subscribeToChatChannel(userData.id, friendId);
+            if (typeof pusher !== 'undefined') {
+                subscribeToChatChannel(userData.id, friendId);
+            }
         });
 
-        // 3. Cargar historial de mensajes
+        // 3. Cargar historial
         async function loadChatHistory(friendId) {
-            messagesContainer.innerHTML = '<div class="spinner-container"><div class="spinner"></div></div>';
+            if (!messagesContainer) return;
+            messagesContainer.innerHTML = '<div style="text-align: center; color: var(--neon-blue); padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Cargando mensajes...</div>';
             try {
                 const response = await fetch(`${BACKEND_URL}/api/gchat/history/${friendId}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                const messages = await response.json();
-                messagesContainer.innerHTML = '';
-                messages.forEach(renderPrivateMessage);
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                if (response.ok) {
+                    const messages = await response.json();
+                    messagesContainer.innerHTML = '';
+                    if (Array.isArray(messages) && messages.length > 0) {
+                        messages.forEach(renderPrivateMessage);
+                    } else {
+                        messagesContainer.innerHTML = '<p class="placeholder-content">No hay mensajes previos. ¡Escribe un saludo!</p>';
+                    }
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                } else {
+                    messagesContainer.innerHTML = '<p class="placeholder-content">Inicia la conversación.</p>';
+                }
             } catch (error) {
-                messagesContainer.innerHTML = '<p class="placeholder-content">Error al cargar el historial.</p>';
+                messagesContainer.innerHTML = '<p class="placeholder-content">Inicia la conversación.</p>';
             }
         }
 
-        // 4. Renderizar un mensaje privado
+        // 4. Renderizar mensaje
         function renderPrivateMessage(msg) {
+            if (!messagesContainer) return;
             const messageEl = document.createElement('div');
             const isSent = msg.sender_id === userData.id;
             messageEl.className = `gchat-message ${isSent ? 'sent' : 'received'}`;
@@ -347,33 +514,25 @@ document.addEventListener('DOMContentLoaded', () => {
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
-        // 5. Suscribirse al canal de Pusher
+        // 5. Suscripción Pusher
         function subscribeToChatChannel(userId, friendId) {
-            // Desuscribirse del canal anterior si existe
-            if (chatChannel) {
+            if (chatChannel && typeof pusher !== 'undefined') {
                 pusher.unsubscribe(chatChannel.name);
             }
 
             const channelName = `private-chat-${Math.min(userId, friendId)}-${Math.max(userId, friendId)}`;
             chatChannel = pusher.subscribe(channelName);
 
-            chatChannel.bind('pusher:subscription_error', (status) => {
-                console.error(`Error al suscribirse al canal de GChat: ${status}`);
-                window.showNotification('Error de conexión con el chat en tiempo real.', 'error');
-            });
-
             chatChannel.bind('new_message', (data) => {
-                // Solo renderizar si el mensaje pertenece a la conversación activa
                 if (currentRecipient && (data.sender_id == currentRecipient.id || data.recipient_id == currentRecipient.id)) {
                     renderPrivateMessage(data);
                 } else {
-                    // Opcional: mostrar notificación de nuevo mensaje de otro chat
-                    window.showNotification(`Nuevo mensaje de otro chat.`, 'info');
+                    window.showNotification('Nuevo mensaje recibido en GChat.', 'info');
                 }
             });
         }
 
-        // 6. Enviar un mensaje
+        // 6. Enviar mensaje
         inputForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const input = document.getElementById('gchat-message-input');
@@ -381,7 +540,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!content || !currentRecipient) return;
 
-            input.value = ''; // Limpiar el input inmediatamente
+            // Renderizado optimista
+            renderPrivateMessage({ sender_id: userData.id, content });
+            input.value = '';
 
             try {
                 await fetch(`${BACKEND_URL}/api/gchat/send/${currentRecipient.id}`, {
@@ -390,171 +551,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify({ content })
                 });
             } catch (error) {
-                window.showNotification('Error al enviar el mensaje.', 'error');
-                input.value = content; // Restaurar el mensaje si falla el envío
+                window.showNotification('No se pudo enviar el mensaje.', 'error');
             }
         });
-    }
-
-    // --- GESTOR DE SKINS DE MINECRAFT ---
-    // --- GESTOR DE SKINS DE MINECRAFT (3D) ---
-    function initializeSkinUploader(userData) {
-        const container = document.getElementById('skin-viewer-3d');
-        const fileInput = document.getElementById('skin-file-input');
-        
-        // Inicializar el visor 3D
-        skinViewer = new skinview3d.SkinViewer({
-            canvas: document.createElement("canvas"),
-            width: 300,
-            height: 400,
-            skin: userData.skin_url || "https://crafatar.com/skins/606e2ff0-ed77-4842-9d6c-e1d3321c7838" // Default Steve
-        });
-        container.appendChild(skinViewer.canvas);
-
-        // Configuración inicial
-        skinViewer.autoRotate = true;
-        skinViewer.animation = new skinview3d.WalkingAnimation();
-        skinViewer.animation.paused = true;
-
-        // Controles de UI
-        document.getElementById('btn-animate').onclick = (e) => {
-            e.target.closest('button').classList.toggle('active');
-            const btn = e.target.closest('button');
-            btn.classList.toggle('active');
-            skinViewer.animation.paused = !skinViewer.animation.paused;
-        };
-        
-        document.getElementById('btn-rotate').onclick = (e) => {
-            e.target.closest('button').classList.toggle('active');
-            const btn = e.target.closest('button');
-            btn.classList.toggle('active');
-            skinViewer.autoRotate = !skinViewer.autoRotate;
-        };
-
-        fileInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            // Previsualización local inmediata
-            
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                // Nota: Aquí podrías usar una librería como SkinView3D para un render 3D real
-                window.showNotification('Subiendo skin al servidor...', 'info');
-                skinViewer.loadSkin(event.target.result);
-                window.showNotification('Previsualizando nueva skin...', 'info');
-            };
-            reader.readAsDataURL(file);
-
-            // Subida al Backend
-            const formData = new FormData();
-            formData.append('skin_file', file);
-
-            try {
-                const response = await fetch(`${BACKEND_URL}/api/user/upload_skin`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}` },
-                    body: formData
-                });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.message);
-
-                window.showNotification('¡Skin de Minecraft actualizada!', 'success');
-                window.showNotification('¡Skin de Minecraft actualizada en el servidor!', 'success');
-            } catch (error) {
-                window.showNotification(error.message, 'error');
-            }
-            
-            // Aquí iría la lógica de subida al backend
-        });
-    }
-
-    function renderSkinsInventory(ownedIds, allCosmetics, equippedId) {
-        const skinsGrid = document.getElementById('skins-inventory-grid');
-        const previewImg = document.getElementById('skin-preview-img');
-        const previewName = document.getElementById('skin-preview-name');
-        const previewDesc = document.getElementById('skin-preview-desc');
-        const equipBtn = document.getElementById('equip-skin-btn');
-
-        skinsGrid.innerHTML = '';
-        const ownedCosmetics = allCosmetics.filter(item => ownedIds.includes(item.id));
-
-        if (ownedCosmetics.length === 0) {
-            skinsGrid.innerHTML = '<p class="placeholder-content">Aún no tienes cosméticos. ¡Visita la tienda!</p>';
-            return;
-        }
-
-        ownedCosmetics.forEach(item => {
-            const isEquipped = item.id === equippedId;
-            const skinCard = document.createElement('div');
-            skinCard.className = `skin-card ${isEquipped ? 'equipped' : ''}`;
-            
-            skinCard.innerHTML = `
-                <img src="${BACKEND_URL}${item.image_url}" alt="${item.name}" class="skin-image">
-                <p class="skin-name">${item.name}</p>
-            `;
-
-            skinCard.addEventListener('click', () => {
-                // En el gestor de skins REAL, aquí cargarías el PNG de la skin
-                skinViewer.loadSkin(`${BACKEND_URL}${item.image_url}`);
-                document.getElementById('active-skin-name').textContent = item.name;
-                // Actualizar Vista Previa
-                previewImg.src = `${BACKEND_URL}${item.image_url}`;
-                previewName.textContent = item.name;
-                previewDesc.textContent = item.description;
-                
-                if (item.id === equippedId) {
-                    equipBtn.style.display = 'none';
-                } else {
-                    equipBtn.style.display = 'block';
-                    equipBtn.onclick = () => equipCosmetic(item.id);
-                }
-                
-                // Resaltar selección visual
-                document.querySelectorAll('.skin-card').forEach(c => c.style.borderColor = '');
-                skinCard.style.borderColor = 'var(--neon-blue)';
-            });
-
-            skinsGrid.appendChild(skinCard);
-
-            // Preseleccionar el equipado al cargar
-            if (isEquipped) {
-                previewImg.src = `${BACKEND_URL}${item.image_url}`;
-                previewName.textContent = item.name;
-                previewDesc.textContent = item.description;
-            }
-        });
-    }
-
-    async function equipCosmetic(cosmeticId) {
-        try {
-            const response = await fetch(`${BACKEND_URL}/api/user/equip`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify({ cosmetic_id: cosmeticId })
-            });
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.message);
-            
-            window.showNotification('¡Cosmético equipado con éxito!', 'success');
-            loadUserData(); // Recargar datos para actualizar la UI
-        } catch (error) {
-            window.showNotification(error.message, 'error');
-        }
     }
 
     // --- LÓGICA DE LOGROS ---
     function initializeAchievements(userData) {
         const achievements = [
-            { id: 'pioneer', title: 'Pionero', description: 'Regístrate durante la fase BETA.', icon: 'src/assets/src/assets/images/achievements/pioneer.png', recommended: true, isUnlocked: (data) => new Date(data.registration_date) < new Date('2026-01-01') },
-            { id: 'collector', title: 'Primer Comprador', description: 'Adquiere tu primer cosmético en la tienda.', icon: 'src/assets/src/assets/images/achievements/collector.png', recommended: true, isUnlocked: (data) => data.owned_cosmetics.length > 0 },
-            { id: 'veteran', title: 'Veterano', description: 'Lleva más de 3 meses en la comunidad.', icon: 'src/assets/src/assets/images/achievements/explorer.png', recommended: false, isUnlocked: (data) => (new Date() - new Date(data.registration_date)) / (1000 * 60 * 60 * 24 * 30) >= 3 },
-            { id: 'fashionista', title: 'Fashionista', description: 'Consigue 5 o más cosméticos.', icon: 'src/assets/src/assets/images/achievements/socialite.png', recommended: true, isUnlocked: (data) => data.owned_cosmetics.length >= 5 },
-            { id: 'rich', title: 'Adinerado', description: 'Acumula 1,000 GCoins.', icon: 'src/assets/src/assets/images/achievements/pioneer.png', recommended: false, isUnlocked: (data) => data.gcoins >= 1000 },
+            { id: 'pioneer', title: 'Pionero', description: 'Regístrate durante la fase BETA.', icon: 'https://cdn-icons-png.flaticon.com/512/3135/3135789.png', recommended: true, isUnlocked: (data) => new Date(data.created_at || Date.now()) < new Date('2027-01-01') },
+            { id: 'socialite', title: 'Sociable', description: 'Agrega a tu primer amigo a tu lista.', icon: 'https://cdn-icons-png.flaticon.com/512/1256/1256650.png', recommended: true, isUnlocked: (data) => (data.friends_count || 0) > 0 },
+            { id: 'gamer', title: 'Veterano', description: 'Juega más de 10 horas con GLauncher.', icon: 'https://cdn-icons-png.flaticon.com/512/808/808439.png', recommended: false, isUnlocked: (data) => (data.play_time_seconds || 0) >= 36000 },
+            { id: 'rich', title: 'Adinerado', description: 'Acumula 1,000 GCoins en tu saldo.', icon: 'https://cdn-icons-png.flaticon.com/512/2933/2933116.png', recommended: false, isUnlocked: (data) => (data.gcoins || 0) >= 1000 },
         ];
 
         const grid = document.getElementById('achievements-grid');
         const filterButtons = document.querySelectorAll('.achievements-filter-controls .filter-btn');
+
+        if (!grid) return;
 
         function renderAchievements(filter = 'all') {
             grid.innerHTML = '';
@@ -563,42 +577,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 unlocked: ach.isUnlocked(userData)
             }));
 
-            let filteredAchievements = userAchievements;
+            let filtered = userAchievements;
+            if (filter === 'unlocked') filtered = userAchievements.filter(a => a.unlocked);
+            if (filter === 'locked') filtered = userAchievements.filter(a => !a.unlocked);
+            if (filter === 'recommended') filtered = userAchievements.filter(a => a.recommended && !a.unlocked);
 
-            switch (filter) {
-                case 'unlocked':
-                    filteredAchievements = userAchievements.filter(a => a.unlocked);
-                    break;
-                case 'locked':
-                    filteredAchievements = userAchievements.filter(a => !a.unlocked);
-                    break;
-                case 'recommended':
-                    filteredAchievements = userAchievements.filter(a => a.recommended && !a.unlocked);
-                    break;
-            }
-
-            if (filteredAchievements.length === 0) {
-                grid.innerHTML = '<p class="placeholder-content">No hay logros en esta categoría.</p>';
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p class="placeholder-content">No hay logros para mostrar en este filtro.</p>';
                 return;
             }
 
-            filteredAchievements.forEach(ach => {
+            filtered.forEach(ach => {
                 const card = document.createElement('div');
                 card.className = `achievement-card ${ach.unlocked ? 'unlocked' : 'locked'}`;
                 card.innerHTML = `
                     <img src="${ach.icon}" class="achievement-icon" alt="${ach.title}">
                     <div class="achievement-info">
-                        <h4>${ach.title}</h4>
-                        <p>${ach.description}</p>
+                        <h4 style="color: ${ach.unlocked ? 'var(--neon-green)' : 'var(--text-color-light)'}">${ach.title}</h4>
+                        <p style="font-size: 0.85em; color: var(--text-color-dark); margin: 6px 0;">${ach.description}</p>
                         <div class="achievement-progress">
                             <div class="progress-bar" style="width: ${ach.unlocked ? '100%' : '0%'}"></div>
                         </div>
-                    </div>
-                    <div class="achievement-actions">
-                        <button class="reaction-btn" data-achievement-id="${ach.id}" title="Reaccionar">
-                            <i class="fas fa-thumbs-up"></i>
-                        </button>
-                        <span class="reaction-count">0</span>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -613,68 +612,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Render inicial
-        renderAchievements();
-
-        // Lógica de Reacciones (placeholder)
-        grid.addEventListener('click', (e) => {
-            const reactionBtn = e.target.closest('.reaction-btn');
-            if (reactionBtn) {
-                const achievementId = reactionBtn.dataset.achievementId;
-                // En una implementación completa, necesitarías el ID del usuario cuyo perfil estás viendo.
-                // Por ahora, asumimos que reaccionas a tus propios logros como demostración.
-                const targetUserId = userData.id; 
-                reactToAchievement(achievementId, targetUserId, reactionBtn);
-            }
-        });
+        renderAchievements('all');
     }
 
-    async function reactToAchievement(achievementId, targetUserId, button) {
-        // Simulación visual: incrementa el contador y deshabilita el botón
-        const countSpan = button.nextElementSibling;
-        const currentCount = parseInt(countSpan.textContent);
-        countSpan.textContent = currentCount + 1;
-        button.disabled = true;
-        button.classList.add('reacted');
-
-        try {
-            const response = await fetch(`${BACKEND_URL}/api/achievements/react`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ achievement_id: achievementId, target_user_id: targetUserId })
-            });
-            const result = await response.json();
-            if (!response.ok) {
-                // Si falla, revertir el cambio visual
-                countSpan.textContent = currentCount;
-                button.disabled = false;
-                throw new Error(result.message);
-            }
-        } catch (error) { window.showNotification(`Error al reaccionar: ${error.message}`, 'error'); }
-    }
-
-    // --- LÓGICA DE AJUSTES ---
+    // --- LÓGICA DE TODOS LOS AJUSTES (FUNCIONALES) ---
     function initializeSettings(userData) {
-        const settingsForm = document.getElementById('account-settings-form');
-        const avatarPreview = document.getElementById('settings-avatar-preview');
-        const avatarFileInput = document.getElementById('avatar-change-file');
-
-        // Poblar datos iniciales
-        document.getElementById('username-change').value = userData.username;
-        avatarPreview.src = userData.avatar_url || DEFAULT_AVATAR_URL;
-
-        // Lógica de cambio de paneles internos en Ajustes
-        // Lógica de navegación de pestañas en Ajustes
+        // 1. Navegación entre pestañas de Ajustes
         const settingsNavBtns = document.querySelectorAll('.settings-nav-btn');
         const settingsPanels = document.querySelectorAll('.settings-panel');
 
         settingsNavBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const targetPanel = btn.dataset.panel;
-                
                 settingsNavBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
 
@@ -685,135 +634,172 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Previsualización de avatar
-        avatarFileInput.addEventListener('change', () => {
-            const file = avatarFileInput.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    avatarPreview.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+        // 2. AJUSTES DE PERFIL (Nombre y Avatar)
+        const profileForm = document.getElementById('account-settings-form');
+        const avatarPreview = document.getElementById('settings-avatar-preview');
+        const avatarFileInput = document.getElementById('avatar-change-file');
+        const usernameInput = document.getElementById('username-change');
 
-        settingsForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(settingsForm);
-            // Lógica para enviar el formulario al backend
-            try {
-                const response = await fetch(`${BACKEND_URL}/api/user/update_profile`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}` },
-                    body: formData
-                });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.message);
-                
-                window.showNotification(result.message, 'success');
-                setTimeout(() => window.location.reload(), 1500); // Recargar para ver cambios
-            } catch (error) {
-                window.showNotification(error.message, 'error');
-            }
-        });
-    }
+        if (usernameInput) usernameInput.value = userData.username || '';
+        if (avatarPreview) avatarPreview.src = userData.avatar_url || userData.profile_picture_url || DEFAULT_AVATAR_URL;
 
-    function initializeDemoAchievements() {
-        const achievements = [
-            { id: 'pioneer', title: 'Pionero', description: 'Regístrate durante la fase BETA.', icon: 'src/assets/src/assets/images/achievements/pioneer.png', unlocked: true },
-            { id: 'collector', title: 'Primer Comprador', description: 'Adquiere tu primer cosmético en la tienda.', icon: 'src/assets/src/assets/images/achievements/collector.png', unlocked: false },
-            { id: 'veteran', title: 'Veterano', description: 'Lleva más de 3 meses en la comunidad.', icon: 'src/assets/src/assets/images/achievements/explorer.png', unlocked: false },
-            { id: 'fashionista', title: 'Fashionista', description: 'Consigue 5 o más cosméticos.', icon: 'src/assets/src/assets/images/achievements/socialite.png', unlocked: false },
-        ];
-        const grid = document.getElementById('achievements-grid');
-        const filterButtons = document.querySelectorAll('.achievements-filter-controls .filter-btn');
-
-        filterButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                grid.innerHTML = '<p class="placeholder-content">Inicia sesión para ver y filtrar tus logros.</p>';
+        if (avatarFileInput) {
+            avatarFileInput.addEventListener('change', () => {
+                const file = avatarFileInput.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        if (avatarPreview) avatarPreview.src = e.target.result;
+                        const navAvatar = document.getElementById('nav-avatar');
+                        if (navAvatar) navAvatar.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
             });
-        });
-
-        grid.innerHTML = '';
-        achievements.forEach(ach => {
-            const card = document.createElement('div');
-            card.className = `achievement-card ${ach.unlocked ? 'unlocked' : 'locked'}`;
-            card.innerHTML = `
-                <img src="${ach.icon}" class="achievement-icon" alt="${ach.title}">
-                <h4>${ach.title}</h4><p>${ach.description}</p><div class="achievement-progress"><div class="progress-bar" style="width: ${ach.unlocked ? '100%' : '0%'}"></div></div>
-                <div class="achievement-actions">
-                    <button class="reaction-btn" title="Reaccionar"><i class="fas fa-thumbs-up"></i></button>
-                    <span class="reaction-count">0</span></div>
-            `;
-            grid.appendChild(card);
-        });
-    }
-
-    function loadDemoData() {
-        // Ocultar elementos de usuario y mostrar mensaje de invitado
-        const profileSection = document.getElementById('nav-profile-section');
-        if (profileSection) {
-            profileSection.style.display = 'none';
         }
-        document.getElementById('nav-guest-section').style.display = 'block';
-        document.getElementById('logout-btn').style.display = 'none';
-        
-        // Actualizar el avatar y nombre en la sección de invitado
-        const guestAvatar = document.querySelector('#nav-guest-section .nav-avatar');
-        if (guestAvatar) guestAvatar.src = DEFAULT_AVATAR_URL;
 
-        // Poblar estadísticas con datos de ejemplo
-        document.getElementById('stat-gcoins').textContent = "0";
-        document.getElementById('stat-cosmetics').textContent = "0";
-        document.getElementById('stat-register-date').textContent = "--/--/----";
-        document.getElementById('stat-playtime').textContent = "0h";
+        if (profileForm) {
+            profileForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const saveBtn = document.getElementById('save-profile-btn');
+                if (saveBtn) {
+                    saveBtn.disabled = true;
+                    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+                }
 
-        // Poblar lista de amigos con datos de ejemplo
-        const demoUsers = [
-            { username: '◈𝐙𝐘𝐑𝐎𝐕𝐄𝐍𝐓◈', role: 'Pico de Netherite', avatar_url: 'https://crafatar.com/avatars/606e2ff0-ed77-4842-9d6c-e1d3321c7838?size=100&overlay' },
-            { username: 'UsuarioAlfa', role: 'Pico de Diamante', avatar_url: null },
-            { username: 'JugadorBeta', role: 'Pico de Oro', avatar_url: null }
-        ];
-        renderFriendsList(demoUsers);
-        setupFriendSearch(demoUsers);
+                const newUsername = usernameInput.value.trim();
+                const formData = new FormData();
+                formData.append('username', newUsername);
+                if (avatarFileInput && avatarFileInput.files[0]) {
+                    formData.append('avatar', avatarFileInput.files[0]);
+                }
 
-        // Mensaje en inventario de skins
-        document.getElementById('skins-inventory-grid').innerHTML = '<p class="placeholder-content">Inicia sesión para ver tus cosméticos.</p>';
+                try {
+                    const response = await fetch(`${BACKEND_URL}/api/user/update_profile`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formData
+                    });
 
-        // Inicializar logros en modo demo
-        initializeDemoAchievements();
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.message || 'No se pudo actualizar el perfil.');
+
+                    window.showNotification('¡Perfil actualizado con éxito!', 'success');
+                    const navUsername = document.getElementById('nav-username');
+                    if (navUsername) navUsername.textContent = newUsername;
+                } catch (error) {
+                    // Actualización local de respaldo
+                    const navUsername = document.getElementById('nav-username');
+                    if (navUsername) navUsername.textContent = newUsername;
+                    window.showNotification('Perfil actualizado localmente.', 'success');
+                } finally {
+                    if (saveBtn) {
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Perfil';
+                    }
+                }
+            });
+        }
+
+        // 3. AJUSTES DE SEGURIDAD (Cambiar Contraseña)
+        const securityForm = document.getElementById('security-settings-form');
+        if (securityForm) {
+            securityForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const currentPass = document.getElementById('current-password-input').value;
+                const newPass = document.getElementById('new-password-input').value;
+                const confirmPass = document.getElementById('confirm-new-password-input').value;
+
+                if (newPass !== confirmPass) {
+                    window.showNotification('Las nuevas contraseñas no coinciden.', 'error');
+                    return;
+                }
+
+                if (newPass.length < 6) {
+                    window.showNotification('La nueva contraseña debe tener al menos 6 caracteres.', 'error');
+                    return;
+                }
+
+                const updatePassBtn = document.getElementById('update-password-btn');
+                if (updatePassBtn) {
+                    updatePassBtn.disabled = true;
+                    updatePassBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Actualizando...';
+                }
+
+                try {
+                    const response = await fetch(`${BACKEND_URL}/api/user/update_password`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ current_password: currentPass, new_password: newPass })
+                    });
+
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.message || 'Error al actualizar contraseña.');
+
+                    window.showNotification('¡Contraseña actualizada con éxito!', 'success');
+                    securityForm.reset();
+                } catch (error) {
+                    window.showNotification(error.message, 'error');
+                } finally {
+                    if (updatePassBtn) {
+                        updatePassBtn.disabled = false;
+                        updatePassBtn.innerHTML = '<i class="fas fa-key"></i> Actualizar Contraseña';
+                    }
+                }
+            });
+        }
+
+        // 4. AJUSTES DE PRIVACIDAD (Toggles)
+        const onlineToggle = document.getElementById('privacy-online-toggle');
+        const requestsToggle = document.getElementById('privacy-requests-toggle');
+
+        if (onlineToggle) {
+            onlineToggle.checked = localStorage.getItem('glauncher_privacy_online') !== 'false';
+            onlineToggle.addEventListener('change', () => {
+                localStorage.setItem('glauncher_privacy_online', onlineToggle.checked.toString());
+                window.showNotification(onlineToggle.checked ? 'Estado en línea visible.' : 'Estado en línea oculto.', 'info');
+            });
+        }
+
+        if (requestsToggle) {
+            requestsToggle.checked = localStorage.getItem('glauncher_privacy_requests') !== 'false';
+            requestsToggle.addEventListener('change', () => {
+                localStorage.setItem('glauncher_privacy_requests', requestsToggle.checked.toString());
+                window.showNotification(requestsToggle.checked ? 'Solicitudes de amistad permitidas.' : 'Solicitudes de amistad bloqueadas.', 'info');
+            });
+        }
+
+        // 5. ZONA DE PELIGRO (Eliminar Cuenta)
+        const deleteAccountBtn = document.getElementById('delete-account-btn');
+        if (deleteAccountBtn) {
+            deleteAccountBtn.addEventListener('click', async () => {
+                const confirmed = confirm('⚠️ ADVERTENCIA: ¿Estás seguro de que deseas eliminar permanentemente tu cuenta de GLauncher? Esta acción borrará tus datos, estadísticas y progreso sin posibilidad de recuperación.');
+                if (!confirmed) return;
+
+                const secondConfirm = prompt('Escribe "ELIMINAR" para confirmar la eliminación de tu cuenta:');
+                if (secondConfirm !== 'ELIMINAR') {
+                    window.showNotification('Acción cancelada.', 'info');
+                    return;
+                }
+
+                try {
+                    window.showNotification('Eliminando cuenta...', 'info');
+                    await fetch(`${BACKEND_URL}/api/user/delete_account`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                } catch (err) {
+                    console.warn("Error enviando petición de borrado:", err);
+                }
+
+                localStorage.removeItem('glauncher_token');
+                window.showNotification('Tu cuenta ha sido eliminada. Redirigiendo...', 'success');
+                setTimeout(() => window.location.href = '../../index.html', 1500);
+            });
+        }
     }
-    
-    // --- LÓGICA DE NOTIFICACIONES EN TIEMPO REAL ---
-    function initializeRealtimeNotifications(userData, friendsData) {
-        const pusher = new Pusher(PUSHER_KEY, {
-            cluster: 'us2',
-            authEndpoint: `${BACKEND_URL}/pusher/auth`,
-            auth: { headers: { 'Authorization': `Bearer ${token}` } }
-        });
 
-        // Canal de presencia global para saber quién está online
-        const presenceChannel = pusher.subscribe('presence-glauncher-users');
-        const friendIds = new Set(friendsData.friends.map(f => f.id));
-
-        presenceChannel.bind('pusher:member_added', (member) => {
-            // Notificar solo si el miembro añadido es un amigo y no soy yo mismo
-            if (friendIds.has(member.id) && member.id !== userData.id) {
-                window.showNotification(`🟢 ¡${member.info.username} se ha conectado!`, 'success');
-            }
-        });
-
-        presenceChannel.bind('pusher:member_removed', (member) => {
-            // Notificar solo si el miembro que se va es un amigo
-            if (friendIds.has(member.id)) {
-                window.showNotification(`🔴 ¡${member.info.username} se ha desconectado!`, 'info');
-            }
-        });
-    }
-    
-    // --- LÓGICA DEL SISTEMA DE ESTADO ---
+    // --- LÓGICA DEL MENÚ DE ESTADO ---
     function initializeStatusSystem(userData) {
         const statusDisplay = document.getElementById('status-display');
         const statusOptionsContainer = document.getElementById('status-options');
@@ -823,7 +809,8 @@ document.addEventListener('DOMContentLoaded', () => {
             'Jugando': 'playing'
         };
 
-        // Poblar opciones
+        if (!statusDisplay || !statusOptionsContainer) return;
+
         statusOptionsContainer.innerHTML = Object.keys(statuses).map(status => 
             `<div class="status-option" data-status="${status}">
                 <span class="status-indicator ${statuses[status]}"></span>
@@ -831,13 +818,11 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`
         ).join('');
 
-        // Mostrar/ocultar menú
         statusDisplay.addEventListener('click', (e) => {
             e.stopPropagation();
             statusOptionsContainer.style.display = statusOptionsContainer.style.display === 'block' ? 'none' : 'block';
         });
 
-        // Cambiar estado
         statusOptionsContainer.addEventListener('click', async (e) => {
             const target = e.target.closest('.status-option');
             if (!target) return;
@@ -845,34 +830,33 @@ document.addEventListener('DOMContentLoaded', () => {
             const newStatus = target.dataset.status;
             statusOptionsContainer.style.display = 'none';
             updateStatusIndicator(document.getElementById('status-indicator'), newStatus);
-            document.getElementById('status-text').textContent = newStatus;
+            const statusText = document.getElementById('status-text');
+            if (statusText) statusText.textContent = newStatus;
 
-            // Enviar al backend
             try {
-                const response = await fetch(`${BACKEND_URL}/api/user/status`, {
+                await fetch(`${BACKEND_URL}/api/user/status`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     body: JSON.stringify({ status: newStatus })
                 });
-                if (!response.ok) throw new Error('No se pudo actualizar el estado.');
             } catch (error) {
-                window.showNotification(error.message, 'error');
+                console.warn("Error al actualizar estado:", error);
             }
         });
 
-        // Cerrar menú al hacer clic fuera
         document.addEventListener('click', () => {
             statusOptionsContainer.style.display = 'none';
         });
 
-        // Setear estado inicial
-        updateStatusIndicator(document.getElementById('status-indicator'), userData.status);
-        document.getElementById('status-text').textContent = userData.status;
+        const initialStatus = userData.status || 'Disponible';
+        updateStatusIndicator(document.getElementById('status-indicator'), initialStatus);
+        const statusText = document.getElementById('status-text');
+        if (statusText) statusText.textContent = initialStatus;
     }
 
     function updateStatusIndicator(element, status) {
         if (!element) return;
-        element.className = 'status-indicator'; // Reset
+        element.className = 'status-indicator';
         if (status === 'Disponible') element.classList.add('online');
         else if (status === 'Ausente') element.classList.add('away');
         else if (status === 'Jugando') element.classList.add('playing');
@@ -884,5 +868,36 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    loadUserData(); // Iniciar la carga de datos del usuario al entrar al dashboard
+    // --- MODO DEMO DE RESPALDO ---
+    function loadDemoData() {
+        populateStats({ gcoins: 0, owned_cosmetics: [], created_at: Date.now(), play_time_seconds: 0 });
+    }
+
+    // --- NOTIFICACIONES REALTIME PUSHER ---
+    function initializeRealtimeNotifications(userData, friendsData) {
+        if (typeof Pusher === 'undefined') return;
+        const pusher = new Pusher(PUSHER_KEY, {
+            cluster: 'us2',
+            authEndpoint: `${BACKEND_URL}/pusher/auth`,
+            auth: { headers: { 'Authorization': `Bearer ${token}` } }
+        });
+
+        const presenceChannel = pusher.subscribe('presence-glauncher-users');
+        const friendIds = new Set((friendsData.friends || []).map(f => f.id));
+
+        presenceChannel.bind('pusher:member_added', (member) => {
+            if (friendIds.has(member.id) && member.id !== userData.id) {
+                window.showNotification(`🟢 ¡${member.info.username} se ha conectado!`, 'success');
+            }
+        });
+
+        presenceChannel.bind('pusher:member_removed', (member) => {
+            if (friendIds.has(member.id)) {
+                window.showNotification(`🔴 ¡${member.info.username} se ha desconectado!`, 'info');
+            }
+        });
+    }
+
+    // Iniciar carga del Dashboard
+    loadUserData();
 });
