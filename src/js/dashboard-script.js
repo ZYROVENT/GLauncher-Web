@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const BACKEND_URL = 'https://glauncher-api.onrender.com';
+    const BACKEND_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? 'http://localhost:3000'
+        : 'https://glauncher-api.onrender.com';
     const DEFAULT_AVATAR_URL = 'https://crafatar.com/avatars/606e2ff0-ed77-4842-9d6c-e1d3321c7838?size=100&overlay';
     const PUSHER_KEY = 'a2fb8d4323a44da53c63';
     const token = localStorage.getItem('glauncher_token');
@@ -16,23 +18,50 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // Función para decodificar JWT sin librerías externas
+    function parseJwt(tokenStr) {
+        try {
+            const base64Url = tokenStr.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+            return JSON.parse(jsonPayload);
+        } catch (e) {
+            return null;
+        }
+    }
+
+    const decodedToken = parseJwt(token) || {};
+
     // --- CARGA DE DATOS DE USUARIO ---
     async function loadUserData() {
         const headers = { 'Authorization': `Bearer ${token}` };
+        let userData = {
+            id: decodedToken.id || 1,
+            username: decodedToken.username || 'Usuario',
+            role: decodedToken.role || 'Jugador',
+            is_admin: decodedToken.is_admin || (decodedToken.role === 'admin'),
+            gcoins: 100,
+            play_time_seconds: 0,
+            status: 'Disponible',
+            avatar_url: `https://crafatar.com/avatars/${decodedToken.username || 'steve'}?size=100&overlay`,
+            owned_cosmetics: []
+        };
+
         try {
-            // 1. Cargar información de usuario
+            // 1. Cargar información de usuario desde API
             const userResponse = await fetch(`${BACKEND_URL}/api/user_info`, { headers });
 
-            if (!userResponse.ok) {
-                if (userResponse.status === 401) {
-                    localStorage.removeItem('glauncher_token');
-                    window.location.href = 'login.html?error=session_expired';
-                    return;
-                }
-                throw new Error('No se pudo cargar la información del usuario.');
+            if (userResponse.ok) {
+                const fetchedData = await userResponse.json();
+                userData = { ...userData, ...fetchedData };
+            } else if (userResponse.status === 401) {
+                localStorage.removeItem('glauncher_token');
+                window.location.href = 'login.html?error=session_expired';
+                return;
+            } else {
+                console.warn(`Aviso: La API respondió con código ${userResponse.status}. Usando datos de sesión locales.`);
             }
 
-            const userData = await userResponse.json();
             userData.owned_cosmetics = userData.owned_cosmetics || [];
 
             // 2. Cargar amigos de forma no bloqueante
@@ -43,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     friendsData = await friendsResponse.json();
                 }
             } catch (fErr) {
-                console.warn("No se pudieron obtener amigos:", fErr);
+                console.warn("Aviso al consultar amigos:", fErr);
             }
 
             // 3. Inicializar Pusher en tiempo real
@@ -51,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 try {
                     initializeRealtimeNotifications(userData, friendsData);
                 } catch (pErr) {
-                    console.warn("Error al conectar Pusher:", pErr);
+                    console.warn("Aviso al conectar Pusher:", pErr);
                 }
             }
 
@@ -66,9 +95,15 @@ document.addEventListener('DOMContentLoaded', () => {
             initializeGChat(userData, friendsData);
 
         } catch (error) {
-            console.error("Error al cargar datos de usuario:", error);
-            window.showNotification(error.message, 'error');
-            loadDemoData();
+            console.warn("Modo local/desconectado activo:", error);
+            populateSidebar(userData);
+            populateStats(userData);
+            renderFriendsList({ friends: [], pending: [], sent: [] });
+            setupFriendSearch(userData, { friends: [], pending: [], sent: [] });
+            initializeSettings(userData);
+            initializeAchievements(userData);
+            initializeStatusSystem(userData);
+            initializeGChat(userData, { friends: [], pending: [], sent: [] });
         }
     }
 

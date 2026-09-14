@@ -188,18 +188,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // Quitar la clase de carga para activar la animación de entrada
     document.body.classList.remove('is-loading');
 
-    // 1. Crear el elemento de audio para el sonido de clic
-    const clickSound = new Audio('/src/assets/sounds/click_sound.mp3');
-    clickSound.preload = 'auto';
-    clickSound.volume = 0.4; // Ajusta el volumen para que no sea muy invasivo
+    // 1. Crear el elemento de audio para el sonido de clic de forma dinámica
+    const isSubdir = window.location.pathname.toLowerCase().includes('/src/html/') || window.location.pathname.toLowerCase().includes('\\src\\html\\');
+    const soundPath = isSubdir ? '../assets/sounds/click_sound.mp3' : 'src/assets/sounds/click_sound.mp3';
+    let clickSound = null;
+    try {
+        clickSound = new Audio(soundPath);
+        clickSound.preload = 'auto';
+        clickSound.volume = 0.4;
+    } catch (e) {
+        console.warn('Audio init error:', e);
+    }
 
     // Función para reproducir el sonido
     const playClickSound = () => {
-        clickSound.currentTime = 0; // Reinicia el sonido para poder hacer clics rápidos
+        if (!clickSound) return;
+        clickSound.currentTime = 0;
         clickSound.play().catch(error => {
-            // La reproducción automática puede fallar si el usuario no ha interactuado con la página.
-            // No es un error crítico, por lo que solo lo mostramos en la consola.
-            console.warn("No se pudo reproducir el sonido de clic:", error);
+            // Ignorar bloqueo de autoplay del navegador
         });
     };
 
