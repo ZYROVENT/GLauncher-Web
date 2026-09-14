@@ -111,7 +111,6 @@
                 <div class="nav-links-section">
                     <a href="#" class="floating-nav-item active" data-target="gchat-section"><i class="fas fa-comments"></i> GChat</a>
                     <a href="#" class="floating-nav-item" data-target="friends-section"><i class="fas fa-user-friends"></i> Amigos</a>
-                    <a href="#" class="floating-nav-item" data-target="skins-section"><i class="fas fa-paint-brush"></i> Skins</a>
                     <a href="#" class="floating-nav-item" data-target="achievements-section"><i class="fas fa-trophy"></i> Logros</a>
                     <a href="#" class="floating-nav-item" data-target="stats-section"><i class="fas fa-chart-line"></i> Estadísticas</a>
                     <a href="#" class="floating-nav-item" data-target="settings-section"><i class="fas fa-cogs"></i> Ajustes</a>
@@ -124,7 +123,7 @@
             </nav>
             
             <section class="dashboard-content-area">
-                <!-- SECCIÓN DE GCHAT (NUEVA) -->
+                <!-- SECCIÓN DE GCHAT -->
                 <section id="gchat-section" class="content-section active">
                     <h2 class="section-header"><i class="fas fa-comments"></i> GChat - Mensajería</h2>
                     <div class="gchat-container">
@@ -145,7 +144,7 @@
                             </div>
                             <form id="gchat-input-form" class="gchat-input-form" style="display: none;">
                                 <input type="text" id="gchat-message-input" placeholder="Escribe un mensaje...">
-                                <button type="submit" class="action-btn">
+                                <button type="submit" class="action-btn save-btn">
                                     <i class="fas fa-paper-plane"></i>
                                 </button>
                             </form>
@@ -153,57 +152,23 @@
                     </div>
                 </section>
 
-                <!-- SECCIÓN DE AMIGOS (NUEVA) -->
+                <!-- SECCIÓN DE AMIGOS & BÚSQUEDA -->
                 <section id="friends-section" class="content-section">
-                    <h2 class="section-header"><i class="fas fa-user-friends"></i> Mis Amigos</h2>
+                    <h2 class="section-header"><i class="fas fa-user-friends"></i> Mis Amigos y Búsqueda</h2>
                     <div class="friends-list-container">
-                        <div class="friends-search-bar">
-                            <input type="text" id="friend-search-input" class="neon-input-field" placeholder="Buscar usuario...">
+                        <div class="friends-search-bar" style="display: flex; gap: 10px; width: 100%; max-width: 550px;">
+                            <input type="text" id="friend-search-input" class="neon-input-field" placeholder="Escribe el nombre de usuario a buscar o añadir...">
+                            <button id="friend-search-btn" class="action-btn save-btn" style="flex-shrink: 0;"><i class="fas fa-search"></i> Buscar</button>
+                        </div>
+                        <div id="search-results-box" style="display: none; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; border: 1px solid var(--neon-blue);">
+                            <h4 style="color: var(--neon-blue); margin-bottom: 10px;"><i class="fas fa-search"></i> Resultado de Búsqueda</h4>
+                            <div id="search-results-list" class="friends-list"></div>
                         </div>
                         <div id="friends-list" class="friends-list"></div>
                     </div>
                 </section>
 
-                <!-- SECCIÓN DE SKINS (REMODELADA 3D) -->
-                <section id="skins-section" class="content-section">
-                    <h2 class="section-header"><i class="fas fa-paint-brush"></i> Gestor de Skins</h2>
-                    <div class="minecraft-skins-container">
-                        <!-- Panel de Vista Previa 3D/2D -->
-                        <div class="skin-viewer-panel">
-                            <div class="skin-display-card">
-                                <div class="render-container" id="skin-viewer-3d">
-                                    <!-- SkinView3D insertará el canvas aquí -->
-                                </div>
-                                <div class="skin-info-overlay">
-                                    <h3 id="active-skin-name">Skin Cargada</h3>
-                                    <span id="skin-type-badge" class="badge-status">Modelo: 64x64</span>
-                                </div>
-                            </div>
-                            
-                            <div class="skin-upload-actions">
-                                <label for="skin-file-input" class="action-btn save-btn upload-skin-btn">
-                                    <i class="fas fa-upload"></i> Subir Mi Propia Skin (.png)
-                                </label>
-                                <input type="file" id="skin-file-input" accept="image/png" style="display: none;">
-                                <div class="viewer-controls">
-                                    <button id="btn-animate" class="control-btn" title="Animar"><i class="fas fa-walking"></i></button>
-                                    <button id="btn-rotate" class="control-btn active" title="Auto-rotar"><i class="fas fa-sync"></i></button>
-                                </div>
-                                <p class="help-text">Arrastra para rotar • Scroll para zoom</p>
-                            </div>
-                        </div>
-
-                        <!-- Galería de Skins y Capas -->
-                        <div class="skin-library-panel">
-                            <h3 class="panel-subtitle"><i class="fas fa-tshirt"></i> Tu Biblioteca de Skins</h3>
-                            <div id="skins-inventory-grid" class="skins-grid">
-                                <!-- Aquí se cargarán las skins compradas o las de la comunidad -->
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- SECCIÓN DE ESTADÍSTICAS (EXISTENTE) -->
+                <!-- SECCIÓN DE ESTADÍSTICAS -->
                 <section id="stats-section" class="content-section">
                     <h2 class="section-header"><i class="fas fa-database"></i> Registros y Analítica</h2>
                     <div class="stats-grid">
@@ -230,7 +195,7 @@
                     </div>
                 </section>
 
-                <!-- SECCIÓN DE LOGROS (NUEVA) -->
+                <!-- SECCIÓN DE LOGROS -->
                 <section id="achievements-section" class="content-section">
                     <h2 class="section-header"><i class="fas fa-trophy"></i> Mis Logros</h2>
                     <div class="achievements-filter-controls">
@@ -244,7 +209,7 @@
                     </div>
                 </section>
 
-                <!-- SECCIÓN DE AJUSTES (MEJORADA) -->
+                <!-- SECCIÓN DE AJUSTES -->
                 <section id="settings-section" class="content-section">
                     <h2 class="section-header"><i class="fas fa-cogs"></i> Ajustes de Cuenta</h2>
                     
@@ -280,24 +245,28 @@
                                         <label for="username-change">Nombre de Usuario</label>
                                         <input type="text" id="username-change" class="neon-input-field" placeholder="Tu nombre visible">
                                     </div>
-                                    <button class="action-btn save-btn" id="save-profile-btn"><i class="fas fa-save"></i> Guardar Perfil</button>
+                                    <button type="submit" class="action-btn save-btn" id="save-profile-btn"><i class="fas fa-save"></i> Guardar Perfil</button>
                                 </form>
                             </div>
 
                             <!-- Panel Seguridad -->
                             <div id="security-panel" class="settings-panel">
-                                <div class="settings-card">
+                                <form id="security-settings-form" class="settings-card">
                                     <h3><i class="fas fa-lock"></i> Seguridad de la Cuenta</h3>
                                     <div class="form-group">
-                                        <label>Contraseña Actual</label>
-                                        <input type="password" class="neon-input-field">
+                                        <label for="current-password-input">Contraseña Actual</label>
+                                        <input type="password" id="current-password-input" class="neon-input-field" placeholder="Ingresa tu contraseña actual" required>
                                     </div>
                                     <div class="form-group">
-                                        <label>Nueva Contraseña</label>
-                                        <input type="password" class="neon-input-field">
+                                        <label for="new-password-input">Nueva Contraseña</label>
+                                        <input type="password" id="new-password-input" class="neon-input-field" placeholder="Mínimo 6 caracteres" required>
                                     </div>
-                                    <button class="action-btn save-btn"><i class="fas fa-key"></i> Actualizar Contraseña</button>
-                                </div>
+                                    <div class="form-group">
+                                        <label for="confirm-new-password-input">Confirmar Nueva Contraseña</label>
+                                        <input type="password" id="confirm-new-password-input" class="neon-input-field" placeholder="Repite la nueva contraseña" required>
+                                    </div>
+                                    <button type="submit" class="action-btn save-btn" id="update-password-btn"><i class="fas fa-key"></i> Actualizar Contraseña</button>
+                                </form>
                             </div>
 
                             <!-- Panel Privacidad -->
@@ -305,12 +274,18 @@
                                 <div class="settings-card">
                                     <h3><i class="fas fa-user-shield"></i> Privacidad y Visibilidad</h3>
                                     <div class="setting-toggle">
-                                        <label>Mostrar estado en línea</label>
-                                        <label class="toggle-switch"><input type="checkbox" checked><span class="slider"></span></label>
+                                        <div>
+                                            <strong style="color: var(--text-color-light);">Mostrar estado en línea</strong>
+                                            <p style="font-size: 0.8em; color: var(--text-color-dark);">Permite a otros jugadores ver si estás conectado.</p>
+                                        </div>
+                                        <label class="toggle-switch"><input type="checkbox" id="privacy-online-toggle" checked><span class="slider"></span></label>
                                     </div>
                                     <div class="setting-toggle">
-                                        <label>Permitir solicitudes de amistad</label>
-                                        <label class="toggle-switch"><input type="checkbox" checked><span class="slider"></span></label>
+                                        <div>
+                                            <strong style="color: var(--text-color-light);">Permitir solicitudes de amistad</strong>
+                                            <p style="font-size: 0.8em; color: var(--text-color-dark);">Recibir invitaciones de otros usuarios de GLauncher.</p>
+                                        </div>
+                                        <label class="toggle-switch"><input type="checkbox" id="privacy-requests-toggle" checked><span class="slider"></span></label>
                                     </div>
                                 </div>
                             </div>
@@ -319,8 +294,8 @@
                             <div id="danger-panel" class="settings-panel">
                                 <div class="settings-card" style="border-color: var(--neon-pink);">
                                     <h3 style="color: var(--neon-pink);"><i class="fas fa-skull-crossbones"></i> Zona de Peligro</h3>
-                                    <p style="margin-bottom: 15px;">Esta acción es irreversible. Perderás todos tus GCoins y cosméticos.</p>
-                                    <button class="action-btn" style="background: var(--neon-pink); color: white;"><i class="fas fa-user-slash"></i> Eliminar Definitivamente</button>
+                                    <p style="margin-bottom: 15px; color: var(--text-color-dark);">Esta acción es permanente e irreversible. Perderás tu progreso, GCoins y cosméticos asociados.</p>
+                                    <button type="button" class="action-btn" id="delete-account-btn" style="background: var(--neon-pink); color: white;"><i class="fas fa-user-slash"></i> Eliminar Definitivamente</button>
                                 </div>
                             </div>
                         </div>
@@ -329,6 +304,35 @@
             </section>
         </div>
     </main>
+
+    <!-- Modal Informativo de Lanzamiento de GLauncher.exe -->
+    <div id="launch-fallback-modal" class="launch-modal-overlay">
+        <div class="launch-modal-card">
+            <div class="launch-modal-header">
+                <h3><i class="fas fa-gamepad text-neon-green"></i> Abriendo GLauncher.exe</h3>
+                <button class="close-modal-btn" id="close-launch-modal" title="Cerrar">&times;</button>
+            </div>
+            <div class="launch-modal-body">
+                <p style="color: var(--text-color-light); margin-bottom: 12px; font-size: 0.95em;">
+                    Hemos enviado la orden a tu equipo para iniciar <strong>GLauncher.exe</strong>.
+                </p>
+                <div class="launch-steps">
+                    <div class="step-item">
+                        <i class="fas fa-check-circle text-neon-green"></i>
+                        <span style="color: var(--text-color-dark);">Si el navegador te pide permiso para abrir el enlace o protocolo, selecciona <strong>"Permitir siempre"</strong>.</span>
+                    </div>
+                    <div class="step-item">
+                        <i class="fas fa-download text-neon-blue"></i>
+                        <span style="color: var(--text-color-dark);">¿No tienes la app instalada o no se abre? Descarga el instalador oficial de GLauncher.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="launch-modal-actions">
+                <a href="download.html" class="action-btn save-btn"><i class="fas fa-download"></i> Descargar GLauncher.exe</a>
+                <button type="button" class="action-btn" id="cancel-launch-modal" style="background: rgba(255,255,255,0.1); color: #fff;">Cerrar</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Banner de Consentimiento de Cookies -->
     <div id="cookie-banner" class="cookie-consent-banner">
@@ -351,8 +355,9 @@
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <!-- Librería Lenis para Smooth Scroll -->
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
-    <!-- Librería SkinView3D para Renders Interactivos -->
-    <script src="https://unpkg.com/skinview3d@latest/bundles/skinview3d.bundle.js"></script>
+    <!-- Supabase SDK y Configuración -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
     <script src="../js/global-script.js"></script>
     <script src="../js/dashboard-script.js" defer></script>
     <script>
@@ -421,13 +426,6 @@
                 saveProfileBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     if (window.showNotification) window.showNotification('¡Perfil actualizado correctamente!', 'success');
-                });
-            }
-
-            const launchBtn = document.getElementById('launch-game-btn');
-            if (launchBtn) {
-                launchBtn.addEventListener('click', () => {
-                    if (window.showNotification) window.showNotification('Iniciando GLauncher... ¡Prepara tus mods!', 'success');
                 });
             }
         });
