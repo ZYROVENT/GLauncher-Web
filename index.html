@@ -5,69 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0d1117">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="description" content="GLauncher es el launcher de Minecraft definitivo, optimizado para PvP y rendimiento. Ofrece soporte para mods, multi-cuenta, cosméticos y mucho más.">
-    <link rel="canonical" href="https://glauncher.vercel.app/">
-    <title>GLauncher</title>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="GLauncher">
+    <meta name="application-name" content="GLauncher">
+    <meta name="author" content="ZYROVENT">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     
-    <!-- Metaetiquetas para corregir el nombre del sitio en Google (SEO) -->
+    <!-- Título y Descripción SEO Principales -->
+    <title>GLauncher - El Launcher de Minecraft Definitivo | PvP, Mods y Rendimiento</title>
+    <meta name="description" content="Descarga GLauncher gratis. El mejor launcher de Minecraft optimizado para PvP, FPS altos, soporte de mods (Forge, Fabric), cosméticos exclusivos, multicuenta y música integrada.">
+    <meta name="keywords" content="GLauncher, Launcher de Minecraft, Minecraft Launcher, Descargar Minecraft Gratis, Minecraft PvP, Launcher FPS Boost, Minecraft Mods, Forge, Fabric, GLauncher Web, ZYROVENT, Minecraft Launcher Ligero">
+    <link rel="canonical" href="https://glauncher.vercel.app/">
+
+    <!-- Open Graph (Facebook, Discord, WhatsApp, Telegram) -->
     <meta property="og:site_name" content="GLauncher">
-    <meta property="og:title" content="GLauncher - Launcher de Minecraft Optimizado">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://glauncher.vercel.app/">
+    <meta property="og:title" content="GLauncher - Launcher de Minecraft Optimizado para PvP y Rendimiento">
+    <meta property="og:description" content="El launcher de Minecraft definitivo con máxima optimización de FPS, mods, cosméticos, música integrada y sistema de amigos.">
     <meta property="og:image" content="https://glauncher.vercel.app/src/assets/images/glauncher%20logo.png">
-    <meta name="apple-mobile-web-app-title" content="GLauncher" />
-    
-    <!-- Datos Estructurados (JSON-LD) para forzar el nombre del sitio -->
+    <meta property="og:image:alt" content="Logo oficial de GLauncher">
+    <meta property="og:locale" content="es_ES">
 
-    <!-- WebSite Structured Data (Exclusivo para Site Name) -->
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@GLauncher">
+    <meta name="twitter:creator" content="@ZYROVENT">
+    <meta name="twitter:title" content="GLauncher - Launcher de Minecraft Definitivo">
+    <meta name="twitter:description" content="El launcher de Minecraft definitivo con optimización PvP, mods, cosméticos y música. ¡Descárgalo gratis!">
+    <meta name="twitter:image" content="https://glauncher.vercel.app/src/assets/images/glauncher%20logo.png">
+
+    <!-- Datos Estructurados JSON-LD (Schema.org) para Google Search -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "GLauncher",
-      "alternateName": ["GLauncher MC", "GLauncher PvP", "GLauncher Minecraft", "GLaucher", "Launcher Minecraft", "Launcher PvP", "Launcher Minecraft PvP", "Launcher GLauncher", "Minecraft Launchers"],
-      "url": "https://glauncher.vercel.app/",
-      "description": "Sitio oficial de GLauncher, el launcher de Minecraft optimizado para PvP, mods y rendimiento extremo."
-    }
-    </script>
-
-    <!-- SoftwareApplication Structured Data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "GLauncher",
-      "operatingSystem": "Windows, Linux, macOS, Android",
-      "applicationCategory": "GameApplication",
-      "description": "El launcher de Minecraft definitivo optimizado para PvP y rendimiento en PCs de bajos recursos.",
-      "author": {
-        "@type": "Person",
-        "name": "◈𝐙𝐘𝐑𝐎𝐕𝐄𝐍𝐓◈"
-      }
-    }
-    </script>
-
-    <!-- FAQPage Structured Data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
+      "@graph": [
         {
-          "@type": "Question",
-          "name": "¿Quién creó GLauncher?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "GLauncher fue creado y es mantenido por el desarrollador ◈𝐙𝐘𝐑𝐎𝐕𝐄𝐍𝐓◈."
+          "@type": "WebSite",
+          "@id": "https://glauncher.vercel.app/#website",
+          "url": "https://glauncher.vercel.app/",
+          "name": "GLauncher",
+          "alternateName": ["GLauncher Minecraft", "GLauncher MC", "GLauncher PvP", "GLauncher Web"],
+          "description": "Sitio web oficial de GLauncher, el launcher de Minecraft optimizado para PvP y alto rendimiento.",
+          "inLanguage": "es-ES"
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://glauncher.vercel.app/#organization",
+          "name": "GLauncher",
+          "url": "https://glauncher.vercel.app/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://glauncher.vercel.app/src/assets/images/glauncher%20logo.png"
           }
         },
         {
-          "@type": "Question",
-          "name": "¿Con qué estructura de código se hizo el launcher?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "El launcher fue migrado de JavaFX a una arquitectura basada en Node.js con Electron, HTML5, CSS y JS para solucionar problemas críticos de incompatibilidad con sistemas x86 (32 bits)."
+          "@type": "SoftwareApplication",
+          "name": "GLauncher",
+          "operatingSystem": "Windows, Linux, macOS, Android",
+          "applicationCategory": "GameApplication",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "description": "El launcher de Minecraft definitivo optimizado para PvP, mods y rendimiento extremo en PCs de bajos recursos.",
+          "author": {
+            "@type": "Person",
+            "name": "ZYROVENT"
           }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "¿Qué es GLauncher?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "GLauncher es un launcher moderno y ultra optimizado para Minecraft que ofrece soporte para mods, perfiles, cosméticos y aumento significativo de FPS."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Quién creó GLauncher?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "GLauncher fue creado y es desarrollado por ZYROVENT."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿GLauncher es gratis?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Sí, GLauncher es completamente gratuito para toda la comunidad de Minecraft."
+              }
+            }
+          ]
         }
       ]
     }
