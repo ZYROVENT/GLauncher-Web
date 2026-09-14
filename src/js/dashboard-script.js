@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- AUTH CHECK ---
     if (!token) {
-        // Modo de demostración si no hay token
-        loadDemoData();
+        // Redirigir a login si no hay token
+        window.location.href = 'login.html?error=auth_required';
         return;
     }
 
@@ -21,39 +21,56 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadUserData() {
         const headers = { 'Authorization': `Bearer ${token}` };
         try {
-            const [userResponse, friendsResponse, cosmeticsResponse] = await Promise.all([
-                fetch(`${BACKEND_URL}/api/user_info`, { headers }),
-                fetch(`${BACKEND_URL}/api/friends`, { headers }),
-                fetch(`${BACKEND_URL}/api/shop/items`, { headers })
-            ]);
+            // 1. Cargar info del usuario (Requerido)
+            const userResponse = await fetch(`${BACKEND_URL}/api/user_info`, { headers });
 
             if (!userResponse.ok) {
                 if (userResponse.status === 401) {
                     localStorage.removeItem('glauncher_token');
-                    window.location.href = '/login.html?error=session_expired';
+                    window.location.href = 'login.html?error=session_expired';
+                    return;
                 }
                 throw new Error('No se pudo cargar la información del usuario.');
             }
 
             const userData = await userResponse.json();
-            // FIX: Asegurar que los cosméticos existan para evitar errores, aunque el backend no los envíe aún.
             userData.owned_cosmetics = userData.owned_cosmetics || [];
 
-            const friendsData = await friendsResponse.json();
-            const allCosmetics = await cosmeticsResponse.json();
+            // 2. Cargar amigos y cosméticos de forma no bloqueante
+            let friendsData = { friends: [], pending: [], sent: [] };
+            let allCosmetics = [];
 
-            // Verificación de seguridad: Si el registro no está completo, forzar redirección
-            if (userData.register_complete !== 'yes') {
-                window.location.href = 'register-complete.html';
-                return;
+            try {
+                const friendsResponse = await fetch(`${BACKEND_URL}/api/friends`, { headers });
+                if (friendsResponse.ok) {
+                    friendsData = await friendsResponse.json();
+                }
+            } catch (fErr) {
+                console.warn("No se pudieron obtener amigos:", fErr);
             }
 
-            initializeRealtimeNotifications(userData, friendsData);
+            try {
+                const cosmeticsResponse = await fetch(`${BACKEND_URL}/api/shop/items`, { headers });
+                if (cosmeticsResponse.ok) {
+                    allCosmetics = await cosmeticsResponse.json();
+                }
+            } catch (cErr) {
+                console.warn("No se pudieron obtener cosméticos:", cErr);
+            }
+
+            // Inicializar todas las vistas del dashboard
+            if (typeof Pusher !== 'undefined') {
+                try {
+                    initializeRealtimeNotifications(userData, friendsData);
+                } catch (pErr) {
+                    console.warn("Error al conectar Pusher:", pErr);
+                }
+            }
+
             populateSidebar(userData);
             populateStats(userData);
             renderFriendsList(friendsData);
             setupFriendSearch(userData.id, friendsData);
-            // Pasamos userData a la inicialización de ajustes
             initializeSettings(userData);
             initializeAchievements(userData);
             initializeStatusSystem(userData);
@@ -64,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error("Error al cargar datos de usuario:", error);
             window.showNotification(error.message, 'error');
-            loadDemoData(); // Cargar datos de demo si hay un error
+            loadDemoData();
         }
     }
 
@@ -81,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('logout-btn').addEventListener('click', () => {
             localStorage.removeItem('glauncher_token');
             window.showNotification('Has cerrado sesión.', 'success');
-            setTimeout(() => window.location.href = '/../../index.html', 1500);
+            setTimeout(() => window.location.href = '../../index.html', 1500);
         });
 
         document.getElementById('launch-game-btn').addEventListener('click', () => {
@@ -93,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function populateStats(userData) {
         // Ahora los datos vienen directamente de las columnas de Supabase
         document.getElementById('stat-gcoins').textContent = (userData.gcoins || 0).toLocaleString('es-ES');
-        document.getElementById('stat-cosmetics').textContent = userData.owned_cosmetics.length;
+        document.getElementById('stat-cosmetics').textContent = (userData.owned_cosmetics || []).length;
         document.getElementById('stat-register-date').textContent = new Date(userData.created_at || Date.now()).toLocaleDateString('es-ES');
         
         // Convertimos los segundos de juego a horas para mostrar
@@ -102,8 +119,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderFriendsList(friendsData) {
         const friendsListContainer = document.getElementById('friends-list');
+        if (!friendsListContainer) return;
         friendsListContainer.innerHTML = '';
-        const { friends, pending, sent } = friendsData;
+        
+        const friends = (friendsData && Array.isArray(friendsData.friends)) ? friendsData.friends : (Array.isArray(friendsData) ? friendsData : []);
+        const pending = (friendsData && Array.isArray(friendsData.pending)) ? friendsData.pending : [];
+        const sent = (friendsData && Array.isArray(friendsData.sent)) ? friendsData.sent : [];
 
         // Renderizar solicitudes pendientes
         if (pending.length > 0) {

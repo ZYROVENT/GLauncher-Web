@@ -620,39 +620,56 @@ h1, h2, h3, h4 {
  */
 
 @media (max-width: 768px) {
+    body {
+        padding-bottom: 75px; /* Evita que la barra inferior tape el footer o botones */
+    }
+
     .header {
-        flex-direction: column;
-        height: auto;
-        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 55px;
+        padding: 8px 16px;
     }
 
-    .auth-buttons {
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-top: 10px;
-    }
-
-    /* Arreglo para la cuadrícula de características en móvil */
-    .features-interactive-container {
-        flex-direction: column;
-    }
-
-    /* Ocultar header y mostrar barra inferior en móviles */
-    .header { display: none; }
-    .bottom-nav { display: flex; }
-
-    
-    .auth-button {
-        padding: 6px 10px;
-        font-size: 0.75em;
+    /* Ocultar botones de escritorio en móvil; se usa bottom-nav */
+    .header .auth-buttons {
+        display: none;
     }
 
     .logo-container {
-        margin-bottom: 10px;
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .logo {
+        height: 34px;
+        margin-right: 10px;
+    }
+
+    .logo-title-img {
+        height: 30px;
+    }
+
+    .bottom-nav {
+        display: flex;
+        height: 60px;
+        padding-bottom: env(safe-area-inset-bottom, 5px);
+        align-items: center;
+    }
+
+    .bottom-nav a {
+        padding: 4px 2px;
+        font-size: 0.72em;
+    }
+
+    .bottom-nav a i {
+        font-size: 1.4em;
     }
 
     .main-content {
-        padding: 20px;
+        padding: 15px 12px 30px 12px;
     }
 
     .program-card {
@@ -678,10 +695,15 @@ h1, h2, h3, h4 {
         font-size: 1.5em;
     }
     .launcher-text-left h2, .auth-form-container h2 {
-        font-size: 2em;
+        font-size: 1.6em;
     }
     .footer {
-        padding: 15px;
+        padding: 20px 15px;
+        font-size: 0.75em;
+    }
+    .footer-nav {
+        flex-direction: column;
+        gap: 8px;
     }
 }
 

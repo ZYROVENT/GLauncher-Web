@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GLauncher Devs — Documentación GSS v7.0 & Prompt para IAs</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #090d0a;
+    --bg-2: #0e140f;
+    --card: #121a13;
+    --card-2: #0f1710;
+    --border: #1e2c1f;
+    --border-hover: #2e432f;
+    --green: #4ade80;
+    --green-2: #22c55e;
+    --green-dark: #052010;
+    --green-glow: rgba(74, 222, 128, 0.35);
+    --text: #e8f0e9;
+    --text-dim: #94a396;
+    --text-dim-2: #5c6b5e;
+    --cyan: #00f0ff;
+    --magenta: #ff007f;
+    --yellow: #facc15;
+    --purple: #c084fc;
+    --mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 15% 0%, rgba(74, 222, 128, 0.08), transparent 40%),
+      radial-gradient(circle at 85% 100%, rgba(34, 197, 94, 0.05), transparent 40%),
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* NAVBAR */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 14px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(16px);
+    background: rgba(9, 13, 10, 0.85);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    width: 100%;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: -0.5px;
+    text-decoration: none;
+    color: var(--text);
+    flex-shrink: 0;
+  }
+
+  .logo i {
+    font-size: 1.3rem;
+    color: var(--green);
+    filter: drop-shadow(0 0 8px var(--green-glow));
+  }
+
+  .logo span { color: var(--green); }
+
+  .logo .tag {
+    margin-left: 6px;
+    padding: 2px 8px;
+    font-size: 0.65rem;
+    font-family: var(--mono);
+    background: rgba(74, 222, 128, 0.12);
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    color: var(--green);
+    border-radius: 6px;
+    font-weight: 600;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-box input {
+    background: var(--card-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 12px 6px 32px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-family: var(--sans);
+    outline: none;
+    transition: all 0.2s;
+    width: 220px;
+  }
+
+  .search-box input:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.2);
+    width: 260px;
+  }
+
+  .search-box i {
+    position: absolute;
+    left: 10px;
+    color: var(--text-dim-2);
+    font-size: 0.8rem;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--green); }
+
+  .hamburger {
+    display: none;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hamburger:hover { border-color: var(--green); color: var(--green); }
+
+  /* LAYOUT */
+  .dev-layout {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    max-width: 1440px;
+    margin: 0 auto;
+    padding-top: 64px;
+    width: 100%;
+  }
+
+  /* SIDEBAR */
+  aside {
+    position: sticky;
+    top: 64px;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+    padding: 24px 16px 40px;
+    background: var(--bg-2);
+  }
+
+  aside::-webkit-scrollbar { width: 5px; }
+  aside::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .sidebar-group { margin-bottom: 24px; }
+
+  .sidebar-title {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim-2);
+    margin-bottom: 8px;
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  aside a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+    margin-bottom: 2px;
+  }
+
+  aside a:hover {
+    color: var(--green);
+    background: rgba(74, 222, 128, 0.05);
+  }
+
+  aside a.active {
+    color: var(--green);
+    background: rgba(74, 222, 128, 0.1);
+    border-left-color: var(--green);
+    font-weight: 600;
+  }
+
+  aside a .badge-mini {
+    font-size: 0.62rem;
+    font-family: var(--mono);
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text-dim-2);
+  }
+
+  .badge-ai {
+    background: rgba(192, 132, 252, 0.15) !important;
+    border-color: rgba(192, 132, 252, 0.3) !important;
+    color: var(--purple) !important;
+  }
+
+  /* OVERLAY */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 90;
+  }
+
+  .overlay.active { display: block; }
+
+  /* MAIN */
+  main {
+    padding: 40px 56px 120px;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .breadcrumb {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--text-dim-2);
+    margin-bottom: 16px;
+  }
+
+  .breadcrumb span { color: var(--green); }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 12px;
+    line-height: 1.1;
+  }
+
+  h1 .accent {
+    background: linear-gradient(135deg, var(--green), var(--cyan));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .lead {
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    margin-bottom: 36px;
+    max-width: 820px;
+    line-height: 1.6;
+  }
+
+  .version-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    background: rgba(74, 222, 128, 0.08);
+    border: 1px solid rgba(74, 222, 128, 0.25);
+    color: var(--green);
+    font-size: 0.78rem;
+    font-family: var(--mono);
+    font-weight: 600;
+    margin-bottom: 18px;
+  }
+
+  .hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+
+  .tag-item {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 6px;
+    color: var(--text-dim);
+  }
+
+  /* PROMPT IA CARD */
+  .ai-prompt-box {
+    background: linear-gradient(135deg, rgba(20, 15, 30, 0.95), rgba(10, 18, 14, 0.95));
+    border: 1px solid rgba(192, 132, 252, 0.35);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 30px 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(192, 132, 252, 0.1);
+  }
+
+  .ai-prompt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .ai-prompt-title {
+    font-size: 1.15rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+  }
+
+  .ai-prompt-title i {
+    color: var(--purple);
+    font-size: 1.4rem;
+  }
+
+  .btn-ai-copy {
+    background: linear-gradient(135deg, #a855f7, #6366f1);
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.82rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+    transition: all 0.2s;
+  }
+
+  .btn-ai-copy:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(168, 85, 247, 0.6);
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin: 48px 0 16px;
+    padding-top: 20px;
+    scroll-margin-top: 80px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+
+  h2::before {
+    content: '#';
+    color: var(--green);
+    font-family: var(--mono);
+    font-weight: 400;
+    opacity: 0.7;
+  }
+
+  h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 28px 0 10px;
+    color: var(--text);
+    scroll-margin-top: 80px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  p { color: var(--text-dim); margin-bottom: 14px; word-wrap: break-word; }
+
+  strong { color: var(--text); font-weight: 600; }
+
+  a { color: var(--green); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.85em;
+    background: var(--card-2);
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    color: #a5d6a7;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: var(--card-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 20px 0;
+    font-family: var(--mono);
+    font-size: 0.86rem;
+    max-width: 100%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  .code-block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background: #090e0b;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.75rem;
+    color: var(--text-dim-2);
+  }
+
+  .code-block-header .lang {
+    color: var(--green);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .copy-btn {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    font-family: var(--mono);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .copy-btn:hover { border-color: var(--green); color: var(--green); background: rgba(74,222,128,0.08); }
+
+  pre {
+    padding: 18px 20px;
+    overflow-x: auto;
+    line-height: 1.7;
+    color: #d1d9d1;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+
+  .kw { color: #ff7b72; font-weight: 600; }
+  .sel { color: #4ade80; font-weight: 600; }
+  .prop { color: #79c0ff; }
+  .str { color: #a5d6a7; }
+  .num { color: #d2a8ff; }
+  .cmt { color: #5c6b5e; font-style: italic; }
+  .fn { color: #ffa657; }
+  .op { color: #facc15; }
+
+  /* CALLOUTS */
+  .callout {
+    display: flex;
+    gap: 14px;
+    padding: 16px 18px;
+    border-radius: 10px;
+    margin: 20px 0;
+    border: 1px solid;
+    font-size: 0.92rem;
+    max-width: 100%;
+  }
+
+  .callout .icon {
+    font-size: 1.15rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .callout-info {
+    background: rgba(74, 222, 128, 0.05);
+    border-color: rgba(74, 222, 128, 0.25);
+  }
+  .callout-info .icon { color: var(--green); }
+
+  .callout-purple {
+    background: rgba(192, 132, 252, 0.06);
+    border-color: rgba(192, 132, 252, 0.3);
+  }
+  .callout-purple .icon { color: var(--purple); }
+
+  /* TABLES */
+  .table-wrapper {
+    overflow-x: auto;
+    margin: 20px 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card-2);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    text-align: left;
+  }
+
+  th {
+    background: #0a0f0b;
+    padding: 12px 16px;
+    font-weight: 600;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(74, 222, 128, 0.02); }
+
+  /* FEATURE GRID */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .feature-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s;
+  }
+
+  .feature-card:hover {
+    border-color: var(--green);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+
+  .feature-card i {
+    font-size: 1.5rem;
+    color: var(--green);
+    margin-bottom: 12px;
+  }
+
+  .feature-card h4 {
+    font-size: 1.05rem;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .feature-card p {
+    font-size: 0.86rem;
+    margin-bottom: 0;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 960px) {
+    .dev-layout {
+      grid-template-columns: 1fr;
+    }
+    aside {
+      position: fixed;
+      top: 64px;
+      left: -300px;
+      width: 280px;
+      z-index: 95;
+      transition: left 0.3s ease;
+      box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+    }
+    aside.open { left: 0; }
+    .hamburger { display: flex; }
+    main { padding: 30px 20px 80px; }
+    .search-box input { width: 160px; }
+    .search-box input:focus { width: 200px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo">
+    <i class="fa-solid fa-code"></i>
+    <div>GLauncher <span>GSS Docs</span> <span class="tag">v7.0</span></div>
+  </a>
+  <div class="nav-right">
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="doc-search" placeholder="Buscar regla, selector...">
+    </div>
+    <ul class="nav-links">
+      <li><a href="#prompt-ia" style="color:var(--purple); font-weight:600;"><i class="fa-solid fa-robot"></i> Prompt IAs</a></li>
+      <li><a href="#intro"><i class="fa-solid fa-book"></i> Guía</a></li>
+      <li><a href="#selectors"><i class="fa-solid fa-tags"></i> Selectores</a></li>
+      <li><a href="#spawn"><i class="fa-solid fa-wand-magic-sparkles"></i> Spawning</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger-btn" aria-label="Abrir menú">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+  </div>
+</nav>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="dev-layout">
+  <aside id="sidebar">
+    <div class="sidebar-group">
+      <div class="sidebar-title"><i class="fa-solid fa-robot" style="color:var(--purple);"></i> Inteligencia Artificial</div>
+      <a href="#prompt-ia" class="active">Prompt para IAs <span class="badge-mini badge-ai">PROMPT</span></a>
+    </div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-title"><i class="fa-solid fa-compass"></i> Introducción</div>
+      <a href="#intro">¿Qué es GSS? <span class="badge-mini">v7.0</span></a>
+      <a href="#filosofia">Filosofía y Seguridad</a>
+      <a href="#instalacion">Uso en Launcher y CLI</a>
+    </div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-title"><i class="fa-solid fa-code"></i> Sintaxis y Luau</div>
+      <a href="#variables">Variables y Tipos</a>
+      <a href="#operaciones">Expresiones y Sandbox</a>
+      <a href="#control-flujo">Bucles y Condicionales</a>
+      <a href="#timing">task.wait y Tiempos</a>
+      <a href="#audio">Audio Reactivo</a>
+    </div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-title"><i class="fa-solid fa-palette"></i> Diseño y Estilos</div>
+      <a href="#selectors">Etiquetas de UI Predefinidas</a>
+      <a href="#alias">Alias en Español</a>
+      <a href="#custom-css">Selectores CSS Nativos</a>
+    </div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-title"><i class="fa-solid fa-cubes"></i> Componentes Dinámicos</div>
+      <a href="#spawn">spawn &lt;type&gt; in &lt;target&gt;</a>
+      <a href="#spawn-props">Propiedades y Posiciones</a>
+      <a href="#spawn-actions">Eventos y Notificaciones</a>
+    </div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-title"><i class="fa-solid fa-wand-magic"></i> Temas y Ejemplos</div>
+      <a href="#theme-cyberpunk">Cyberpunk Neon Matrix</a>
+      <a href="#theme-pixelart">PixelArt Retro 8-Bit</a>
+    </div>
+  </aside>
+
+  <main>
+    <div class="breadcrumb">DOCUMENTACIÓN // <span>GSS ENGINE v7.0 & PROMPT LLM</span></div>
+    
+    <div class="version-pill">
+      <i class="fa-solid fa-bolt"></i> GSS Spec v7.0 — Motor Seguro Luau + CSS
+    </div>
+
+    <h1>GLauncher <span class="accent">StyleSheet & Script</span></h1>
+    <p class="lead">
+      GSS es un lenguaje híbrido y declarativo diseñado específicamente para la personalización de <strong>GLauncher</strong>. Combina la lógica de <strong>Luau (Roblox)</strong> con la potencia de <strong>CSS moderno</strong> y spawning seguro de componentes interactivos.
+    </p>
+
+    <!-- SECCIÓN ESPECIAL: PROMPT PARA IAs -->
+    <div class="ai-prompt-box" id="prompt-ia">
+      <div class="ai-prompt-header">
+        <div class="ai-prompt-title">
+          <i class="fa-solid fa-brain"></i>
+          <div>
+            Prompt Maestro para Inteligencias Artificiales
+            <div style="font-size:0.75rem; color:var(--text-dim); font-weight:400; margin-top:2px;">
+              Copia este prompt y pégalo en ChatGPT, Claude, Gemini, DeepSeek o Cursor para que escriban temas GSS perfectos al instante.
+            </div>
+          </div>
+        </div>
+        <button class="btn-ai-copy" onclick="copyAIPrompt(this)">
+          <i class="fa-solid fa-copy"></i> Copiar Prompt para IAs
+        </button>
+      </div>
+
+      <div class="code-block" style="margin:0; background:#070b08;">
+        <div class="code-block-header">
+          <span class="lang" style="color:var(--purple);"><i class="fa-solid fa-robot"></i> SYSTEM PROMPT — GSS v7.0 SPECIFICATION</span>
+          <span style="font-size:0.68rem; color:#888;">Listo para pegar en LLM</span>
+        </div>
+        <pre id="ai-prompt-text"><code>Eres un desarrollador experto en GSS (GLauncher StyleSheet &amp; Script v7.0), el lenguaje de estilos y scripting seguro de GLauncher.
+Tu tarea es escribir código .gss válido, limpio y creativo para temas visuales y componentes interactivos del launcher.
+
+### REGLAS FUNDAMENTALES DE GSS v7.0:
+1. SINTAXIS Y VARIABLES (Estilo Luau / Roblox):
+   - Variables: `local nombre_var = "valor"` o `contador = 10`
+   - Comentarios: `-- comentario` o `# comentario`
+   - Tipos: String, Number, Boolean (`true`, `false`)
+   - Concatenación y Operaciones: Soporta `+`, `-`, `*`, `/`, `%` y `"texto " + variable`
+   - Condicionales: `if condicion then ... else ... end` (operadores: `==`, `~=`, `!=`, `<`, `>`, `and`, `or`, `not`)
+   - Bucles: `for i = 1, 5, 1 do ... end` y `while condicion do ... end`
+   - Temporizador: `task.wait(segundos)`
+   - Logs y Notificaciones: `print("mensaje")` y `notify("mensaje emergente")`
+   - Sonidos locales: `play sound "assets/sounds/click.ogg"`
+
+2. SELECTORES SEMÁNTICOS PREDEFINIDOS (Bloques terminados en `end`):
+   - `navbar` / `barra_navegacion`: Barra de navegación inferior
+   - `navbar_btn` / `botones_navbar`: Botones de navegación
+   - `navbar_btn_active`: Botón de navegación activo o hover
+   - `button` / `botones`: Botones primarios del launcher
+   - `button_secondary`: Botones secundarios
+   - `card` / `tarjetas`: Tarjetas de mods, servidores y versiones
+   - `mini_player` / `mini_reproductor`: Reproductor flotante GMusic
+   - `modal` / `ventana_flotante`: Ventanas modales y paneles
+   - `campos_texto` / `input`: Campos de texto y búsqueda
+   - `scrollbar` / `barra_desplazamiento`: Scrollbar personalizada
+   - Selectores CSS libres: `style ".mi-clase" { ... }`
+
+3. ALIAS AUTOMÁTICOS EN ESPAÑOL:
+   - `fondo:` -&gt; `background:`
+   - `redondeado:` o `esquinas:` -&gt; `border-radius:`
+   - `brillo:` o `sombra:` -&gt; `box-shadow:`
+   - `letra:` o `texto_color:` -&gt; `color:`
+   - `desenfoque: 20px` -&gt; `backdrop-filter: blur(20px)`
+   - `borde:` -&gt; `border:`
+   - `relleno:` -&gt; `padding:`, `margen:` -&gt; `margin:`
+
+4. SPAWNING DE COMPONENTES INTERACTIVOS (`spawn <tipo> in "<target>"`):
+   - Tipos: `button`, `card`, `label`, `icon`, `badge`
+   - Targets seguros: `.card`, `.view-content`, `header`, `.modal-content` (NUNCA en body/html)
+   - Propiedades del spawn:
+     * `text: "Texto"`
+     * `icon: "fa-solid fa-bolt"`
+     * `move: "bottom-right"` (o `top-right`, `bottom-left`, `top-left`, `center`)
+     * `move_x: "10px"`, `move_y: "10px"`
+     * `sound: "assets/sounds/click.ogg"`
+     * `on_click: "notify:¡Mensaje al hacer clic!"`
+     * Estilos inline: `fondo: "..."`, `redondeado: "..."`, `brillo: "..."`
+     * Cierre: `end`
+
+5. SEGURIDAD Y SANDBOX:
+   - Solo recursos multimedia locales (`.png`, `.jpg`, `.mp4`, `.ogg`, `.wav`, etc.).
+   - PROHIBIDO enlaces http/https externos o comandos ejecutables (`.bat`, `.exe`, `.sh`).
+
+### EJEMPLO DE CÓDIGO GSS COMPLETO:
+local tema_cyan = "#00f0ff"
+local tema_pink = "#ff007f"
+
+print("Cargando tema...")
+
+navbar:
+    fondo: "rgba(10, 10, 20, 0.95)"
+    borde: "2px solid " + tema_cyan
+    redondeado: "16px"
+    desenfoque: "20px"
+    brillo: "0 0 25px rgba(0, 240, 255, 0.45)"
+end
+
+navbar_btn_active:
+    fondo: "rgba(255, 0, 127, 0.2)"
+    letra: tema_pink
+    brillo: "0 0 15px rgba(255, 0, 127, 0.6)"
+end
+
+card:
+    fondo: "rgba(16, 16, 32, 0.85)"
+    borde: "1px solid rgba(0, 240, 255, 0.3)"
+    redondeado: "14px"
+    brillo: "0 4px 20px rgba(0, 0, 0, 0.7)"
+end
+
+button:
+    fondo: "linear-gradient(135deg, #00f0ff, #ff007f)"
+    redondeado: "12px"
+    letra: "#ffffff"
+    brillo: "0 0 20px rgba(0, 240, 255, 0.6)"
+end
+
+spawn button in ".card":
+    text: "⚡ Modo Matrix"
+    icon: "fa-solid fa-bolt"
+    move: "bottom-right"
+    move_x: "10px"
+    move_y: "10px"
+    sound: "assets/sounds/click.ogg"
+    on_click: "notify:¡Modo Matrix Activado!"
+    fondo: "linear-gradient(135deg, #ff007f, #7928ca)"
+    redondeado: "10px"
+    brillo: "0 0 15px rgba(255, 0, 127, 0.8)"
+end
+
+notify("¡Tema aplicado con éxito!")</code></pre>
+      </div>
+    </div>
+
+    <!-- SECCIÓN: INTRODUCCIÓN -->
+    <h2 id="intro">1. Introducción y Filosofía</h2>
+    <p>
+      GSS permite a creadores de temas y desarrolladores personalizar la interfaz visual de GLauncher, disparar efectos de sonido reactivos y añadir componentes interactivos sin necesidad de programar en JavaScript complejo ni comprometer la seguridad del launcher.
+    </p>
+
+    <h3 id="filosofia">Arquitectura Segura y Sandbox</h3>
+    <p>
+      A diferencia de otros motores que usan <code>eval()</code> o <code>Function()</code>, GSS v7.0 incluye un <strong>evaluador léxico seguro (AST)</strong> aislado:
+    </p>
+    <ul>
+      <li>No ejecuta comandos del sistema operativo (.bat, .cmd, PowerShell, Bash).</li>
+      <li>Bloquea protocolos externos inseguros (<code>http://</code>, <code>ftp://</code>) y conexiones de red no autorizadas.</li>
+      <li>Solo admite formatos multimedia permitidos: <code>.png</code>, <code>.jpg</code>, <code>.webp</code>, <code>.gif</code>, <code>.svg</code>, <code>.mp3</code>, <code>.ogg</code>, <code>.wav</code>.</li>
+    </ul>
+
+    <!-- SECCIÓN: VARIABLES Y EXPRESIONES -->
+    <h2 id="variables">2. Variables y Sintaxis de Luau</h2>
+    <p>
+      Las variables se declaran con la palabra clave opcional <code>local</code> o asignación directa. Soportan cadenas de texto, números enteros, decimales y booleanos.
+    </p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="lang"><i class="fa-solid fa-code"></i> GSS Variables</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button>
+      </div>
+      <pre><code><span class="cmt">-- Declaración de variables globales y locales</span>
+<span class="kw">local</span> tema_principal = <span class="str">"#00f0ff"</span>
+<span class="kw">local</span> brillo_neon = <span class="str">"0 0 20px rgba(0, 240, 255, 0.6)"</span>
+<span class="kw">local</span> radio_esquinas = <span class="str">"14px"</span>
+<span class="kw">local</span> activar_alerta = <span class="kw">true</span>
+<span class="kw">local</span> iteraciones = <span class="num">3</span></code></pre>
+    </div>
+
+    <h3 id="operaciones">Expresiones Matemáticas y Lógicas</h3>
+    <p>
+      El motor soporta operadores aritméticos (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code>), comparadores de Luau (<code>==</code>, <code>~=</code>, <code>!=</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>) y operadores lógicos (<code>and</code>, <code>or</code>, <code>not</code>).
+    </p>
+
+    <!-- SECCIÓN: CONTROL DE FLUJO -->
+    <h2 id="control-flujo">3. Control de Flujo (Bucles y Condicionales)</h2>
+    
+    <h3>Bucle <code>for</code> numérico y <code>task.wait</code></h3>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="lang"><i class="fa-solid fa-code"></i> GSS For Loop</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button>
+      </div>
+      <pre><code><span class="cmt">-- for variable = inicio, fin, paso do ... end</span>
+<span class="kw">for</span> i = <span class="num">1</span>, <span class="num">3</span>, <span class="num">1</span> <span class="kw">do</span>
+    <span class="fn">print</span>(<span class="str">"Generando pulso neon #"</span> + i)
+    <span class="fn">play sound</span> <span class="str">"assets/sounds/click.ogg"</span>
+    <span class="fn">task.wait</span>(<span class="num">0.2</span>)
+<span class="kw">end</span></code></pre>
+    </div>
+
+    <!-- SECCIÓN: SELECTORES -->
+    <h2 id="selectors">4. Etiquetas de UI y Selectores Amigables</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Etiqueta GSS (Español / Inglés)</th>
+            <th>Elemento Destino en GLauncher</th>
+            <th>Ejemplo de Uso</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>navbar</code> / <code>barra_navegacion</code></td>
+            <td>Barra de navegación inferior fija</td>
+            <td><code>navbar: fondo: #0c100d end</code></td>
+          </tr>
+          <tr>
+            <td><code>navbar_btn</code> / <code>botones_navbar</code></td>
+            <td>Botones individuales de navegación</td>
+            <td><code>navbar_btn: redondeado: 10px end</code></td>
+          </tr>
+          <tr>
+            <td><code>navbar_btn_active</code></td>
+            <td>Botón activo o al pasar el cursor (hover)</td>
+            <td><code>navbar_btn_active: letra: #00f0ff end</code></td>
+          </tr>
+          <tr>
+            <td><code>button</code> / <code>botones</code></td>
+            <td>Botones primarios (Jugar, Descargar, etc.)</td>
+            <td><code>button: brillo: 0 0 20px #4ade80 end</code></td>
+          </tr>
+          <tr>
+            <td><code>card</code> / <code>tarjetas</code></td>
+            <td>Tarjetas de mods, versiones y servidores</td>
+            <td><code>card: desenfoque: 20px end</code></td>
+          </tr>
+          <tr>
+            <td><code>modal</code> / <code>ventana_flotante</code></td>
+            <td>Ventanas modales de descarga y diálogo</td>
+            <td><code>modal: fondo: rgba(5,5,10,0.98) end</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECCIÓN: SPAWNING -->
+    <h2 id="spawn">5. Spawning Dinámico de Componentes UI</h2>
+    <p>
+      La instrucción <code>spawn &lt;tipo&gt; in &lt;target&gt;</code> te permite insertar elementos visuales interactivos exclusivamente en secciones designadas como <code>.card</code>, <code>.view-content</code> o <code>.modal-content</code> con protección de tamaño automática.
+    </p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="lang"><i class="fa-solid fa-code"></i> GSS Spawning</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button>
+      </div>
+      <pre><code><span class="cmt">-- Spawn seguro dentro de una tarjeta</span>
+<span class="kw">spawn</span> <span class="sel">button</span> in <span class="str">".card"</span>:
+    text: <span class="str">"⚡ Cyberpunk Matrix"</span>
+    icon: <span class="str">"fa-solid fa-bolt"</span>
+    move: <span class="str">"bottom-right"</span>
+    move_x: <span class="str">"10px"</span>
+    move_y: <span class="str">"10px"</span>
+    sound: <span class="str">"assets/sounds/click.ogg"</span>
+    on_click: <span class="str">"notify:¡Modo Cyberpunk Activado!"</span>
+    fondo: <span class="str">"linear-gradient(135deg, #ff007f, #7928ca)"</span>
+    redondeado: <span class="str">"10px"</span>
+    brillo: <span class="str">"0 0 15px rgba(255, 0, 127, 0.8)"</span>
+<span class="kw">end</span></code></pre>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Copiar prompt para IAs
+  function copyAIPrompt(btn) {
+    const promptText = document.getElementById('ai-prompt-text').innerText;
+    navigator.clipboard.writeText(promptText).then(() => {
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> ¡Prompt Copiado!';
+      btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+        btn.style.background = '';
+      }, 2500);
+    });
+  }
+
+  // Copiar código genérico
+  function copyCode(btn) {
+    const codeBlock = btn.closest('.code-block').querySelector('code');
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> ¡Copiado!';
+      btn.style.borderColor = 'var(--green)';
+      btn.style.color = 'var(--green)';
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+        btn.style.borderColor = '';
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  // Menú móvil responsive
+  const hamburger = document.getElementById('hamburger-btn');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+
+  if (hamburger && sidebar && overlay) {
+    hamburger.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('active');
+    });
+
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+    });
+
+    sidebar.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 960) {
+          sidebar.classList.remove('open');
+          overlay.classList.remove('active');
+        }
+      });
+    });
+  }
+
+  // Búsqueda en documentación
+  const searchInput = document.getElementById('doc-search');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      const sections = document.querySelectorAll('main h2, main h3, main .feature-card, main tr');
+      if (!query) return;
+
+      for (let s of sections) {
+        if (s.innerText.toLowerCase().includes(query)) {
+          s.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          break;
+        }
+      }
+    });
+  }
+
+  // Active link scroll observer
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        if (id) {
+          document.querySelectorAll('aside a').forEach(a => {
+            a.classList.toggle('active', a.getAttribute('href') === `#${id}`);
+          });
+        }
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  document.querySelectorAll('main h2[id], main h3[id], #prompt-ia').forEach(heading => {
+    observer.observe(heading);
+  });
+</script>
+
+</body>
+</html>
