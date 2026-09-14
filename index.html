@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0d1117">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="description" content="GLauncher es el launcher de Minecraft definitivo, optimizado para PvP y rendimiento. Ofrece soporte para mods, multi-cuenta, cosméticos y mucho más.">
     <link rel="canonical" href="https://glauncher.vercel.app/">
     <title>GLauncher</title>
@@ -444,17 +446,17 @@
         </section>
 
         <!-- Sección de Soporte -->
-        <section class="support-section" style="padding: 60px 20px; text-align: center; background-color: var(--secondary-bg-color); margin-bottom: 40px;">
+        <section class="support-section" style="padding: 50px 20px; text-align: center; background-color: var(--secondary-bg-color); margin-bottom: 35px; border-radius: 12px; max-width: 900px; margin-left: auto; margin-right: auto; border: 1px solid rgba(0, 243, 255, 0.15);">
             <h2 class="section-title"><span>Soporte</span></h2>
-            <div class="support-container" style="display: flex; flex-direction: column; gap: 20px; align-items: center; font-size: 1.2em;">
-                <div class="support-item">
-                    <i class="fas fa-phone-alt" style="color: var(--neon-green); margin-right: 10px;"></i>
-                    <span style="color: var(--text-color-light);">0424-7200506</span>
-                </div>
-                <div class="support-item">
-                    <i class="fas fa-envelope" style="color: var(--neon-blue); margin-right: 10px;"></i>
-                    <span style="color: var(--text-color-light);">glauncherforminecraft@gmail.com</span>
-                </div>
+            <div class="support-container" style="display: flex; flex-direction: column; gap: 15px; align-items: center; font-size: 1.1em;">
+                <a href="tel:04247200506" class="support-item" style="color: var(--text-color-light); text-decoration: none; padding: 12px 20px; border: 1px solid rgba(57, 255, 20, 0.4); border-radius: 8px; background: rgba(0,0,0,0.3); display: flex; align-items: center; gap: 10px; width: 100%; max-width: 340px; justify-content: center; box-sizing: border-box; transition: transform 0.2s ease;">
+                    <i class="fas fa-phone-alt" style="color: var(--neon-green);"></i>
+                    <span>0424-7200506</span>
+                </a>
+                <a href="mailto:glauncherforminecraft@gmail.com" class="support-item" style="color: var(--text-color-light); text-decoration: none; padding: 12px 20px; border: 1px solid rgba(0, 255, 255, 0.4); border-radius: 8px; background: rgba(0,0,0,0.3); display: flex; align-items: center; gap: 10px; width: 100%; max-width: 340px; justify-content: center; word-break: break-all; box-sizing: border-box; transition: transform 0.2s ease;">
+                    <i class="fas fa-envelope" style="color: var(--neon-blue);"></i>
+                    <span style="font-size: 0.85em;">glauncherforminecraft@gmail.com</span>
+                </a>
             </div>
         </section>
     </main>
@@ -499,25 +501,30 @@
             const displayTitle = document.getElementById('feature-display-title');
             const displayDesc = document.getElementById('feature-display-description');
 
-            featureCards.forEach(card => {
-                card.addEventListener('mouseenter', () => {
-                    // Remover clase activa de otras tarjetas
-                    featureCards.forEach(c => c.classList.remove('active'));
-                    card.classList.add('active');
+            const activateCard = (card) => {
+                // Remover clase activa de otras tarjetas
+                featureCards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
 
-                    // Iniciar transición de salida
+                // Iniciar transición de salida
+                if (displayPanel) {
                     displayPanel.classList.add('updating');
 
                     // Esperar a que termine la transición para cambiar el contenido
                     setTimeout(() => {
-                        displayImage.src = card.getAttribute('data-image');
-                        displayTitle.textContent = card.getAttribute('data-title');
-                        displayDesc.textContent = card.getAttribute('data-description');
+                        if (displayImage) displayImage.src = card.getAttribute('data-image');
+                        if (displayTitle) displayTitle.textContent = card.getAttribute('data-title');
+                        if (displayDesc) displayDesc.textContent = card.getAttribute('data-description');
                         
                         // Iniciar transición de entrada
                         displayPanel.classList.remove('updating');
-                    }, 300); // 300ms coincide con la duración en CSS
-                });
+                    }, 300);
+                }
+            };
+
+            featureCards.forEach(card => {
+                card.addEventListener('mouseenter', () => activateCard(card));
+                card.addEventListener('click', () => activateCard(card));
             });
 
             // --- Lógica del Efecto de Escritura (Typewriter) ---

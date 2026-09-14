@@ -560,84 +560,231 @@
 
 /* --- Tabletas y Móviles (hasta 768px) --- */
 @media (max-width: 768px) {
+    .intro-container {
+        padding: 25px 15px;
+        margin: 10px auto;
+        border-radius: 14px;
+    }
+
     .launcher-content-area {
         flex-direction: column;
         text-align: center;
+        gap: 25px;
+        padding: 10px 0;
     }
 
     .version-indicator {
-        position: relative; /* Cambiamos a relativo */
-        top: auto; right: auto;
-        margin: 0 auto 30px auto; /* Centrado y con margen inferior */
+        position: relative;
+        top: auto;
+        right: auto;
+        display: inline-block;
+        margin: 0 auto 20px auto;
+        font-size: 0.8em;
+        padding: 6px 14px;
+        text-align: center;
     }
 
     .launcher-text-left, .launcher-visual-right {
         max-width: 100%;
-    }
-
-    .features-interactive-container {
-        grid-template-columns: 1fr; /* Apila el panel y las tarjetas */
-        grid-template-areas: /* Reordenamos para móvil */
-            "grid"
-            "panel";
-    }
-
-    .features-grid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    }
-    
-    /* En tabletas, el panel de visualización sigue siendo útil, pero lo hacemos más compacto */
-    .feature-display-panel {
-        min-height: auto;
-        padding: 30px;
-        margin-bottom: 20px; /* Espacio si se apila arriba */
-    }
-
-    /* Ocultar el panel de visualización en móviles, ya que el hover no es práctico */
-    .feature-display-panel {
-        display: none;
-    }
-}
-
-/* --- Móviles Pequeños (hasta 576px) --- */
-@media (max-width: 480px) {
-    .launcher-section {
-        padding: 60px 0;
+        flex: unset;
+        width: 100%;
     }
 
     .main-headline {
-        font-size: 2em; /* Ligeramente más pequeño para móviles */
+        font-size: clamp(1.4rem, 6vw, 2.2rem);
+        word-break: break-word;
     }
 
-    .section-title {
-        font-size: 1.8em;
+    .download-button {
+        display: block;
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto;
+        padding: 14px 20px;
+        box-sizing: border-box;
+    }
+
+    .launcher-gui-img {
+        max-width: 220px;
+        margin: 0 auto;
+    }
+
+    .live-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .stat-item {
+        padding: 18px 10px;
+    }
+
+    .stat-number {
+        font-size: 2.2em;
+    }
+
+    .stat-label {
+        font-size: 0.85em;
+    }
+
+    .features-interactive-container {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "grid"
+            "panel";
+        gap: 20px;
+        padding: 0 10px;
     }
 
     .features-grid {
-        grid-template-columns: 1fr; /* Una sola columna para las características */
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
     }
 
-    .feature-card:hover, .feature-card.active {
-        transform: translateY(-5px) rotateZ(0); /* Animación más sutil en móvil */
+    .feature-card {
+        padding: 15px 10px;
+    }
+
+    .feature-card h4 {
+        font-size: 0.9em;
+        margin-top: 8px;
+    }
+
+    .feature-icon {
+        font-size: 1.8em;
+        margin-bottom: 8px;
+    }
+    
+    .feature-display-panel {
+        min-height: auto;
+        padding: 20px 15px;
+        margin-top: 10px;
+        display: flex;
+    }
+
+    .feature-display-img {
+        max-width: 110px;
+        margin-bottom: 12px;
     }
 
     #feature-display-title {
-        font-size: 1.4em;
+        font-size: 1.25em;
+        min-height: auto;
+        margin-bottom: 8px;
     }
 
-    .thanks-card {
-        padding: 20px;
+    #feature-display-description {
+        font-size: 0.9em;
     }
 
-    .thanks-user-info {
-        flex-direction: column; /* Apila el avatar y el nombre */
+    #christmas-countdown {
+        padding: 1.2em 0.8em;
+        margin: 1.2em 10px;
+    }
+
+    #christmas-countdown h3 {
+        font-size: 1.3em;
+    }
+
+    #christmas-countdown .countdown-target-date {
+        font-size: 0.95em;
+        margin-bottom: 15px;
+    }
+
+    #timer {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        max-width: 380px;
+        margin: 1em auto 0;
+    }
+
+    #timer div {
+        min-width: unset;
+        padding: 10px 4px;
+        font-size: 0.75em;
+    }
+
+    #timer div span {
+        font-size: 1.8em;
+    }
+
+    .about-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .creator-card, .about-content {
+        min-width: 100%;
+    }
+}
+
+/* --- Móviles Pequeños (hasta 480px) --- */
+@media (max-width: 480px) {
+    .launcher-section {
+        padding: 40px 0 30px;
+    }
+
+    .features-section, .comparison-section, .about-section {
+        padding: 50px 10px;
+    }
+
+    .section-title {
+        font-size: 1.5em;
+        margin-bottom: 30px;
+    }
+
+    .section-subtitle {
+        font-size: 0.9em;
+        margin-bottom: 30px;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .feature-card {
+        padding: 16px;
+        display: flex;
         align-items: center;
-        text-align: center;
+        gap: 15px;
+        text-align: left;
+    }
+
+    .feature-card .feature-icon {
+        margin-bottom: 0;
+        font-size: 1.8em;
+        flex-shrink: 0;
+    }
+
+    .feature-card h4 {
+        margin-top: 0;
+        font-size: 1em;
+    }
+
+    .feature-card:hover, .feature-card.active {
+        transform: translateY(-3px) scale(1.01);
+    }
+
+    .live-stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .stat-number {
+        font-size: 1.8em;
+    }
+
+    .stat-label {
+        font-size: 0.75em;
+    }
+
+    .stat-item {
+        padding: 15px 8px;
     }
 
     /* --- Estilos responsivos para la tabla comparativa --- */
     .comparison-table thead {
-        display: none; /* Ocultar la cabecera original en móviles */
+        display: none;
     }
 
     .comparison-table, .comparison-table tbody, .comparison-table tr, .comparison-table td {
@@ -646,35 +793,51 @@
     }
 
     .comparison-table tr {
-        margin-bottom: 15px;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
+        margin-bottom: 18px;
+        border: 1px solid rgba(0, 243, 255, 0.3);
+        border-radius: 10px;
         overflow: hidden;
+        background-color: var(--secondary-bg-color);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
     .comparison-table td {
-        text-align: right; /* Alinea el contenido a la derecha */
-        padding-left: 50%; /* Deja espacio para la etiqueta */
+        text-align: right;
+        padding: 10px 12px 10px 48%;
         position: relative;
-        border-bottom: 1px solid var(--main-bg-color);
+        font-size: 0.85em;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        min-height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
     }
 
     .comparison-table td:before {
-        content: attr(data-label); /* Usa el data-label como pseudo-elemento */
+        content: attr(data-label);
         position: absolute;
-        left: 15px;
-        width: calc(50% - 30px);
+        left: 12px;
+        width: calc(48% - 16px);
         text-align: left;
         font-weight: bold;
         color: var(--neon-blue);
+        font-size: 0.85em;
+        word-break: break-word;
     }
 
-    /* El primer td de cada fila es el título de la característica, lo estilizamos como cabecera */
     .comparison-table td:first-child {
-        background-color: rgba(0, 243, 255, 0.1);
+        background-color: rgba(0, 243, 255, 0.15);
         font-weight: bold;
         text-align: center;
-        padding-left: 15px; /* Reset padding */
+        justify-content: center;
+        padding: 10px 12px;
+        font-size: 1em;
+        color: var(--neon-green);
+        border-bottom: 1px solid var(--neon-blue);
+    }
+
+    .comparison-table td:first-child:before {
+        display: none;
     }
 }
 

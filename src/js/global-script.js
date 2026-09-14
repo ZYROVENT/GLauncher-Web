@@ -26,6 +26,83 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ========================================================
+    // B. GESTIÓN GLOBAL DE ESTADO DE SESIÓN (LOGIN / DASHBOARD)
+    // ========================================================
+    window.initializeTabNavigation = (buttonSelector, contentSelector) => {
+        const buttons = document.querySelectorAll(buttonSelector);
+        const contents = document.querySelectorAll(contentSelector);
+        if (!buttons.length || !contents.length) return;
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const targetId = btn.getAttribute('data-target');
+                if (!targetId) return;
+                e.preventDefault();
+
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                contents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === targetId) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+    };
+
+    function updateAuthNavigation() {
+        const token = localStorage.getItem('glauncher_token');
+        const path = window.location.pathname.toLowerCase();
+        const isDashboardPage = path.endsWith('dashboard.html') || path.includes('/dashboard.html');
+
+        // Seleccionar todos los enlaces al dashboard, login y registro
+        const dashboardLinks = document.querySelectorAll('a[href*="dashboard.html"]');
+        const loginLinks = document.querySelectorAll('a[href*="login.html"]');
+        const registerLinks = document.querySelectorAll('a[href*="register.html"]');
+
+        if (token) {
+            // Usuario CON sesión iniciada:
+            dashboardLinks.forEach(link => {
+                link.style.display = '';
+            });
+            // Ocultar botones de Iniciar Sesión y Registro en el header
+            loginLinks.forEach(link => {
+                if (!link.closest('.bottom-nav')) {
+                    link.style.display = 'none';
+                }
+            });
+            registerLinks.forEach(link => {
+                if (!link.closest('.bottom-nav')) {
+                    link.style.display = 'none';
+                }
+            });
+        } else {
+            // Usuario SIN sesión iniciada:
+            // Ocultar enlace de Dashboard por completo
+            dashboardLinks.forEach(link => {
+                link.style.display = 'none';
+            });
+            // Mostrar enlaces de login y registro
+            loginLinks.forEach(link => {
+                link.style.display = '';
+            });
+            registerLinks.forEach(link => {
+                link.style.display = '';
+            });
+
+            // Si intenta entrar al dashboard sin haber iniciado sesión, redirigir a login
+            if (isDashboardPage) {
+                window.location.href = 'login.html?error=auth_required';
+            }
+        }
+    }
+
+    // Ejecutar inmediatamente
+    updateAuthNavigation();
+
+    // ========================================================
     // 0. LÓGICA DEL BANNER DE COOKIES
     // ========================================================
     const cookieBanner = document.getElementById('cookie-banner');
