@@ -981,6 +981,623 @@ notify("¡Tema aplicado con éxito!")</code></pre>
 <span class="kw">end</span></code></pre>
     </div>
 
+    <!-- SECCIÓN: INSTALACIÓN Y USO -->
+    <h2 id="instalacion">6. Uso en GLauncher y CLI</h2>
+    <p>
+      Los archivos <code>.gss</code> se cargan en GLauncher desde la sección <strong>Temas → Mis Temas</strong>, o bien desde la CLI con el siguiente comando:
+    </p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="lang"><i class="fa-solid fa-terminal"></i> CLI — GLauncher</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button>
+      </div>
+      <pre><code><span class="cmt"># Aplicar un tema .gss directamente desde la terminal</span>
+glauncher theme apply <span class="str">./mi-tema.gss</span>
+
+<span class="cmt"># Ver el tema activo</span>
+glauncher theme status
+
+<span class="cmt"># Resetear al tema por defecto</span>
+glauncher theme reset
+
+<span class="cmt"># Validar sintaxis sin aplicar</span>
+glauncher theme lint <span class="str">./mi-tema.gss</span></code></pre>
+    </div>
+
+    <div class="callout callout-info">
+      <span class="icon"><i class="fa-solid fa-circle-info"></i></span>
+      <div>
+        Los archivos <code>.gss</code> se guardan en <code>%APPDATA%/GLauncher/themes/</code> en Windows y en <code>~/.config/glauncher/themes/</code> en Linux/macOS. GLauncher los recarga automáticamente al guardar sin reiniciar.
+      </div>
+    </div>
+
+    <h3 id="timing"><i class="fa-solid fa-clock"></i> task.wait y Control de Tiempos</h3>
+    <p>
+      <code>task.wait(segundos)</code> pausa la ejecución del script GSS durante el tiempo especificado, igual que en Luau/Roblox. Es útil para animaciones secuenciales, efectos de entrada y notificaciones diferidas.
+    </p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="lang"><i class="fa-solid fa-code"></i> GSS — task.wait</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button>
+      </div>
+      <pre><code><span class="cmt">-- Efecto de arranque escalonado con esperas</span>
+<span class="fn">print</span>(<span class="str">"Iniciando sistema..."</span>)
+<span class="fn">task.wait</span>(<span class="num">0.5</span>)
+
+<span class="fn">notify</span>(<span class="str">"🟢 GSS Engine cargado"</span>)
+<span class="fn">task.wait</span>(<span class="num">1.0</span>)
+
+<span class="fn">notify</span>(<span class="str">"🎨 Aplicando estilos..."</span>)
+<span class="fn">task.wait</span>(<span class="num">0.8</span>)
+
+<span class="cmt">-- Bucle con espera para pulso visual</span>
+<span class="kw">for</span> i = <span class="num">1</span>, <span class="num">3</span>, <span class="num">1</span> <span class="kw">do</span>
+    <span class="fn">play sound</span> <span class="str">"assets/sounds/ping.ogg"</span>
+    <span class="fn">task.wait</span>(<span class="num">0.3</span>)
+<span class="kw">end</span>
+
+<span class="fn">notify</span>(<span class="str">"✅ ¡Tema activado con éxito!"</span>)</code></pre>
+    </div>
+
+    <div class="callout callout-purple">
+      <span class="icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
+      <div>
+        <strong>Límite de seguridad:</strong> El valor máximo de <code>task.wait</code> es <code>10.0</code> segundos. Valores mayores son truncados automáticamente por el sandbox. El tiempo mínimo es <code>0.05</code> segundos.
+      </div>
+    </div>
+
+    <!-- SECCIÓN: AUDIO -->
+    <h2 id="audio">7. Audio Reactivo</h2>
+    <p>
+      GSS permite reproducir sonidos locales en respuesta a eventos del usuario. Los formatos permitidos son <code>.ogg</code>, <code>.mp3</code> y <code>.wav</code>. Los sonidos deben estar en la carpeta de assets del tema.
+    </p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="lang"><i class="fa-solid fa-code"></i> GSS — Audio</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button>
+      </div>
+      <pre><code><span class="cmt">-- Reproducir un sonido al iniciar el tema</span>
+<span class="fn">play sound</span> <span class="str">"assets/sounds/startup.ogg"</span>
+
+<span class="cmt">-- Audio combinado con condicional</span>
+<span class="kw">local</span> modo_noche = <span class="kw">true</span>
+
+<span class="kw">if</span> modo_noche == <span class="kw">true</span> <span class="kw">then</span>
+    <span class="fn">play sound</span> <span class="str">"assets/sounds/night_mode.ogg"</span>
+    <span class="fn">notify</span>(<span class="str">"🌙 Modo Noche Activado"</span>)
+<span class="kw">else</span>
+    <span class="fn">play sound</span> <span class="str">"assets/sounds/day_mode.wav"</span>
+    <span class="fn">notify</span>(<span class="str">"☀️ Modo Día Activado"</span>)
+<span class="kw">end</span>
+
+<span class="cmt">-- Audio secuencial con task.wait</span>
+<span class="kw">for</span> i = <span class="num">1</span>, <span class="num">2</span>, <span class="num">1</span> <span class="kw">do</span>
+    <span class="fn">play sound</span> <span class="str">"assets/sounds/beep.ogg"</span>
+    <span class="fn">task.wait</span>(<span class="num">0.25</span>)
+<span class="kw">end</span>
+<span class="fn">play sound</span> <span class="str">"assets/sounds/confirm.ogg"</span></code></pre>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Formato</th>
+            <th>Compatibilidad</th>
+            <th>Uso recomendado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>.ogg</code></td>
+            <td>✅ Preferido</td>
+            <td>Efectos de sonido cortos, clics, notificaciones</td>
+          </tr>
+          <tr>
+            <td><code>.mp3</code></td>
+            <td>✅ Soportado</td>
+            <td>Música de fondo de baja duración</td>
+          </tr>
+          <tr>
+            <td><code>.wav</code></td>
+            <td>✅ Soportado</td>
+            <td>Efectos sin compresión, alta calidad</td>
+          </tr>
+          <tr>
+            <td><code>.mp4 / .webm</code></td>
+            <td>🔒 Solo imagen</td>
+            <td>No se reproduce audio de video</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECCIÓN: ALIAS EN ESPAÑOL -->
+    <h2 id="alias">8. Alias en Español</h2>
+    <p>
+      GSS v7.0 incluye alias automáticos para las propiedades CSS más usadas, permitiendo escribir el código completamente en español sin perder funcionalidad.
+    </p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Alias GSS (Español)</th>
+            <th>Propiedad CSS Equivalente</th>
+            <th>Ejemplo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>fondo:</code></td><td><code>background:</code></td><td><code>fondo: "#1a1a2e"</code></td></tr>
+          <tr><td><code>letra:</code> / <code>texto_color:</code></td><td><code>color:</code></td><td><code>letra: "#00f0ff"</code></td></tr>
+          <tr><td><code>redondeado:</code> / <code>esquinas:</code></td><td><code>border-radius:</code></td><td><code>redondeado: "14px"</code></td></tr>
+          <tr><td><code>brillo:</code> / <code>sombra:</code></td><td><code>box-shadow:</code></td><td><code>brillo: "0 0 20px #4ade80"</code></td></tr>
+          <tr><td><code>borde:</code></td><td><code>border:</code></td><td><code>borde: "1px solid #333"</code></td></tr>
+          <tr><td><code>relleno:</code></td><td><code>padding:</code></td><td><code>relleno: "12px 20px"</code></td></tr>
+          <tr><td><code>margen:</code></td><td><code>margin:</code></td><td><code>margen: "0 auto"</code></td></tr>
+          <tr><td><code>desenfoque:</code></td><td><code>backdrop-filter: blur()</code></td><td><code>desenfoque: "20px"</code></td></tr>
+          <tr><td><code>tamaño_letra:</code></td><td><code>font-size:</code></td><td><code>tamaño_letra: "1rem"</code></td></tr>
+          <tr><td><code>peso_letra:</code></td><td><code>font-weight:</code></td><td><code>peso_letra: "700"</code></td></tr>
+          <tr><td><code>ancho:</code></td><td><code>width:</code></td><td><code>ancho: "100%"</code></td></tr>
+          <tr><td><code>alto:</code></td><td><code>height:</code></td><td><code>alto: "60px"</code></td></tr>
+          <tr><td><code>opacidad:</code></td><td><code>opacity:</code></td><td><code>opacidad: "0.85"</code></td></tr>
+          <tr><td><code>transicion:</code></td><td><code>transition:</code></td><td><code>transicion: "all 0.3s ease"</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="lang"><i class="fa-solid fa-code"></i> GSS — Alias Español completo</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button>
+      </div>
+      <pre><code><span class="cmt">-- Tema usando 100% alias en español</span>
+<span class="kw">local</span> color_principal = <span class="str">"#a855f7"</span>
+<span class="kw">local</span> color_fondo = <span class="str">"rgba(10, 5, 20, 0.95)"</span>
+
+<span class="sel">card</span>:
+    fondo: color_fondo
+    borde: <span class="str">"1px solid rgba(168, 85, 247, 0.4)"</span>
+    redondeado: <span class="str">"16px"</span>
+    brillo: <span class="str">"0 8px 30px rgba(168, 85, 247, 0.2)"</span>
+    relleno: <span class="str">"20px"</span>
+    transicion: <span class="str">"all 0.25s ease"</span>
+    desenfoque: <span class="str">"10px"</span>
+<span class="kw">end</span>
+
+<span class="sel">button</span>:
+    fondo: <span class="str">"linear-gradient(135deg, #a855f7, #6366f1)"</span>
+    letra: <span class="str">"#ffffff"</span>
+    redondeado: <span class="str">"12px"</span>
+    relleno: <span class="str">"10px 24px"</span>
+    peso_letra: <span class="str">"700"</span>
+    brillo: <span class="str">"0 4px 20px rgba(168, 85, 247, 0.5)"</span>
+    transicion: <span class="str">"all 0.2s"</span>
+<span class="kw">end</span></code></pre>
+    </div>
+
+    <!-- SECCIÓN: CSS NATIVO -->
+    <h2 id="custom-css">9. Selectores CSS Nativos</h2>
+    <p>
+      Además de los selectores semánticos predefinidos, GSS permite apuntar a cualquier elemento del launcher usando la instrucción <code>style ".selector"</code> con CSS puro.
+    </p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="lang"><i class="fa-solid fa-code"></i> GSS — CSS Nativo</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button>
+      </div>
+      <pre><code><span class="cmt">-- Selectores CSS libres con style ".clase"</span>
+style <span class="str">".mod-card:hover"</span> {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 240, 255, 0.3);
+    border-color: #00f0ff;
+}
+
+style <span class="str">".version-badge"</span> {
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    color: #000;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 0.75rem;
+}
+
+style <span class="str">".play-btn"</span> {
+    background: linear-gradient(135deg, #00f0ff, #0070ff);
+    border: none;
+    border-radius: 14px;
+    color: #fff;
+    font-weight: 800;
+    font-size: 1.1rem;
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+}
+
+style <span class="str">":root"</span> {
+    --primary: #00f0ff;
+    --accent: #ff007f;
+    --bg-main: #090d0a;
+}</code></pre>
+    </div>
+
+    <div class="callout callout-info">
+      <span class="icon"><i class="fa-solid fa-circle-info"></i></span>
+      <div>
+        Los bloques <code>style ".selector" { }</code> usan llaves <code>{ }</code> en vez de <code>end</code>. Dentro de ellos solo se admite CSS estándar — no se puede mezclar con lógica Luau.
+      </div>
+    </div>
+
+    <!-- SECCIÓN: SPAWN PROPIEDADES -->
+    <h2 id="spawn-props">10. Propiedades y Posiciones de Spawn</h2>
+    <p>
+      La instrucción <code>spawn</code> acepta múltiples propiedades para personalizar el componente generado. A continuación se describen todas las opciones disponibles.
+    </p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Propiedad</th>
+            <th>Tipo</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>text:</code></td><td>String</td><td>Texto visible del componente</td></tr>
+          <tr><td><code>icon:</code></td><td>String (FA class)</td><td>Ícono FontAwesome, ej: <code>"fa-solid fa-bolt"</code></td></tr>
+          <tr><td><code>move:</code></td><td>String (posición)</td><td><code>"top-left"</code>, <code>"top-right"</code>, <code>"bottom-left"</code>, <code>"bottom-right"</code>, <code>"center"</code></td></tr>
+          <tr><td><code>move_x:</code></td><td>String (px/%)</td><td>Desplazamiento horizontal desde la posición base</td></tr>
+          <tr><td><code>move_y:</code></td><td>String (px/%)</td><td>Desplazamiento vertical desde la posición base</td></tr>
+          <tr><td><code>sound:</code></td><td>String (ruta)</td><td>Sonido al hacer clic en el componente</td></tr>
+          <tr><td><code>on_click:</code></td><td>String</td><td>Acción al hacer clic: <code>"notify:Mensaje"</code></td></tr>
+          <tr><td><code>fondo:</code></td><td>String (CSS)</td><td>Fondo del componente spawneado</td></tr>
+          <tr><td><code>redondeado:</code></td><td>String (CSS)</td><td>Border-radius del componente</td></tr>
+          <tr><td><code>brillo:</code></td><td>String (CSS)</td><td>Box-shadow del componente</td></tr>
+          <tr><td><code>letra:</code></td><td>String (CSS)</td><td>Color del texto del componente</td></tr>
+          <tr><td><code>relleno:</code></td><td>String (CSS)</td><td>Padding del componente</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="lang"><i class="fa-solid fa-code"></i> GSS — Spawn completo con todas las props</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button>
+      </div>
+      <pre><code><span class="cmt">-- Badge informativo en la esquina superior derecha de cada tarjeta</span>
+<span class="kw">spawn</span> <span class="sel">badge</span> in <span class="str">".card"</span>:
+    text: <span class="str">"✨ NUEVO"</span>
+    icon: <span class="str">"fa-solid fa-star"</span>
+    move: <span class="str">"top-right"</span>
+    move_x: <span class="str">"8px"</span>
+    move_y: <span class="str">"8px"</span>
+    fondo: <span class="str">"linear-gradient(135deg, #facc15, #f59e0b)"</span>
+    letra: <span class="str">"#000"</span>
+    redondeado: <span class="str">"999px"</span>
+    relleno: <span class="str">"3px 12px"</span>
+    brillo: <span class="str">"0 0 10px rgba(250, 204, 21, 0.6)"</span>
+<span class="kw">end</span>
+
+<span class="cmt">-- Botón de acción centrado en el modal</span>
+<span class="kw">spawn</span> <span class="sel">button</span> in <span class="str">".modal-content"</span>:
+    text: <span class="str">"🚀 Lanzar Servidor"</span>
+    icon: <span class="str">"fa-solid fa-rocket"</span>
+    move: <span class="str">"center"</span>
+    sound: <span class="str">"assets/sounds/launch.ogg"</span>
+    on_click: <span class="str">"notify:¡Servidor iniciado!"</span>
+    fondo: <span class="str">"linear-gradient(135deg, #22c55e, #16a34a)"</span>
+    redondeado: <span class="str">"14px"</span>
+    brillo: <span class="str">"0 0 25px rgba(34, 197, 94, 0.6)"</span>
+    relleno: <span class="str">"12px 28px"</span>
+    letra: <span class="str">"#fff"</span>
+<span class="kw">end</span>
+
+<span class="cmt">-- Label informativo en view-content</span>
+<span class="kw">spawn</span> <span class="sel">label</span> in <span class="str">".view-content"</span>:
+    text: <span class="str">"Versión: 1.21.4"</span>
+    icon: <span class="str">"fa-solid fa-cube"</span>
+    move: <span class="str">"bottom-left"</span>
+    move_x: <span class="str">"16px"</span>
+    move_y: <span class="str">"16px"</span>
+    fondo: <span class="str">"rgba(0, 0, 0, 0.7)"</span>
+    letra: <span class="str">"#4ade80"</span>
+    redondeado: <span class="str">"8px"</span>
+    relleno: <span class="str">"6px 14px"</span>
+<span class="kw">end</span></code></pre>
+    </div>
+
+    <!-- SECCIÓN: SPAWN EVENTOS -->
+    <h2 id="spawn-actions">11. Eventos y Notificaciones</h2>
+    <p>
+      GSS soporta notificaciones emergentes con <code>notify()</code> y reacciones a clics en componentes spawneados mediante la propiedad <code>on_click</code>.
+    </p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="lang"><i class="fa-solid fa-code"></i> GSS — Eventos</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button>
+      </div>
+      <pre><code><span class="cmt">-- Notificaciones directas desde el script</span>
+<span class="fn">notify</span>(<span class="str">"🎨 Tema cargado correctamente"</span>)
+<span class="fn">task.wait</span>(<span class="num">2.0</span>)
+<span class="fn">notify</span>(<span class="str">"⚡ Efectos activados"</span>)
+
+<span class="cmt">-- Notificación condicional</span>
+<span class="kw">local</span> primera_vez = <span class="kw">true</span>
+
+<span class="kw">if</span> primera_vez == <span class="kw">true</span> <span class="kw">then</span>
+    <span class="fn">notify</span>(<span class="str">"👋 ¡Bienvenido! Este es tu primer tema GSS"</span>)
+    <span class="fn">play sound</span> <span class="str">"assets/sounds/welcome.ogg"</span>
+<span class="kw">end</span>
+
+<span class="cmt">-- on_click: soporta el prefijo "notify:" para disparar una notificación</span>
+<span class="kw">spawn</span> <span class="sel">button</span> in <span class="str">".card"</span>:
+    text: <span class="str">"🔥 Activar PvP Mode"</span>
+    icon: <span class="str">"fa-solid fa-fire"</span>
+    move: <span class="str">"bottom-right"</span>
+    sound: <span class="str">"assets/sounds/pvp.ogg"</span>
+    on_click: <span class="str">"notify:⚔️ ¡Modo PvP activado! Prepárate para la batalla."</span>
+    fondo: <span class="str">"linear-gradient(135deg, #ef4444, #dc2626)"</span>
+    redondeado: <span class="str">"10px"</span>
+    brillo: <span class="str">"0 0 20px rgba(239, 68, 68, 0.7)"</span>
+<span class="kw">end</span></code></pre>
+    </div>
+
+    <!-- SECCIÓN: TEMA CYBERPUNK -->
+    <h2 id="theme-cyberpunk">12. Tema Completo — Cyberpunk Neon Matrix</h2>
+    <p>
+      Tema visual de alto contraste con colores neón cyan y magenta, glassmorphism y efectos de brillo intenso. Inspirado en la estética cyberpunk 2088.
+    </p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="lang"><i class="fa-solid fa-wand-magic-sparkles"></i> GSS — Tema Cyberpunk Neon Matrix</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button>
+      </div>
+      <pre><code><span class="cmt">-- ===================================</span>
+<span class="cmt">-- TEMA: Cyberpunk Neon Matrix v2.0</span>
+<span class="cmt">-- Autor: GLauncher Community</span>
+<span class="cmt">-- ===================================</span>
+
+<span class="kw">local</span> cyan      = <span class="str">"#00f0ff"</span>
+<span class="kw">local</span> magenta   = <span class="str">"#ff007f"</span>
+<span class="kw">local</span> purple    = <span class="str">"#7928ca"</span>
+<span class="kw">local</span> bg_dark   = <span class="str">"rgba(5, 5, 18, 0.97)"</span>
+<span class="kw">local</span> card_bg   = <span class="str">"rgba(12, 12, 30, 0.92)"</span>
+
+<span class="fn">print</span>(<span class="str">"[Cyberpunk] Cargando tema..."</span>)
+<span class="fn">play sound</span> <span class="str">"assets/sounds/cyber_boot.ogg"</span>
+
+<span class="cmt">-- Navbar principal</span>
+<span class="sel">navbar</span>:
+    fondo: bg_dark
+    borde: <span class="str">"2px solid "</span> + cyan
+    desenfoque: <span class="str">"24px"</span>
+    brillo: <span class="str">"0 0 30px rgba(0, 240, 255, 0.3), inset 0 1px 0 rgba(0,240,255,0.1)"</span>
+<span class="kw">end</span>
+
+<span class="sel">navbar_btn</span>:
+    letra: <span class="str">"rgba(255,255,255,0.6)"</span>
+    redondeado: <span class="str">"10px"</span>
+    transicion: <span class="str">"all 0.2s ease"</span>
+<span class="kw">end</span>
+
+<span class="sel">navbar_btn_active</span>:
+    fondo: <span class="str">"rgba(0, 240, 255, 0.12)"</span>
+    letra: cyan
+    brillo: <span class="str">"0 0 18px rgba(0, 240, 255, 0.5)"</span>
+    borde: <span class="str">"1px solid rgba(0, 240, 255, 0.35)"</span>
+<span class="kw">end</span>
+
+<span class="cmt">-- Tarjetas</span>
+<span class="sel">card</span>:
+    fondo: card_bg
+    borde: <span class="str">"1px solid rgba(0, 240, 255, 0.25)"</span>
+    redondeado: <span class="str">"16px"</span>
+    brillo: <span class="str">"0 8px 32px rgba(0, 0, 0, 0.6), 0 0 1px rgba(0, 240, 255, 0.3)"</span>
+    desenfoque: <span class="str">"12px"</span>
+    transicion: <span class="str">"all 0.3s ease"</span>
+<span class="kw">end</span>
+
+<span class="cmt">-- Botones</span>
+<span class="sel">button</span>:
+    fondo: <span class="str">"linear-gradient(135deg, "</span> + cyan + <span class="str">", "</span> + magenta + <span class="str">")"</span>
+    redondeado: <span class="str">"12px"</span>
+    letra: <span class="str">"#ffffff"</span>
+    peso_letra: <span class="str">"700"</span>
+    brillo: <span class="str">"0 0 25px rgba(0, 240, 255, 0.5)"</span>
+    transicion: <span class="str">"all 0.2s ease"</span>
+<span class="kw">end</span>
+
+<span class="sel">button_secondary</span>:
+    fondo: <span class="str">"transparent"</span>
+    borde: <span class="str">"1px solid "</span> + cyan
+    letra: cyan
+    redondeado: <span class="str">"12px"</span>
+    transicion: <span class="str">"all 0.2s ease"</span>
+<span class="kw">end</span>
+
+<span class="cmt">-- Campos de texto</span>
+<span class="sel">campos_texto</span>:
+    fondo: <span class="str">"rgba(0, 240, 255, 0.04)"</span>
+    borde: <span class="str">"1px solid rgba(0, 240, 255, 0.2)"</span>
+    letra: <span class="str">"#e0f8ff"</span>
+    redondeado: <span class="str">"10px"</span>
+<span class="kw">end</span>
+
+<span class="cmt">-- Modal</span>
+<span class="sel">modal</span>:
+    fondo: <span class="str">"rgba(3, 3, 15, 0.98)"</span>
+    borde: <span class="str">"1px solid rgba(0, 240, 255, 0.35)"</span>
+    redondeado: <span class="str">"20px"</span>
+    brillo: <span class="str">"0 0 60px rgba(0, 240, 255, 0.15)"</span>
+    desenfoque: <span class="str">"20px"</span>
+<span class="kw">end</span>
+
+<span class="cmt">-- Scrollbar</span>
+<span class="sel">scrollbar</span>:
+    fondo: <span class="str">"rgba(0, 240, 255, 0.15)"</span>
+    redondeado: <span class="str">"999px"</span>
+<span class="kw">end</span>
+
+<span class="cmt">-- CSS personalizado extra</span>
+style <span class="str">".card:hover"</span> {
+    border-color: rgba(0, 240, 255, 0.7);
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.25), 0 12px 40px rgba(0,0,0,0.5);
+    transform: translateY(-3px);
+}
+
+<span class="cmt">-- Badge en tarjetas</span>
+<span class="kw">spawn</span> <span class="sel">badge</span> in <span class="str">".card"</span>:
+    text: <span class="str">"CYBER"</span>
+    move: <span class="str">"top-right"</span>
+    move_x: <span class="str">"10px"</span>
+    move_y: <span class="str">"10px"</span>
+    fondo: <span class="str">"rgba(0, 240, 255, 0.15)"</span>
+    borde: <span class="str">"1px solid rgba(0, 240, 255, 0.5)"</span>
+    letra: cyan
+    redondeado: <span class="str">"6px"</span>
+    relleno: <span class="str">"2px 8px"</span>
+<span class="kw">end</span>
+
+<span class="fn">task.wait</span>(<span class="num">0.5</span>)
+<span class="fn">notify</span>(<span class="str">"⚡ Cyberpunk Neon Matrix activado"</span>)</code></pre>
+    </div>
+
+    <!-- SECCIÓN: TEMA PIXELART -->
+    <h2 id="theme-pixelart">13. Tema Completo — PixelArt Retro 8-Bit</h2>
+    <p>
+      Tema nostálgico de videojuegos retro con píxeles, colores vivos de 8-bit, bordes cuadrados y efectos de parpadeo. Perfecto para servidores temáticos de Minecraft clásico.
+    </p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="lang"><i class="fa-solid fa-gamepad"></i> GSS — Tema PixelArt Retro 8-Bit</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copiar</button>
+      </div>
+      <pre><code><span class="cmt">-- ===================================</span>
+<span class="cmt">-- TEMA: PixelArt Retro 8-Bit v1.5</span>
+<span class="cmt">-- Autor: GLauncher Community</span>
+<span class="cmt">-- ===================================</span>
+
+<span class="kw">local</span> pixel_green  = <span class="str">"#39ff14"</span>
+<span class="kw">local</span> pixel_yellow = <span class="str">"#ffe135"</span>
+<span class="kw">local</span> pixel_red    = <span class="str">"#ff3131"</span>
+<span class="kw">local</span> pixel_blue   = <span class="str">"#00bfff"</span>
+<span class="kw">local</span> bg_pixel     = <span class="str">"#0f0f0f"</span>
+<span class="kw">local</span> card_pixel   = <span class="str">"#1a1a1a"</span>
+
+<span class="fn">print</span>(<span class="str">"[PixelArt] Cargando tema retro..."</span>)
+<span class="fn">play sound</span> <span class="str">"assets/sounds/retro_start.ogg"</span>
+
+<span class="cmt">-- Navbar con estilo 8-bit</span>
+<span class="sel">navbar</span>:
+    fondo: bg_pixel
+    borde: <span class="str">"3px solid "</span> + pixel_green
+    redondeado: <span class="str">"0px"</span>
+    brillo: <span class="str">"0 4px 0 #000, 0 0 20px rgba(57, 255, 20, 0.3)"</span>
+<span class="kw">end</span>
+
+<span class="sel">navbar_btn</span>:
+    letra: <span class="str">"rgba(255,255,255,0.5)"</span>
+    redondeado: <span class="str">"0px"</span>
+    transicion: <span class="str">"all 0.1s"</span>
+<span class="kw">end</span>
+
+<span class="sel">navbar_btn_active</span>:
+    fondo: pixel_green
+    letra: <span class="str">"#000"</span>
+    brillo: <span class="str">"0 0 14px rgba(57, 255, 20, 0.8)"</span>
+    peso_letra: <span class="str">"900"</span>
+<span class="kw">end</span>
+
+<span class="cmt">-- Tarjetas pixeladas</span>
+<span class="sel">card</span>:
+    fondo: card_pixel
+    borde: <span class="str">"2px solid "</span> + pixel_green
+    redondeado: <span class="str">"0px"</span>
+    brillo: <span class="str">"4px 4px 0 "</span> + pixel_green
+    transicion: <span class="str">"all 0.1s"</span>
+<span class="kw">end</span>
+
+<span class="cmt">-- Botones estilo NES</span>
+<span class="sel">button</span>:
+    fondo: pixel_green
+    redondeado: <span class="str">"0px"</span>
+    letra: <span class="str">"#000000"</span>
+    peso_letra: <span class="str">"900"</span>
+    brillo: <span class="str">"4px 4px 0 #000, -1px -1px 0 rgba(255,255,255,0.3)"</span>
+    transicion: <span class="str">"all 0.05s"</span>
+<span class="kw">end</span>
+
+<span class="sel">button_secondary</span>:
+    fondo: <span class="str">"transparent"</span>
+    borde: <span class="str">"2px solid "</span> + pixel_yellow
+    letra: pixel_yellow
+    redondeado: <span class="str">"0px"</span>
+    brillo: <span class="str">"3px 3px 0 #000"</span>
+<span class="kw">end</span>
+
+<span class="cmt">-- Campos de texto pixel</span>
+<span class="sel">campos_texto</span>:
+    fondo: <span class="str">"#000"</span>
+    borde: <span class="str">"2px solid "</span> + pixel_green
+    letra: pixel_green
+    redondeado: <span class="str">"0px"</span>
+<span class="kw">end</span>
+
+<span class="cmt">-- Modal pixel</span>
+<span class="sel">modal</span>:
+    fondo: <span class="str">"#0a0a0a"</span>
+    borde: <span class="str">"3px solid "</span> + pixel_yellow
+    redondeado: <span class="str">"0px"</span>
+    brillo: <span class="str">"6px 6px 0 #000"</span>
+<span class="kw">end</span>
+
+<span class="cmt">-- Scrollbar pixelada</span>
+<span class="sel">scrollbar</span>:
+    fondo: pixel_green
+    redondeado: <span class="str">"0px"</span>
+<span class="kw">end</span>
+
+<span class="cmt">-- CSS extra para hover pixel</span>
+style <span class="str">".card:hover"</span> {
+    border-color: #ffe135;
+    box-shadow: 4px 4px 0 #ffe135;
+    transform: translate(-2px, -2px);
+}
+
+style <span class="str">".play-btn:active"</span> {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+}
+
+<span class="cmt">-- Badge de score 8-bit</span>
+<span class="kw">spawn</span> <span class="sel">badge</span> in <span class="str">".card"</span>:
+    text: <span class="str">"★ RETRO"</span>
+    move: <span class="str">"top-left"</span>
+    move_x: <span class="str">"0px"</span>
+    move_y: <span class="str">"0px"</span>
+    fondo: pixel_yellow
+    letra: <span class="str">"#000"</span>
+    redondeado: <span class="str">"0px"</span>
+    relleno: <span class="str">"2px 10px"</span>
+    peso_letra: <span class="str">"900"</span>
+    brillo: <span class="str">"2px 2px 0 #000"</span>
+<span class="kw">end</span>
+
+<span class="cmt">-- Sonido de moneda al cargar</span>
+<span class="kw">for</span> i = <span class="num">1</span>, <span class="num">2</span>, <span class="num">1</span> <span class="kw">do</span>
+    <span class="fn">play sound</span> <span class="str">"assets/sounds/coin.ogg"</span>
+    <span class="fn">task.wait</span>(<span class="num">0.2</span>)
+<span class="kw">end</span>
+
+<span class="fn">notify</span>(<span class="str">"🎮 PixelArt Retro 8-Bit activado — INSERT COIN"</span>)</code></pre>
+    </div>
+
   </main>
 </div>
 
