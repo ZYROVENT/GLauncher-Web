@@ -1,3 +1,26 @@
+/**
+ * Maneja la cadena de fallback de banners de Minecraft Wiki.
+ * Intenta en orden: version_banner.png → version_banner.jpg → major_banner.png → major_banner.jpg → 1.21_banner.jpg
+ * Nunca usa imágenes genéricas Java_Edition_*.png del artículo.
+ */
+window.mcBannerFallback = function(img) {
+    const chain = [
+        img.dataset.fb1,
+        img.dataset.fb2,
+        img.dataset.fb3,
+        img.dataset.fb4,
+        img.dataset.fb5
+    ].filter(Boolean);
+
+    const idx = parseInt(img.dataset.fbIdx || '0');
+    if (idx < chain.length) {
+        img.dataset.fbIdx = idx + 1;
+        img.src = chain[idx];
+    } else {
+        img.onerror = null; // Sin más fallbacks
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     const versionsContainer = document.getElementById('versions-feed-container');
     const paginationContainer = document.getElementById('pagination-container');
@@ -78,20 +101,77 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // ── Release estándar ─────────────────────────────────────────────────
-        // Versiones antiguas (1.0 → 1.21.x): File:1.21.4_banner.jpg / File:1.21_banner.jpg
-        // Versiones nuevas  (1.26+)         : File:1.26.1_banner.jpg / File:1.26_banner.jpg
-        candidates.push(`File:${versionId}_banner.jpg`);
+        // Era antigua (1.0.0 – 1.14, sin subversión): File:Java_Edition_1.x.png
+        // Era moderna (1.14.x, 1.15+, 26.x+):         File:{ver}_banner.png / File:{ver}_banner.jpg
+        const oldEraMatch = versionId.match(/^1\.(\d+)(?:\.(\d+))?$/);
+        if (oldEraMatch) {
+            const minor = parseInt(oldEraMatch[1]);
+            const hasPatch = oldEraMatch[2] !== undefined;
+            // 1.0.0 → 1.14 (exacto, sin patch) usan Java_Edition format
+            if (minor < 14 || (minor === 14 && !hasPatch)) {
+                candidates.push(`File:Java_Edition_${versionId}.png`);
+                candidates.push(`File:Java_Edition_${versionId}.jpg`);
+                // también probar _banner como fallback por si existe
+                candidates.push(`File:${versionId}_banner.png`);
+                candidates.push(`File:${versionId}_banner.jpg`);
+                return candidates;
+            }
+        }
+
+        // Era moderna: _banner.png → _banner.jpg → major _banner.png → major _banner.jpg
         candidates.push(`File:${versionId}_banner.png`);
+        candidates.push(`File:${versionId}_banner.jpg`);
         if (majorVer && majorVer !== versionId) {
-            candidates.push(`File:${majorVer}_banner.jpg`);
             candidates.push(`File:${majorVer}_banner.png`);
+            candidates.push(`File:${majorVer}_banner.jpg`);
         }
         candidates.push(`File:${versionId}.jpg`);
         return candidates;
     }
 
     /**
+     * Traduce texto de inglés a español usando la API gratuita de MyMemory.
+     * Limit: 500 chars por request, ~1000 req/día sin API key.
+     */
+    async function translateToSpanish(text) {
+        if (!text || !text.trim()) return text;
+        try {
+            const chunk = text.substring(0, 480);
+            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=en|es`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            if (data.responseStatus === 200 && data.responseData?.translatedText) {
+                return data.responseData.translatedText;
+            }
+        } catch (_) {}
+        return text; // devuelve original si falla
+    }
+
+    /**
+     * Parsea el extracto de la wiki en oraciones/bullets limpios.
+     * Elimina la primera oración genérica de identificación ("X is a minor update...").
+     */
+    function parseExtractToBullets(extractText, maxBullets = 4) {
+        if (!extractText) return [];
+        // Separar en oraciones por . ! ?
+        const sentences = extractText
+            .replace(/\n+/g, ' ')
+            .split(/(?<=[.!?])\s+(?=[A-Z])/)
+            .map(s => s.trim())
+            .filter(s => s.length > 30);
+
+        // Descartar la primera oración si es la de definición genérica (contiene "is a" o "was released")
+        const filtered = sentences.filter(s =>
+            !/^Java Edition .+ is (a|an|the)/i.test(s) &&
+            !/was released on/i.test(s)
+        );
+
+        return (filtered.length > 0 ? filtered : sentences).slice(0, maxBullets);
+    }
+
+    /**
      * Consulta la API de Minecraft Wiki con los candidatos de banner exactos por tipo de versión.
+     * También extrae y traduce el changelog del artículo.
      */
     async function fetchExactWikiBannerAndDetails(versionId) {
         if (wikiDataCache[versionId]) return wikiDataCache[versionId];
@@ -101,9 +181,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const majorVer = majorMatch ? majorMatch[1] : versionId;
             const fileCandidates = buildBannerCandidates(versionId);
 
-            // Consultar todos los candidatos de archivo + página de la versión en una sola petición
+            // Consultar candidatos de archivo + página de la versión en una sola petición
             const titlesToQuery = [...fileCandidates, `Java Edition ${versionId}`].join('|');
-            const url = `https://minecraft.wiki/api.php?action=query&titles=${encodeURIComponent(titlesToQuery)}&prop=imageinfo|pageimages|extracts&iiprop=url&piprop=original|thumbnail&pithumbsize=600&exintro=1&explaintext=1&format=json&origin=*`;
+            const url = `https://minecraft.wiki/api.php?action=query&titles=${encodeURIComponent(titlesToQuery)}&prop=imageinfo|pageimages|extracts&iiprop=url&piprop=original|thumbnail&pithumbsize=600&exintro=1&explaintext=1&exchars=1200&format=json&origin=*`;
 
             const response = await fetch(url);
             if (!response.ok) return null;
@@ -127,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (bannerUrl) break;
                 }
 
-                // Extraer descripción del artículo de la versión
+                // Extraer texto del artículo de la versión
                 for (const pid in pages) {
                     const page = pages[pid];
                     if (page.title === `Java Edition ${versionId}`) {
@@ -140,13 +220,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Último fallback: URL directa canónica con el primer candidato
+            // Último fallback de banner
             if (!bannerUrl && fileCandidates.length > 0) {
                 const firstFile = fileCandidates[0].replace('File:', '');
                 bannerUrl = `https://minecraft.wiki/images/${encodeURIComponent(firstFile)}`;
             }
 
-            const result = { banner: bannerUrl, extract: extractText };
+            // ── Traducir extracto y convertir en bullets ──────────────────────
+            let changes = null;
+            if (extractText) {
+                const bullets = parseExtractToBullets(extractText, 4);
+                if (bullets.length > 0) {
+                    // Traducir cada bullet en paralelo
+                    const translated = await Promise.all(bullets.map(b => translateToSpanish(b)));
+                    changes = translated.filter(Boolean);
+                }
+            }
+
+            // Traducir la primera oración como descripción corta
+            let translatedExtract = null;
+            if (extractText) {
+                const firstSentence = extractText.split(/(?<=[.!?])\s+/)[0] || extractText.substring(0, 200);
+                translatedExtract = await translateToSpanish(firstSentence);
+            }
+
+            const result = {
+                banner: bannerUrl,
+                extract: translatedExtract || extractText,
+                changes // array de strings en español o null
+            };
             wikiDataCache[versionId] = result;
             return result;
         } catch (e) {
@@ -335,22 +437,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const relDate = new Date(v.releaseTime);
         const formattedRelDate = relDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
-        
-        // Intento directo del banner de la wiki para esta versión
-        const directBannerCandidate = `https://minecraft.wiki/images/${encodeURIComponent(v.id)}_banner.jpg`;
-        const fallbackBanner = `https://minecraft.wiki/images/1.21_banner.jpg`;
 
-        const changesList = getVersionChanges(v);
+        // ── Detectar era para URL correcta de banner ─────────────────────────
+        // Era antigua (1.0.0 – 1.14 sin subversión): Java_Edition_{ver}.png
+        // Era moderna (1.14.x, 1.15+, 26.x+):        {ver}_banner.png / {ver}_banner.jpg
+        const majorVer = v.id.match(/^(\d+\.\d+)/)?.[1] || v.id;
+        const base = `https://minecraft.wiki/images/`;
+        const vid  = encodeURIComponent(v.id);
+        const vmaj = encodeURIComponent(majorVer);
+
+        const oldEraCheck = v.id.match(/^1\.(\d+)(?:\.(\d+))?$/);
+        const isOldEra = oldEraCheck && (() => {
+            const minor = parseInt(oldEraCheck[1]);
+            const hasPatch = oldEraCheck[2] !== undefined;
+            return minor < 14 || (minor === 14 && !hasPatch);
+        })();
+
+        let bannerSrc, fb1, fb2, fb3, fb4, fb5;
+        if (isOldEra) {
+            // 1.1 → Java_Edition_1.1.png  |  1.0.0 → Java_Edition_1.0.0.png
+            bannerSrc = `${base}Java_Edition_${vid}.png`;
+            fb1 = `${base}Java_Edition_${vid}.jpg`;
+            fb2 = `${base}${vid}_banner.png`;
+            fb3 = `${base}${vid}_banner.jpg`;
+            fb4 = `${base}1.21_banner.png`;
+            fb5 = `${base}1.21_banner.jpg`;
+        } else {
+            // Era moderna: _banner.png → _banner.jpg → major → fallback
+            bannerSrc = `${base}${vid}_banner.png`;
+            fb1 = `${base}${vid}_banner.jpg`;
+            fb2 = `${base}${vmaj}_banner.png`;
+            fb3 = `${base}${vmaj}_banner.jpg`;
+            fb4 = `${base}1.21_banner.png`;
+            fb5 = `${base}1.21_banner.jpg`;
+        }
+
         const wikiSearchUrl = `https://minecraft.wiki/w/Java_Edition_${encodeURIComponent(v.id)}`;
-        const changesHtml = changesList.map(item => `<li><i class="fas fa-chevron-right"></i> <span>${item}</span></li>`).join('');
         const safeId = v.id.replace(/[^a-zA-Z0-9]/g, '-');
+
+        // Preset como fallback hasta que cargue la wiki
+        const presetChanges = getVersionChanges(v);
+        const presetHtml = presetChanges.map(item =>
+            `<li><i class="fas fa-chevron-right"></i> <span>${item}</span></li>`
+        ).join('');
 
         card.innerHTML = `
             <!-- Banner Oficial de la Versión con Badges Superpuestos -->
             <div class="version-media-wrapper">
                 <span class="version-badge-overlay ${badgeClass}">${badgeLabel}</span>
                 <span class="version-date-overlay"><i class="fas fa-calendar-alt"></i> ${formattedRelDate}</span>
-                <img id="wiki-banner-${safeId}" src="${directBannerCandidate}" alt="Banner Minecraft ${v.id}" class="version-screenshot-img" loading="lazy" onerror="this.onerror=null;this.src='${fallbackBanner}';">
+                <img id="wiki-banner-${safeId}"
+                     src="${bannerSrc}"
+                     alt="Banner Minecraft ${v.id}"
+                     class="version-screenshot-img"
+                     loading="lazy"
+                     data-fb1="${fb1}"
+                     data-fb2="${fb2}"
+                     data-fb3="${fb3}"
+                     data-fb4="${fb4}"
+                     data-fb5="${fb5}"
+                     onerror="window.mcBannerFallback(this)">
             </div>
 
             <!-- Cuerpo de la Tarjeta -->
@@ -369,8 +515,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="changes-title">
                         <i class="fas fa-list-check"></i> Novedades & Cambios Clave
                     </div>
-                    <ul class="changes-list">
-                        ${changesHtml}
+                    <ul id="changes-list-${safeId}" class="changes-list">
+                        ${presetHtml}
                     </ul>
                 </div>
 
@@ -386,21 +532,35 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        // Consultar la API de la Wiki para obtener la URL exacta del archivo y el extracto
+        // Consultar la API de la Wiki — banner + extracto traducido + bullets de cambios
         fetchExactWikiBannerAndDetails(v.id).then(details => {
-            if (details) {
-                if (details.banner) {
-                    const imgEl = card.querySelector(`#wiki-banner-${safeId}`);
-                    if (imgEl && imgEl.src !== details.banner) {
-                        imgEl.src = details.banner;
-                    }
+            if (!details) return;
+
+            // Actualizar banner solo si la URL es un _banner real
+            if (details.banner) {
+                const imgEl = card.querySelector(`#wiki-banner-${safeId}`);
+                const isBannerFile = details.banner.includes('_banner') || details.banner.includes('Java_Edition_');
+                if (imgEl && isBannerFile && imgEl.src !== details.banner) {
+                    imgEl.src = details.banner;
                 }
-                if (details.extract) {
-                    const descEl = card.querySelector(`#wiki-summary-${safeId}`);
-                    if (descEl) {
-                        const cleanExtract = details.extract.split('\n')[0].substring(0, 160) + '...';
-                        descEl.textContent = cleanExtract;
-                    }
+            }
+
+            // Actualizar descripción (ya traducida)
+            if (details.extract) {
+                const descEl = card.querySelector(`#wiki-summary-${safeId}`);
+                if (descEl) {
+                    const clean = details.extract.replace(/\n/g, ' ').substring(0, 200);
+                    descEl.textContent = clean + (details.extract.length > 200 ? '...' : '');
+                }
+            }
+
+            // Reemplazar bullets con los obtenidos y traducidos de la wiki
+            if (details.changes && details.changes.length > 0) {
+                const listEl = card.querySelector(`#changes-list-${safeId}`);
+                if (listEl) {
+                    listEl.innerHTML = details.changes.map(item =>
+                        `<li><i class="fas fa-chevron-right"></i> <span>${item}</span></li>`
+                    ).join('');
                 }
             }
         });
