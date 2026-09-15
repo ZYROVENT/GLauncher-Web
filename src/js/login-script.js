@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const BACKEND_URL = 'https://glauncher-api.onrender.com';
+    const BACKEND_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? 'http://localhost:3000'
+        : 'https://glauncher-api.onrender.com';
     // Usamos el cliente global de Supabase (debe estar cargado previamente)
     const supabaseClient = window.glauncherSupabase;
 

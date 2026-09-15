@@ -3,211 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GLauncher - Tienda</title>
+    <title>GLauncher — Tienda Oficial & Recompensas</title>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/shop-styles.css">
     <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <link href="https://fonts.cdnfonts.com/css/minecraftia" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-    <style>
-        /* --- Estilos Específicos para la Tienda Mejorada --- */
-        
-        /* Layout General */
-        .shop-grid-layout {
-            display: grid;
-            grid-template-columns: 1fr 350px; /* Contenido principal | Sidebar (Ruleta/Regalo) */
-            gap: 30px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        @media (max-width: 992px) {
-            .shop-grid-layout { grid-template-columns: 1fr; }
-            .sidebar-shop { order: -1; } /* En móvil, ponemos lo interactivo primero */
-        }
-
-        /* Tarjeta de Regalo Diario */
-        .daily-reward-card {
-            background: var(--secondary-bg-color);
-            border: 2px solid var(--neon-green);
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 30px;
-            box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-        .chest-icon {
-            font-size: 4em;
-            color: #ffd700;
-            filter: drop-shadow(0 0 10px #ffd700);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
-        .chest-icon:hover { transform: scale(1.1) rotate(-5deg); }
-        .chest-icon.opened { color: #cd7f32; opacity: 0.7; transform: scale(0.9); }
-
-        /* Ruleta de la Suerte */
-        .roulette-card {
-            background: var(--secondary-bg-color);
-            border: 2px solid var(--neon-pink);
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 0 15px rgba(255, 0, 255, 0.2);
-        }
-        
-        .wheel-container {
-            position: relative;
-            width: 250px;
-            height: 250px;
-            margin: 20px auto;
-        }
-        
-        .wheel {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 5px solid var(--main-bg-color);
-            box-shadow: 0 0 20px var(--neon-blue), inset 0 0 15px rgba(0, 0, 0, 0.5);
-            background: conic-gradient(
-                from 0deg,
-                var(--neon-pink) 0deg 60deg,
-                var(--neon-blue) 60deg 120deg,
-                var(--neon-green) 120deg 180deg,
-                #ffcc00 180deg 240deg,
-                #ff3333 240deg 300deg,
-                #ffffff 300deg 360deg
-            );
-            transition: transform 9s cubic-bezier(0.1, 0, 0.1, 1);
-            position: relative;
-        }
-
-        /* Tapa central de la ruleta */
-        .wheel::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            background: var(--main-bg-color);
-            border: 3px solid var(--text-color-light);
-            border-radius: 50%;
-            z-index: 5;
-            box-shadow: 0 0 10px var(--neon-blue);
-        }
-        
-        /* Indicador de la ruleta */
-        .wheel-arrow {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0; 
-            height: 0; 
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 30px solid var(--text-color-light);
-            z-index: 10;
-            filter: drop-shadow(0 0 10px var(--neon-pink));
-            animation: arrow-bounce 1s infinite alternate;
-        }
-
-        @keyframes arrow-bounce {
-            from { transform: translateX(-50%) translateY(0); }
-            to { transform: translateX(-50%) translateY(5px); }
-        }
-
-        /* Números dentro de la ruleta */
-        .wheel-number {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 60px;
-            height: 30px;
-            margin-top: -15px;
-            margin-left: -30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            color: white;
-            text-shadow: 0 0 10px rgba(0,0,0,1), 2px 2px 5px rgba(0,0,0,1);
-            font-size: 1.3em;
-            pointer-events: none;
-            user-select: none;
-        }
-
-        #roulette-result {
-            margin-top: 15px;
-            font-size: 1.4em;
-            font-weight: bold;
-            min-height: 1.5em;
-            transition: all 0.3s;
-            color: var(--neon-blue);
-        }
-
-        #spin-btn:hover:not(:disabled) {
-            background: var(--neon-blue) !important;
-            border-color: var(--neon-blue) !important;
-            color: var(--main-bg-color) !important;
-            box-shadow: var(--shadow-blue);
-            transform: translateY(-2px);
-        }
-
-        .gcoin-balance {
-            background: rgba(0, 0, 0, 0.4);
-            padding: 8px 20px;
-            border-radius: 20px;
-            border: 1px solid var(--neon-green);
-            backdrop-filter: blur(5px);
-        }
-
-        /* Precios de GCoins mejorados */
-        .gcoin-packages-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-        }
-        .gcoin-package {
-            background: rgba(22, 27, 34, 0.8);
-            border: 1px solid var(--neon-blue);
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            transition: transform 0.3s;
-        }
-        .gcoin-package:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
-            border-color: var(--neon-pink);
-        }
-        .gcoin-package.popular {
-            border-color: var(--neon-pink);
-            box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
-            transform: scale(1.05);
-        }
-        .gcoin-package.popular:hover {
-            box-shadow: var(--shadow-pink);
-        }
-    </style>
 </head>
 <body>
+
+    <!-- Spinner de Carga, Notificaciones y Pantalla Offline -->
+    <div id="loader-overlay" class="loader-overlay"><div class="spinner"></div></div>
+    <div id="notification-container"></div>
+    <div id="offline-overlay" class="offline-overlay"><div class="offline-content"><i class="fas fa-wifi"></i><h2>Sin Conexión</h2><p>Revisa tu red e inténtalo de nuevo.</p></div></div>
+
     <header class="header">
         <div class="logo-container">
             <img src="../assets/images/favicon.png" alt="Logo de GLauncher" class="logo">
             <img src="../assets/images/minecraft_title.png" alt="Título de GLauncher" class="logo-title-img">
         </div>
         <nav class="auth-buttons">
-            <a href="../index.html" class="auth-button">Inicio</a> 
+            <a href="../../index.html" class="auth-button">Inicio</a> 
             <a href="noticias.html" class="auth-button">Noticias</a>
             <a href="shop.html" class="auth-button active">Tienda</a>
             <a href="download.html" class="auth-button">Descargas</a>
+            <a href="../../dev.html" class="auth-button" style="border-color: var(--neon-green); color: var(--neon-green);"><i class="fas fa-code"></i> Devs / GSS</a>
             <a href="dashboard.html" class="auth-button">Dashboard</a>
             <a href="login.html" class="auth-button">Iniciar Sesión</a>
             <a href="register.html" class="auth-button">Registrar</a>
@@ -218,70 +39,168 @@
     </header>
 
     <main class="main-content shop-page">
-        <div class="shop-header">
-            <h2 class="neon-title"><i class="fas fa-store"></i> Tienda de Cosméticos</h2>
-            <p class="subtitle-text">Personaliza tu experiencia en GLauncher con ítems exclusivos.</p>
-            <div id="user-gcoin-balance" class="gcoin-balance" style="display: inline-flex; justify-content: center; gap: 10px; font-size: 1.2em; margin-top: 10px;">
-                <span>Tu Saldo:</span>
-                <span id="gcoin-amount" class="neon-hover-text" style="color: var(--neon-green); font-weight: bold;">--- <i class="fas fa-coins"></i></span>
+        <!-- HEADER DE TIENDA Y SALDO DEL USUARIO -->
+        <div class="shop-hero-banner">
+            <div class="shop-hero-text">
+                <div class="shop-badge"><i class="fas fa-gem"></i> Tienda Oficial GLauncher</div>
+                <h1 class="shop-main-title">Economía, Recompensas & <span class="text-neon-green">GCoins</span></h1>
+                <p class="shop-subtitle">Obtén GCoins, reclama recompensas diarias gratuitas y apoya el desarrollo del launcher.</p>
+            </div>
+
+            <!-- TARJETA DE SALDO DE GCOINS EN TIEMPO REAL -->
+            <div class="user-economy-card">
+                <div class="economy-user-info">
+                    <img id="shop-user-avatar" src="https://crafatar.com/avatars/steve?size=100&overlay" alt="Avatar" class="economy-avatar">
+                    <div>
+                        <span id="shop-username" class="economy-username">Invitado</span>
+                        <span id="shop-user-role" class="economy-role">No Autenticado</span>
+                    </div>
+                </div>
+
+                <div class="economy-balance-box">
+                    <span class="balance-label"><i class="fas fa-coins text-neon-green"></i> Saldo Actual</span>
+                    <span id="gcoin-amount" class="balance-number">0 <i class="fas fa-coins text-neon-green"></i></span>
+                </div>
+
+                <div id="shop-auth-hint" class="shop-auth-hint">
+                    <a href="login.html" class="btn-micro-login"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
+                </div>
             </div>
         </div>
 
         <div class="shop-grid-layout">
             
-            <!-- COLUMNA PRINCIPAL (Tienda) -->
+            <!-- COLUMNA PRINCIPAL (Paquetes de GCoins y Sección en Desarrollo) -->
             <div class="main-shop-content">
-                <!-- Sección de Cosméticos -->
-                <section class="cosmetics-section">
-                    <h3 class="section-title"><span><i class="fas fa-tshirt"></i> Catálogo de Cosméticos</span></h3>
-                    <div id="cosmetics-grid" class="cosmetics-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 20px;">
-                        <!-- Ejemplo de ítem -->
-                        <div class="gcoin-package">
-                            <img src="https://via.placeholder.com/150" alt="Capa Creeper" style="border-radius: 8px; margin-bottom: 10px;">
-                            <h4>Capa Creeper</h4>
-                            <p style="color: var(--neon-green); font-weight: bold;">500 GC</p>
-                            <button class="auth-button" style="width: 100%; margin-top: 10px;">Ver Detalles</button>
+
+                <!-- 1. SECCIÓN DE COSMÉTICOS (EN DESARROLLO) -->
+                <section class="shop-section in-dev-section">
+                    <div class="dev-banner-card">
+                        <div class="dev-banner-header">
+                            <span class="dev-status-badge"><i class="fas fa-hammer"></i> En Desarrollo Activo</span>
+                            <span class="dev-version-tag">Próximamente en v2.1</span>
                         </div>
-                         <div class="gcoin-package">
-                            <img src="https://via.placeholder.com/150" alt="Alas Ender" style="border-radius: 8px; margin-bottom: 10px;">
-                            <h4>Alas Ender</h4>
-                            <p style="color: var(--neon-pink); font-weight: bold;">1200 GC</p>
-                            <button class="auth-button" style="width: 100%; margin-top: 10px;">Ver Detalles</button>
+                        <div class="dev-banner-body">
+                            <div class="dev-icon-circle">
+                                <i class="fas fa-tshirt"></i>
+                            </div>
+                            <div class="dev-banner-info">
+                                <h3>Catálogo de Cosméticos & Capas 3D</h3>
+                                <p>
+                                    Estamos rediseñando el sistema completo de renderizado de cosméticos para Minecraft con soporte de <strong>Capas Animadas HD, Alas Ender, Mascotas y Efectos de Partículas PvP</strong> sincronizados en tiempo real mediante el motor <strong>.GSS</strong>.
+                                </p>
+                                <div class="dev-pills-list">
+                                    <span class="dev-pill"><i class="fas fa-check"></i> Capas HD Personalizadas</span>
+                                    <span class="dev-pill"><i class="fas fa-check"></i> Alas y Sombreros 3D</span>
+                                    <span class="dev-pill"><i class="fas fa-check"></i> Integración con .GSS</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. PAQUETES DE GCOINS -->
+                <section class="shop-section">
+                    <h3 class="section-title"><span><i class="fas fa-coins"></i> Paquetes de GCoins</span></h3>
+                    <p class="section-desc">Adquiere GCoins para apoyar el desarrollo y utilizarlos en la ruleta y futuras funciones.</p>
+                    
+                    <div class="gcoin-packages-grid">
+                        <!-- Pack 1 -->
+                        <div class="gcoin-package-card">
+                            <div class="pack-icon-wrapper"><i class="fas fa-coins"></i></div>
+                            <h4 class="pack-title">Pack Principiante</h4>
+                            <div class="pack-gcoins">500 <span class="currency">GC</span></div>
+                            <div class="pack-bonus">+0 GC Bonus</div>
+                            <div class="pack-price">$1.99 USD</div>
+                            <a href="https://wa.me/584247200506?text=Hola,%20deseo%20adquirir%20el%20Pack%20Principiante%20(500%20GC)%20en%20GLauncher" target="_blank" class="pack-buy-btn">
+                                <i class="fas fa-shopping-cart"></i> Adquirir Pack
+                            </a>
+                        </div>
+
+                        <!-- Pack 2 (Popular) -->
+                        <div class="gcoin-package-card popular-pack">
+                            <div class="pack-ribbon"><i class="fas fa-star"></i> Popular</div>
+                            <div class="pack-icon-wrapper"><i class="fas fa-gem"></i></div>
+                            <h4 class="pack-title">Pack Aventurero</h4>
+                            <div class="pack-gcoins">1,500 <span class="currency">GC</span></div>
+                            <div class="pack-bonus bonus-green">+200 GC Extra</div>
+                            <div class="pack-price">$4.99 USD</div>
+                            <a href="https://wa.me/584247200506?text=Hola,%20deseo%20adquirir%20el%20Pack%20Aventurero%20(1500%20GC)%20en%20GLauncher" target="_blank" class="pack-buy-btn btn-popular">
+                                <i class="fas fa-bolt"></i> Adquirir Pack
+                            </a>
+                        </div>
+
+                        <!-- Pack 3 -->
+                        <div class="gcoin-package-card">
+                            <div class="pack-icon-wrapper"><i class="fas fa-fire"></i></div>
+                            <h4 class="pack-title">Pack Maestro PvP</h4>
+                            <div class="pack-gcoins">5,000 <span class="currency">GC</span></div>
+                            <div class="pack-bonus bonus-green">+1,000 GC Extra</div>
+                            <div class="pack-price">$12.99 USD</div>
+                            <a href="https://wa.me/584247200506?text=Hola,%20deseo%20adquirir%20el%20Pack%20Maestro%20PvP%20(5000%20GC)%20en%20GLauncher" target="_blank" class="pack-buy-btn">
+                                <i class="fas fa-shopping-cart"></i> Adquirir Pack
+                            </a>
+                        </div>
+
+                        <!-- Pack 4 (Supremo) -->
+                        <div class="gcoin-package-card supreme-pack">
+                            <div class="pack-ribbon ribbon-gold"><i class="fas fa-crown"></i> Mejor Valor</div>
+                            <div class="pack-icon-wrapper"><i class="fas fa-crown"></i></div>
+                            <h4 class="pack-title">Pack Supremo</h4>
+                            <div class="pack-gcoins">12,000 <span class="currency">GC</span></div>
+                            <div class="pack-bonus bonus-pink">+3,500 GC Extra</div>
+                            <div class="pack-price">$24.99 USD</div>
+                            <a href="https://wa.me/584247200506?text=Hola,%20deseo%20adquirir%20el%20Pack%20Supremo%20(12000%20GC)%20en%20GLauncher" target="_blank" class="pack-buy-btn btn-gold">
+                                <i class="fas fa-crown"></i> Adquirir Pack
+                            </a>
                         </div>
                     </div>
                 </section>
             </div>
 
-            <!-- COLUMNA LATERAL (Interacción) -->
+            <!-- COLUMNA LATERAL (Interacción: Regalo Diario & Ruleta) -->
             <aside class="sidebar-shop">
-                <!-- Regalo Diario -->
-                <div class="daily-reward-card">
-                    <h3 style="color: var(--neon-green); margin-bottom: 15px;">Regalo Diario</h3>
-                    <i id="daily-chest-icon" class="fas fa-gift chest-icon"></i>
-                    <p id="daily-status-text" style="font-size: 0.9em; color: var(--text-color-dark);">¡Haz clic para abrir tu regalo!</p>
-                    <button id="claim-daily-btn" class="auth-button" style="margin-top: 15px; width: 100%;">Reclamar</button>
+                <!-- Tarjeta de Regalo Diario -->
+                <div class="interactive-shop-card daily-reward-card">
+                    <div class="card-header-bar">
+                        <span class="card-badge green"><i class="fas fa-clock"></i> Cada 24 Horas</span>
+                    </div>
+                    <h3 class="interactive-title"><i class="fas fa-gift text-neon-green"></i> Regalo Diario</h3>
+                    
+                    <div class="chest-animation-area">
+                        <i id="daily-chest-icon" class="fas fa-gift chest-icon"></i>
+                    </div>
+
+                    <p id="daily-status-text" class="interactive-desc">¡Haz clic para abrir tu recompensa de 50 GCoins!</p>
+                    <button id="claim-daily-btn" class="interactive-action-btn btn-green">
+                        <i class="fas fa-hand-holding-usd"></i> Reclamar +50 GC
+                    </button>
                 </div>
 
-                <!-- Ruleta -->
-                <div class="roulette-card">
-                    <h3 style="color: var(--neon-pink);">Ruleta de la Suerte</h3>
-                    <p style="font-size: 0.8em; color: var(--text-color-dark);">Prueba tu suerte (100 GC/tiro)</p>
+                <!-- Tarjeta de la Ruleta -->
+                <div class="interactive-shop-card roulette-card">
+                    <div class="card-header-bar">
+                        <span class="card-badge pink"><i class="fas fa-trophy"></i> Suerte Diaria</span>
+                    </div>
+                    <h3 class="interactive-title"><i class="fas fa-dharmachakra text-neon-pink"></i> Ruleta de la Suerte</h3>
+                    <p class="interactive-desc">Gira la ruleta y gana hasta 1,000 GCoins.</p>
                     
                     <div class="wheel-container">
                         <div class="wheel-arrow"></div>
                         <div class="wheel" id="roulette-wheel">
-                            <!-- Los números se posicionan rotando desde el centro hacia afuera -->
-                            <span class="wheel-number" style="transform: rotate(30deg) translate(105px) rotate(90deg);">100</span>
-                            <span class="wheel-number" style="transform: rotate(90deg) translate(105px) rotate(90deg);">50</span>
-                            <span class="wheel-number" style="transform: rotate(150deg) translate(105px) rotate(90deg);">500</span>
-                            <span class="wheel-number" style="transform: rotate(210deg) translate(105px) rotate(90deg);">0</span>
-                            <span class="wheel-number" style="transform: rotate(270deg) translate(105px) rotate(90deg);">200</span>
-                            <span class="wheel-number" style="transform: rotate(330deg) translate(105px) rotate(90deg);">1K</span>
+                            <span class="wheel-number" style="transform: rotate(30deg) translate(95px) rotate(90deg);">100</span>
+                            <span class="wheel-number" style="transform: rotate(90deg) translate(95px) rotate(90deg);">50</span>
+                            <span class="wheel-number" style="transform: rotate(150deg) translate(95px) rotate(90deg);">500</span>
+                            <span class="wheel-number" style="transform: rotate(210deg) translate(95px) rotate(90deg);">0</span>
+                            <span class="wheel-number" style="transform: rotate(270deg) translate(95px) rotate(90deg);">200</span>
+                            <span class="wheel-number" style="transform: rotate(330deg) translate(95px) rotate(90deg);">1K</span>
                         </div>
                     </div>
                     
-                    <button id="spin-btn" class="auth-button" style="width: 100%; background: var(--neon-pink); border-color: #ff66ff;">GIRAR</button>
-                    <p id="roulette-result" style="margin-top: 10px; font-weight: bold; min-height: 1.2em;"></p>
+                    <button id="spin-btn" class="interactive-action-btn btn-pink">
+                        <i class="fas fa-sync-alt"></i> GIRAR RULETA
+                    </button>
+                    <p id="roulette-result" class="roulette-result-msg"></p>
                 </div>
             </aside>
         </div>
@@ -289,177 +208,30 @@
 
     <footer class="footer">
         <p>GLauncher &copy; 2026. Todos los derechos reservados.</p>
+        <p>Desarrollador Principal: <a href="https://www.youtube.com/@zyrovent" target="_blank" class="neon-hover-text">◈𝐙𝐘𝐑𝐎𝐕𝐄𝐍𝐓◈</a></p>
+        <nav class="footer-nav" style="margin-top: 10px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <a href="../../dev.html" class="neon-hover-text" style="color: var(--neon-green); font-weight: bold;"><i class="fas fa-code"></i> Docs para Desarrolladores (.GSS)</a>
+            <a href="privacy-policy.html" class="neon-hover-text">Política de Privacidad</a>
+            <a href="terms-and-conditions.html" class="neon-hover-text">Términos y Condiciones</a>
+        </nav>
     </footer>
 
-    <!-- Elementos de audio para la ruleta -->
-    <audio id="roulette-spin-sound" src="src/assets/sounds/roulette-spin.mp3" preload="auto"></audio>
-    <audio id="roulette-win-sound" src="src/assets/sounds/coin-win.mp3" preload="auto"></audio>
+    <!-- Barra de Navegación Inferior (Solo para Móviles) -->
+    <nav class="bottom-nav">
+        <a href="../../index.html"><i class="fas fa-home"></i><span>Inicio</span></a>
+        <a href="../../dev.html"><i class="fas fa-code"></i><span>Devs</span></a>
+        <a href="shop.html" class="active"><i class="fa-solid fa-shop"></i><span>Tienda</span></a>
+        <a href="download.html"><i class="fas fa-download"></i><span>Descargas</span></a>
+        <a href="dashboard.html"><i class="fas fa-user-circle"></i><span>Perfil</span></a>
+    </nav>
 
-    <!-- Librería Lenis para Smooth Scroll -->
+    <!-- Audios de efectos -->
+    <audio id="roulette-spin-sound" src="../assets/sounds/minecraft_click.mp3" preload="auto"></audio>
+    <audio id="roulette-win-sound" src="../assets/sounds/click_sound.mp3" preload="auto"></audio>
+
+    <!-- Librerías y Scripts -->
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
-
     <script src="../js/global-script.js"></script>
     <script src="../js/shop-script.js"></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- Lógica del Regalo Diario ---
-            const gcoinAmountEl = document.getElementById('gcoin-amount');
-            const chestIcon = document.getElementById('daily-chest-icon');
-            const claimBtn = document.getElementById('claim-daily-btn');
-            const statusText = document.getElementById('daily-status-text');
-            
-            const lastClaimDate = localStorage.getItem('lastDailyReward');
-            const today = new Date().toDateString();
-
-            // --- Función de Animación de Conteo ---
-            function animateValue(obj, start, end, duration) {
-                let startTimestamp = null;
-                const step = (timestamp) => {
-                    if (!startTimestamp) startTimestamp = timestamp;
-                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                    const currentValue = Math.floor(progress * (end - start) + start);
-                    
-                    obj.innerHTML = `${currentValue.toLocaleString('es-ES')} <i class="fas fa-coins"></i>`;
-                    
-                    if (progress < 1) {
-                        window.requestAnimationFrame(step);
-                    } else {
-                        obj.innerHTML = `${end.toLocaleString('es-ES')} <i class="fas fa-coins"></i>`;
-                    }
-                };
-                window.requestAnimationFrame(step);
-            }
-
-            // Helper para obtener saldo actual como número
-            function getCurrentBalance() {
-                return parseInt(gcoinAmountEl.textContent.replace(/\D/g, '')) || 0;
-            }
-
-            if (lastClaimDate === today) {
-                // Ya reclamado
-                chestIcon.classList.remove('fa-gift');
-                chestIcon.classList.add('fa-box-open', 'opened');
-                statusText.textContent = "Vuelve mañana para más recompensas.";
-                claimBtn.disabled = true;
-                claimBtn.textContent = "Reclamado";
-                claimBtn.style.opacity = "0.5";
-            }
-
-            claimBtn.addEventListener('click', () => {
-                if (claimBtn.disabled) return;
-
-                // Efecto de apertura
-                chestIcon.style.transform = "scale(1.2) rotate(10deg)";
-                setTimeout(() => {
-                    chestIcon.classList.remove('fa-gift');
-                    chestIcon.classList.add('fa-box-open');
-                    
-                    // Confeti
-                    confetti({
-                        particleCount: 100,
-                        spread: 70,
-                        origin: { y: 0.6 },
-                        colors: ['#ffd700', '#ffa500']
-                    });
-
-                    statusText.textContent = "¡Has ganado 50 GCoins!";
-                    claimBtn.disabled = true;
-                    claimBtn.textContent = "Reclamado";
-                    
-                    // Guardar en localStorage
-                    localStorage.setItem('lastDailyReward', today);
-                    
-                    const currentBal = getCurrentBalance();
-                    const prizeAmount = 50;
-                    animateValue(gcoinAmountEl, currentBal, currentBal + prizeAmount, 1500);
-                }, 300);
-            });
-
-            // --- Lógica de la Ruleta ---
-            const spinBtn = document.getElementById('spin-btn');
-            const wheel = document.getElementById('roulette-wheel');
-            const resultText = document.getElementById('roulette-result');
-            let currentRotation = 0;
-
-            // Sonidos de la ruleta
-            const spinSound = document.getElementById('roulette-spin-sound');
-            const winSound = document.getElementById('roulette-win-sound');
-            spinSound.volume = 0.3;
-            winSound.volume = 0.5;
-            
-            // Verificar si ya giró hoy
-            const lastSpinDate = localStorage.getItem('lastRouletteSpin');
-            
-            if (lastSpinDate === today) {
-                spinBtn.disabled = true;
-                spinBtn.textContent = "Vuelve Mañana";
-                spinBtn.style.background = "#555";
-                spinBtn.style.borderColor = "#777";
-                resultText.textContent = "Ya usaste tu giro diario.";
-            }
-
-            spinBtn.addEventListener('click', () => {
-                if (spinBtn.disabled) return;
-                
-                spinBtn.disabled = true;
-                resultText.textContent = "Girando...";
-
-                spinSound.currentTime = 0;
-                spinSound.play();
-
-                // Calcular giro aleatorio (mínimo 9 vueltas completas para 9 segundos + aleatorio)
-                const randomDegree = Math.floor(Math.random() * 360);
-                const totalSpin = 3240 + randomDegree; 
-                currentRotation += totalSpin;
-
-                wheel.style.transform = `rotate(${currentRotation}deg)`;
-
-                // Esperar a que termine la animación (9s según CSS)
-                setTimeout(() => {
-                    spinBtn.disabled = false;
-                    
-                    // Calcular premio basado en la posición final (Arrow en el top)
-                    const arrowAngle = (360 - (currentRotation % 360)) % 360;
-                    const segmentIndex = Math.floor(arrowAngle / 60);
-                    
-                    const prizes = [
-                        { name: "¡100 GCoins!", amount: 100, color: "var(--neon-pink)" },
-                        { name: "¡50 GCoins!", amount: 50, color: "var(--neon-blue)" },
-                        { name: "¡500 GCoins!", amount: 500, color: "var(--neon-green)" },
-                        { name: "¡0 GCoins!", amount: 0, color: "#ffcc00" },
-                        { name: "¡200 GCoins!", amount: 200, color: "#ff3333" },
-                        { name: "¡JACKPOT 1000!", amount: 1000, color: "#ffffff" }
-                    ];
-
-                    const prize = prizes[segmentIndex];
-                    resultText.textContent = prize.name;
-                    resultText.style.color = prize.color;
-                    
-                    // Guardar que ya giró hoy
-                    localStorage.setItem('lastRouletteSpin', today);
-                    spinBtn.textContent = "Vuelve Mañana";
-                    spinBtn.style.background = "#555";
-                    spinBtn.style.borderColor = "#777";
-                    
-                    if (prize.amount > 0) {
-                        winSound.currentTime = 0;
-                        winSound.play();
-
-                        confetti({
-                            particleCount: 50,
-                            spread: 50,
-                            origin: { x: 0.75, y: 0.6 } // Posición relativa a la ruleta (aprox)
-                        });
-                        
-                        // Animar saldo
-                        const currentBal = getCurrentBalance();
-                        animateValue(gcoinAmountEl, currentBal, currentBal + prize.amount, 1000);
-                    }
-
-                }, 9000);
-            });
-        });
-    </script>
 </body>
 </html>
