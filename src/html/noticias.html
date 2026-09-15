@@ -1,205 +1,18 @@
-<html lang="es"><head>
+<!DOCTYPE html>
+<html lang="es">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <meta name="description" content="Mantente informado con las últimas noticias de Minecraft, actualizaciones de GLauncher, snapshots de Java, betas de Bedrock y eventos de la comunidad.">
-    <title>GLauncher - Noticias y Eventos</title>
-    <link rel="stylesheet" href="../css/styles.css"> 
+    <meta name="description" content="Historial completo y registro oficial de todas las versiones de Minecraft Java Edition sincronizadas directamente desde el Version Manifest v2 de Mojang.">
+    <title>GLauncher — Registro de Versiones de Minecraft</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/news-styles.css">
     <link rel="icon" type="image/png" href="../assets/images/favicon.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* --- Nuevos Estilos para la Página de Noticias --- */
-        .news-page-header {
-            text-align: center;
-            padding: 40px 20px;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 40px;
-        }
-        .news-page-header .neon-title {
-            font-size: 3em;
-            color: var(--neon-blue);
-            text-shadow: var(--shadow-blue);
-        }
-        .news-page-header .subtitle-text {
-            font-size: 1.2em;
-            color: var(--text-color-dark);
-            max-width: 600px;
-            margin: 10px auto 0 auto;
-        }
-
-        .news-feed-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: 30px;
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .news-article-card {
-            background: var(--secondary-bg-color);
-            border-radius: 15px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .news-article-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-pink);
-            border-color: var(--neon-pink);
-        }
-
-        .article-thumbnail {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .article-content {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .article-title {
-            font-size: 1.3em;
-            color: var(--text-color-light);
-            margin-bottom: 10px;
-            line-height: 1.4;
-            flex-grow: 1;
-        }
-
-        .article-summary {
-            font-size: 0.95em;
-            color: var(--text-color-dark);
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .article-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85em;
-            color: var(--text-color-dark);
-            border-top: 1px solid var(--border-color);
-            padding-top: 15px;
-            margin-top: auto;
-        }
-
-        /* --- Pestañas de Categoría --- */
-        .news-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-        .news-tab-btn {
-            background: var(--secondary-bg-color);
-            border: 1px solid var(--neon-blue);
-            color: var(--text-color-dark);
-            padding: 8px 20px;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: bold;
-            font-size: 0.95em;
-        }
-        .news-tab-btn:hover, .news-tab-btn.active {
-            background: var(--neon-blue);
-            color: var(--main-bg-color);
-            box-shadow: var(--shadow-blue);
-            border-color: var(--neon-blue);
-        }
-        .news-tab-btn .count {
-            font-size: 0.85em;
-            opacity: 0.8;
-            margin-left: 5px;
-        }
-
-        /* --- Skeleton Loading (Animación de Carga) --- */
-        .skeleton-card {
-            background: var(--secondary-bg-color);
-            border-radius: 15px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            height: 420px;
-            display: flex;
-            flex-direction: column;
-            animation: pulse-skeleton 1.5s infinite ease-in-out;
-        }
-        @keyframes pulse-skeleton {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
-        }
-        .skeleton-img {
-            width: 100%;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.05);
-        }
-        .skeleton-content {
-            padding: 20px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .skeleton-line {
-            height: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 4px;
-        }
-        .skeleton-line.title { height: 25px; width: 80%; }
-        .skeleton-line.short { width: 60%; }
-
-        /* --- Estilos para la Paginación (Estilo Google) --- */
-        .pagination-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-top: 50px;
-            flex-wrap: wrap;
-        }
-        .pagination-btn {
-            background: var(--secondary-bg-color);
-            color: var(--text-color-dark);
-            border: 1px solid var(--border-color);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        .pagination-btn:hover:not(:disabled) {
-            background: var(--neon-blue);
-            color: var(--main-bg-color);
-            border-color: var(--neon-blue);
-            box-shadow: var(--shadow-blue);
-        }
-        .pagination-btn.active {
-            background: var(--neon-pink);
-            color: var(--main-bg-color);
-            border-color: var(--neon-pink);
-            box-shadow: var(--shadow-pink);
-            transform: scale(1.1);
-        }
-        .pagination-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-    </style>
+    <link href="https://fonts.cdnfonts.com/css/minecraftia" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+
     <!-- Spinner de Carga, Notificaciones y Pantalla Offline -->
     <div id="loader-overlay" class="loader-overlay"><div class="spinner"></div></div>
     <div id="notification-container"></div>
@@ -212,9 +25,10 @@
         </div>
         <nav class="auth-buttons">
             <a href="../../index.html" class="auth-button">Inicio</a> 
-            <a href="noticias.html" class="auth-button active">Noticias</a>
+            <a href="noticias.html" class="auth-button active">Versiones</a>
             <a href="shop.html" class="auth-button">Tienda</a>
             <a href="download.html" class="auth-button">Descargas</a>
+            <a href="../../dev.html" class="auth-button" style="border-color: var(--neon-green); color: var(--neon-green);"><i class="fas fa-code"></i> Devs / GSS</a>
             <a href="dashboard.html" class="auth-button">Dashboard</a>
             <a href="login.html" class="auth-button">Iniciar Sesión</a>
             <a href="register.html" class="auth-button">Registrar</a>
@@ -225,719 +39,84 @@
     </header>
 
     <main class="main-content news-page">
-        <div class="news-page-header">
-            <h2 class="neon-title"><i class="fas fa-newspaper"></i> Últimas Noticias de Minecraft</h2>
-            <p class="subtitle-text">Mantente al día con las novedades más importantes del universo Minecraft, directamente desde las mejores fuentes.</p>
+        <!-- HEADER / HERO BANNER -->
+        <div class="news-hero-banner">
+            <div class="news-hero-text">
+                <div class="news-badge"><i class="fas fa-cube"></i> Minecraft Version Manifest v2</div>
+                <h1 class="news-main-title">Registro & Historial de <span class="text-neon-green">Versiones</span></h1>
+                <p class="news-subtitle">Consulta todas las versiones, snapshots de desarrollo, pre-releases y versiones históricas de Minecraft Java Edition sincronizadas directamente desde el <strong>Manifiesto Oficial de Mojang</strong>.</p>
+            </div>
+
+            <!-- TARJETA DE ESTADÍSTICAS DEL MANIFEST EN TIEMPO REAL -->
+            <div class="version-stats-card">
+                <div class="stats-row">
+                    <span><i class="fas fa-check-circle text-neon-green"></i> Última Release:</span>
+                    <span id="stat-latest-release" class="stats-val release">Cargando...</span>
+                </div>
+                <div class="stats-row">
+                    <span><i class="fas fa-flask text-neon-pink"></i> Última Snapshot:</span>
+                    <span id="stat-latest-snapshot" class="stats-val snapshot">Cargando...</span>
+                </div>
+                <div class="stats-row">
+                    <span><i class="fas fa-layer-group" style="color: var(--neon-blue);"></i> Total Versiones:</span>
+                    <span id="stat-total-versions" class="stats-val">...</span>
+                </div>
+            </div>
         </div>
 
-        <!-- Pestañas de Filtros -->
-        <div class="news-tabs">
-            <button class="news-tab-btn active" data-category="all">Todo <span class="count" id="count-all">(0)</span></button>
-            <button class="news-tab-btn" data-category="java">Java <span class="count" id="count-java">(0)</span></button>
-            <button class="news-tab-btn" data-category="bedrock">Bedrock <span class="count" id="count-bedrock">(0)</span></button>
-            <button class="news-tab-btn" data-category="oficial">Oficial <span class="count" id="count-oficial">(0)</span></button>
-            <button class="news-tab-btn" data-category="mods">Mods <span class="count" id="count-mods">(0)</span></button>
-            <button class="news-tab-btn" data-category="leaks">Filtraciones <span class="count" id="count-leaks">(0)</span></button>
-            <button class="news-tab-btn" data-category="community">Comunidad <span class="count" id="count-community">(0)</span></button>
+        <!-- BARRA DE FILTROS POR TIPO DE VERSIÓN Y BÚSQUEDA -->
+        <div id="filter-container" class="filter-container">
+            <!-- Filtros de Tipos -->
+            <div class="version-filters-pills">
+                <button class="v-pill active" data-vtype="all">Todas las Versiones <span id="vcount-all">(0)</span></button>
+                <button class="v-pill" data-vtype="release"><i class="fas fa-check-circle text-neon-green"></i> Releases <span id="vcount-release">(0)</span></button>
+                <button class="v-pill" data-vtype="snapshot"><i class="fas fa-flask text-neon-pink"></i> Snapshots & Betas <span id="vcount-snapshot">(0)</span></button>
+                <button class="v-pill" data-vtype="old"><i class="fas fa-archive"></i> Versiones Clásicas <span id="vcount-old">(0)</span></button>
+            </div>
+
+            <!-- Caja de Búsqueda -->
+            <div class="search-box-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="version-search-input" placeholder="Buscar versión (ej: 1.21.4, 24w, 1.8.9)...">
+            </div>
         </div>
 
-        <div id="news-feed-container" class="news-feed-container">
-            <!-- Las noticias se cargarán aquí dinámicamente desde el backend -->
+        <!-- FEED DE TARJETAS DE VERSIONES -->
+        <div id="versions-feed-container" class="versions-cards-grid">
+            <!-- Skeletons durante la carga -->
+            <div class="skeleton-card"><div class="skeleton-line title"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>
+            <div class="skeleton-card"><div class="skeleton-line title"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>
+            <div class="skeleton-card"><div class="skeleton-line title"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>
+            <div class="skeleton-card"><div class="skeleton-line title"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>
         </div>
         
-        <!-- Contenedor de Paginación -->
+        <!-- Paginación -->
         <div id="pagination-container" class="pagination-container"></div>
     </main>
 
     <footer class="footer">
-        <p>GLauncher © 2026. Todos los derechos reservados.</p>
+        <p>GLauncher &copy; 2026. Todos los derechos reservados.</p>
         <p>Desarrollador Principal: <a href="https://www.youtube.com/@zyrovent" target="_blank" class="neon-hover-text">◈𝐙𝐘𝐑𝐎𝐕𝐄𝐍𝐓◈</a></p>
+        <nav class="footer-nav" style="margin-top: 10px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <a href="../../dev.html" class="neon-hover-text" style="color: var(--neon-green); font-weight: bold;"><i class="fas fa-code"></i> Docs para Desarrolladores (.GSS)</a>
+            <a href="privacy-policy.html" class="neon-hover-text">Política de Privacidad</a>
+            <a href="terms-and-conditions.html" class="neon-hover-text">Términos y Condiciones</a>
+        </nav>
     </footer>
 
     <!-- Barra de Navegación Inferior (Solo para Móviles) -->
     <nav class="bottom-nav">
         <a href="../../index.html"><i class="fas fa-home"></i><span>Inicio</span></a>
+        <a href="../../dev.html"><i class="fas fa-code"></i><span>Devs</span></a>
+        <a href="noticias.html" class="active"><i class="fas fa-cube"></i><span>Versiones</span></a>
         <a href="shop.html"><i class="fa-solid fa-shop"></i><span>Tienda</span></a>
-        <a href="noticias.html" class="active"><i class="fas fa-newspaper"></i><span>Noticias</span></a>
         <a href="download.html"><i class="fas fa-download"></i><span>Descargas</span></a>
         <a href="dashboard.html"><i class="fas fa-user-circle"></i><span>Perfil</span></a>
     </nav>
 
     <!-- Librería Lenis para Smooth Scroll -->
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
-
     <script src="../js/global-script.js"></script> 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const newsContainer = document.getElementById('news-feed-container');
-            const paginationContainer = document.getElementById('pagination-container');
-            
-            // Configuración de Paginación
-            const ITEMS_PER_PAGE = 12; // Aumentamos a 12 noticias por página
-            let currentPage = 1;
-            let allNewsData = []; // Almacena todas las noticias crudas
-            let filteredNews = []; // Almacena las noticias filtradas para mostrar
-            
-            // Configuración de Caché
-            const BACKEND_URL = "https://glauncher-api.onrender.com";
-            const CACHE_KEY = 'glauncher_news_cache_v4_mega'; // Nueva versión para incluir noticias del backend
-            const CACHE_EXPIRY = 1000 * 60 * 30; // 30 minutos en milisegundos
-
-            // Lista de Feeds RSS (Google News y Minecraft Forum)
-            // Usamos Google News porque es el más rápido en indexar "Pale Garden", Snapshots y Betas.
-            const FEEDS = [
-                // Java Edition & Snapshots
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BJava%2BSnapshot%2BUpdate%26hl%3Des-419%26gl%3DMX%26ceid%3DMX%3Aes-419",
-                // Bedrock Edition & Betas
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BBedrock%2BBeta%2BPreview%26hl%3Des-419%26gl%3DMX%26ceid%3DMX%3Aes-419",
-                // Filtraciones, Rumores y Futuras Actualizaciones (NUEVO)
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BLeaks%2BRumors%2BFiltraciones%2BFeatures%26hl%3Des-419%26gl%3DMX%26ceid%3DMX%3Aes-419",
-                // Actualizaciones Oficiales Generales (NUEVO)
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BOfficial%2BUpdate%2BNews%2B2026%26hl%3Des-419%26gl%3DMX%26ceid%3DMX%3Aes-419",
-                // Minecraft Live & Eventos (NUEVO - Específico para eventos recientes)
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BLive%2BAnnouncements%2BNew%2BMobs%2BBiomes%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                // Novedades de Jugabilidad (NUEVO - Para Slimes, Bloques, etc.)
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BNew%2BBlock%2BFeature%2BSnapshot%26hl%3Des-419%26gl%3DMX%26ceid%3DMX%3Aes-419",
-                // Oficial: Artículos de Minecraft.net (Vía Google News para mejor parsing)
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3Dsite%3Aminecraft.net%2Ben-us%2Barticle%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                // Filtraciones Técnicas: Datamining y Código
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BDatamine%2BTexture%2BLeak%2BCode%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                // Minecraft Feedback y actualizaciones de comunidad
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BUpdate%2BFeedback%2BFeature%26hl%3Des-419%26gl%3DMX%26ceid%3DMX%3Aes-419",
-                // Noticias de Servidores (Hypixel, etc)
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DHypixel%2BUpdate%2BNews%2BMinecraft%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                // Bedrock Específico: Changelogs y Parches
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BBedrock%2BChangelog%2BPatch%2BNotes%26hl%3Des-419%26gl%3DMX%26ceid%3DMX%3Aes-419",
-                // Comunidad y General (Minecraft Forum)
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.minecraftforum.net%2Fnews.rss", // Este no es de Google News
-                // --- NUEVAS FUENTES ---
-                // Actualizaciones de Versiones Específicas
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2B1.20%2Bupdate%26hl%3Des-419%26gl%3DMX%26ceid%3DMX%3Aes-419",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2B1.21%2Bfeatures%26hl%3Des-419%26gl%3DMX%26ceid%3DMX%3Aes-419",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnext%2Bupdate%2Bspeculation%26hl%3Des-419%26gl%3DMX%26ceid%3DMX%3Aes-419",
-                // Modding y Herramientas
-                // Blog de Modrinth (Lo último en Mods y Herramientas)
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fblog.modrinth.com%2Frss.xml",
-                // Noticias de Modding en General (Forge, Fabric, etc)
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BModding%2BForge%2BFabric%2BMods%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BForge%2Bupdate%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BFabric%2Bupdate%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BNeoForge%2Bnews%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BQuilt%2Bnews%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DOptiFine%2Bnews%2BMinecraft%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DSodium%2Bmod%2BMinecraft%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DIris%2Bshaders%2BMinecraft%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DLitematica%2Bmod%2BMinecraft%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DReplayMod%2BMinecraft%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bshaders%2Bpack%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bresource%2Bpack%2Bupdate%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bdata%2Bpack%2Btutorial%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bclient%2Bdevelopment%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bperformance%2Boptimization%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                // Comunidad y Contenido de Jugadores
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bfan%2Bart%2Bcontest%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bbest%2Bbuilds%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bsurvival%2Bguide%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bhardcore%2Bseries%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bspeedrun%2Bworld%2Brecord%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BChampionship%2Bresults%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bbuilding%2Btips%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bfarming%2Bguides%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Benchanting%2Bguide%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bpotion%2Bbrewing%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bvillager%2Btrading%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BPvP%2Bstrategies%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                // Juegos Derivados y Ediciones Especiales
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BDungeons%2Bnew%2Bcontent%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BLegends%2Bgameplay%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BEducation%2BEdition%2Bnews%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BRTX%2Bupdate%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bray%2Btracing%2Bperformance%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                // Contenido del Juego
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnew%2Bbiomes%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bmob%2Bvote%2Bwinner%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnew%2Bitems%2Bupdate%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnether%2Bupdate%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bend%2Bupdate%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bcaves%2Band%2Bcliffs%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bcombat%2Bupdate%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                // Servidores y Hosting
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Bhosting%2Btips%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Blist%2Bupdate%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Bplugins%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Badministration%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Bsecurity%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Beconomy%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Bminigames%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Bfactions%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Bskyblock%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Bprison%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Bcreative%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Bsurvival%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Broleplay%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Bmodded%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Bvanilla%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Bproxy%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2BBungeeCord%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2BVelocity%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2BPaperMC%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2BSpigot%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2BBukkit%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2BAternos%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2BRealms%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Bhosting%2Bproviders%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Bperformance%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Banti-cheat%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Bgriefing%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Bwhitelist%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bserver%2Bmarketplace%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                // Más fuentes generales y regionales
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSpain%26hl%3Des-419%26gl%3DMX%26ceid%3DMX%3Aes-419",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BArgentina%26hl%3Des-419%26gl%3DMX%26ceid%3DMX%3Aes-419",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BColombia%26hl%3Des-419%26gl%3DMX%26ceid%3DMX%3Aes-419",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BChile%26hl%3Des-419%26gl%3DMX%26ceid%3DMX%3Aes-419",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BPeru%26hl%3Des-419%26gl%3DMX%26ceid%3DMX%3Aes-419",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BVenezuela%26hl%3Des-419%26gl%3DMX%26ceid%3DMX%3Aes-419",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BUSA%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BUK%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BGermany%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BFrance%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BJapan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BAustralia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BCanada%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BBrazil%26hl%3Dpt-BR%26gl%3DBR%26ceid%3DBR%3Apt-419",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BRussia%26hl%3Dru-RU%26gl%3DRU%26ceid%3DRU%3Aru",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BChina%26hl%3Dzh-CN%26gl%3DCN%26ceid%3DCN%3Azh-Hans",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIndia%26hl%3Den-IN%26gl%3DIN%26ceid%3DIN%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSouth%2BAfrica%26hl%3Den-ZA%26gl%3DZA%26ceid%3DZA%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSweden%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BNorway%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BDenmark%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BFinland%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BNetherlands%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BBelgium%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSwitzerland%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BAustria%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BPolar%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BCzech%2BRepublic%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BHungary%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BGreece%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BTurkey%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BEgypt%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BNigeria%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIndonesia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BPhilippines%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BVietnam%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BThailand%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMalaysia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSingapore%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BNew%2BZealand%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIreland%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BPakistan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BBangladesh%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BAfghanistan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BUAE%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSaudi%2BArabia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIran%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIraq%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSyria%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIsrael%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BEthiopia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BTanzania%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BKenya%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BUganda%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BAlgeria%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMorocco%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSudan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BAngola%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMozambique%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BGhana%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BCameroon%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMadagascar%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BNepal%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSri%2BLanka%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMyanmar%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BLaos%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BCambodia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BNorth%2BKorea%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSouth%2BKorea%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BTaiwan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BHong%2BKong%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMacau%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BPhilippines%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIndonesia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BVietnam%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BThailand%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMalaysia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSingapore%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BNew%2BZealand%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIreland%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BPakistan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BBangladesh%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BAfghanistan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BUAE%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSaudi%2BArabia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIran%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIraq%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSyria%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIsrael%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BEthiopia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BTanzania%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BKenya%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BUganda%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BAlgeria%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMorocco%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSudan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BAngola%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMozambique%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BGhana%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BCameroon%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMadagascar%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BNepal%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSri%2BLanka%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMyanmar%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BLaos%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BCambodia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BNorth%2BKorea%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSouth%2BKorea%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BTaiwan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BHong%2BKong%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMacau%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BPhilippines%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIndonesia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BVietnam%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BThailand%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMalaysia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSingapore%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BNew%2BZealand%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIreland%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BPakistan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BBangladesh%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BAfghanistan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BUAE%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSaudi%2BArabia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIran%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIraq%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSyria%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIsrael%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BEthiopia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BTanzania%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BKenya%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BUganda%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BAlgeria%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMorocco%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSudan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BAngola%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMozambique%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BGhana%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BCameroon%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMadagascar%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BNepal%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSri%2BLanka%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMyanmar%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BLaos%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BCambodia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BNorth%2BKorea%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSouth%2BKorea%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BTaiwan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BHong%2BKong%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMacau%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BPhilippines%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIndonesia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BVietnam%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BThailand%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMalaysia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSingapore%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BNew%2BZealand%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIreland%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BPakistan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BBangladesh%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BAfghanistan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BUAE%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSaudi%2BArabia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIran%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIraq%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSyria%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIsrael%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BEthiopia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BTanzania%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BKenya%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BUganda%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BAlgeria%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMorocco%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSudan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BAngola%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMozambique%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BGhana%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BCameroon%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMadagascar%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BNepal%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSri%2BLanka%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMyanmar%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BLaos%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BCambodia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BNorth%2BKorea%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSouth%2BKorea%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BTaiwan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BHong%2BKong%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMacau%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BPhilippines%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIndonesia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BVietnam%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BThailand%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BMalaysia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSingapore%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BNew%2BZealand%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIreland%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BPakistan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BBangladesh%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BAfghanistan%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BUAE%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSaudi%2BArabia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIran%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIraq%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BSyria%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BIsrael%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BEthiopia%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BTanzania%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BKenya%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BUganda%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2BAlgeria%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2Bnews%2",
-                // Minecraft Marketplace (Nuevos Mapas y Skins)
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BMarketplace%2BUpdate%2BNew%2BMaps%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen",
-                // Servidores Técnicos y de Gran Escala (2b2t, Wynncraft, etc)
-                "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DMinecraft%2BServer%2BUpdate%2BWynncraft%2B2b2t%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen"
-            ];
-
-            // Función avanzada para extraer la imagen de la noticia
-            function getThumbnail(item) {
-                // 1. Intentar obtener la miniatura explícita (thumbnail o enclosure).
-                // Se prioriza 'enclosure' si es de tipo imagen, ya que suele ser de mejor calidad.
-                if (item.enclosure && item.enclosure.type && item.enclosure.type.startsWith('image')) {
-                    return item.enclosure.link;
-                }
-                if (item.thumbnail) return item.thumbnail;
-
-                // 2. Buscar dentro del contenido HTML (común en Google News y otros).
-                const content = item.description || item.content || "";
-                const div = document.createElement('div');
-                div.innerHTML = content;
-                const images = Array.from(div.querySelectorAll('img'));
-
-                if (images.length > 0) {
-                    // Heurística: la mejor imagen suele ser la primera que no es un GIF y no tiene "icon", "logo" o "avatar" en su src.
-                    let bestImage = images.find(img => 
-                        img.src && !img.src.endsWith('.gif') && 
-                        !/icon|logo|avatar|feed|rss/i.test(img.src)
-                    );
-                    
-                    // Si no se encuentra una "mejor", se usa la primera de todas.
-                    if (!bestImage) bestImage = images[0];
-
-                    if (bestImage && bestImage.src) {
-                        let imageUrl = bestImage.src;
-
-                        // Algunas URLs de CDN tienen parámetros de redimensionamiento. Intentamos quitarlos para obtener la original.
-                        // Esto es una heurística y puede no funcionar siempre, pero es un intento para obtener mayor calidad.
-                        // Ej: .../image-320x240.jpg -> .../image.jpg
-                        // Ej: .../image.jpg?width=320 -> .../image.jpg
-                        imageUrl = imageUrl.replace(/-\d{2,4}x\d{2,4}(?=\.(jpg|jpeg|png|webp))/i, '');
-                        imageUrl = imageUrl.split('?')[0];
-
-                        return imageUrl;
-                    }
-                }
-
-                // 3. Fallback: Logo de GLauncher si no hay imagen.
-                // Usamos un banner genérico de Minecraft de alta calidad como fallback en lugar del logo
-                return 'https://piston-meta.mojang.com/v1/products/java/608298b17359550e509617300c325c48b2691b0c/banner.jpg'; 
-            }
-
-            // Función para determinar la categoría
-            function getCategory(item) {
-                if (item.category === 'oficial') return 'oficial';
-
-                const text = (item.title + " " + item.description).toLowerCase();
-
-                // Prioridad a Oficial para fuentes directas
-                if (item.link.includes('minecraft.net') || item.author === 'GLauncher Oficial') return 'oficial';
-
-                // Categoría de Mods (Específica para GLauncher)
-                if (text.includes('mod') || text.includes('forge') || text.includes('fabric') || text.includes('neoforge') || text.includes('quilt') || text.includes('modrinth') || text.includes('curseforge') || text.includes('optifine') || text.includes('iris') || text.includes('sodium')) {
-                    return 'mods';
-                }
-
-                // Prioridad a Filtraciones
-                if (text.includes('leak') || text.includes('filtrac') || text.includes('rumor') || text.includes('future') || text.includes('concept') || text.includes('1.2') || text.includes('live') || text.includes('mob') || text.includes('slime') || text.includes('bloque') || text.includes('biome') || text.includes('datamine') || text.includes('code')) {
-                    return 'leaks';
-                }
-
-                // Palabras clave para Java
-                if (text.includes('java') || text.includes('snapshot') || text.includes('pre-release') || text.includes('release candidate') || text.includes('rc')) {
-                    return 'java';
-                }
-                
-                // Palabras clave para Bedrock
-                if (text.includes('bedrock') || text.includes('beta') || text.includes('preview') || text.includes('mcpe') || text.includes('pocket') || text.includes('changelog') || text.includes('patch notes') || text.includes('hotfix')) {
-                    return 'bedrock';
-                }
-                
-                // Por defecto, Comunidad
-                return 'community'; 
-            }
-
-            function createNewsCard(item) {
-                const card = document.createElement('a');
-                const category = getCategory(item);
-                card.className = `news-article-card news-item-category-${category}`;
-                card.dataset.category = category; // Para filtrado
-                card.href = item.link;
-                card.target = '_blank'; // Abrir en nueva pestaña
-                card.rel = 'noopener noreferrer';
-
-                // Obtener imagen procesada
-                const imageUrl = getThumbnail(item);
-
-                // Limpiar la descripción de etiquetas HTML y acortarla
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = item.description;
-                let summary = tempDiv.textContent || tempDiv.innerText || "";
-                summary = summary.split('...').pop().trim(); // Quitar el nombre de la fuente que a veces añade Google
-                summary = summary.substring(0, 150) + (summary.length > 150 ? '...' : '');
-
-                // Formatear fecha
-                const pubDate = new Date(item.pubDate);
-                const formattedDate = pubDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
-
-                card.innerHTML = `
-                    <img src="${imageUrl}" alt="${item.title}" class="article-thumbnail" loading="lazy" onerror="this.onerror=null;this.src='../assets/images/favicon.png';">
-                    <div class="article-content">
-                        <h3 class="article-title">${item.title}</h3>
-                        <p class="article-summary" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">${summary}</p>
-                        <div class="article-footer">
-                            <span class="article-source"><i class="fas fa-rss"></i> ${item.author || 'Noticias'}</span>
-                            <span class="article-date"><i class="fas fa-calendar-alt"></i> ${formattedDate}</span>
-                        </div>
-                    </div>
-                `;
-                return card;
-            }
-
-            function showSkeletons() {
-                newsContainer.innerHTML = '';
-                for(let i=0; i<6; i++) {
-                    const skeleton = document.createElement('div');
-                    skeleton.className = 'skeleton-card';
-                    skeleton.innerHTML = `
-                        <div class="skeleton-img"></div>
-                        <div class="skeleton-content">
-                            <div class="skeleton-line title"></div>
-                            <div class="skeleton-line"></div>
-                            <div class="skeleton-line short"></div>
-                            <div class="skeleton-line" style="margin-top: auto;"></div>
-                        </div>
-                    `;
-                    newsContainer.appendChild(skeleton);
-                }
-            }
-
-            // Función para renderizar la paginación
-            function renderPagination() {
-                paginationContainer.innerHTML = '';
-                const totalPages = Math.ceil(filteredNews.length / ITEMS_PER_PAGE);
-                
-                if (totalPages <= 1) return; // No mostrar si solo hay una página
-
-                // Botón Anterior
-                const prevBtn = document.createElement('button');
-                prevBtn.className = 'pagination-btn';
-                prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
-                prevBtn.disabled = currentPage === 1;
-                prevBtn.onclick = () => changePage(currentPage - 1);
-                paginationContainer.appendChild(prevBtn);
-
-                // Números de página
-                for (let i = 1; i <= totalPages; i++) {
-                    const btn = document.createElement('button');
-                    btn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
-                    btn.textContent = i;
-                    btn.onclick = () => changePage(i);
-                    paginationContainer.appendChild(btn);
-                }
-
-                // Botón Siguiente
-                const nextBtn = document.createElement('button');
-                nextBtn.className = 'pagination-btn';
-                nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
-                nextBtn.disabled = currentPage === totalPages;
-                nextBtn.onclick = () => changePage(currentPage + 1);
-                paginationContainer.appendChild(nextBtn);
-            }
-
-            // Función para cambiar de página
-            function changePage(page) {
-                currentPage = page;
-                renderCurrentPage();
-                
-                // Scroll suave hacia arriba de las noticias
-                const headerOffset = 150;
-                const elementPosition = newsContainer.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                
-                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-            }
-
-            // Función para renderizar la página actual
-            function renderCurrentPage() {
-                newsContainer.innerHTML = '';
-                
-                const start = (currentPage - 1) * ITEMS_PER_PAGE;
-                const end = start + ITEMS_PER_PAGE;
-                const itemsToShow = filteredNews.slice(start, end);
-
-                itemsToShow.forEach(item => {
-                    newsContainer.appendChild(createNewsCard(item));
-                });
-                
-                renderPagination();
-            }
-
-            // Función centralizada para procesar los datos (ya sean de caché o API)
-            function processAndRenderNews(items) {
-                // Eliminar duplicados basados en el título
-                allNewsData = items.filter((item, index, self) =>
-                    index === self.findIndex((t) => (
-                        t.title === item.title
-                    ))
-                );
-
-                // Ordenar por fecha (más reciente primero)
-                allNewsData.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-                filteredNews = allNewsData; // Inicialmente mostramos todo
-
-                // Actualizar contadores
-                let counts = { all: 0, java: 0, bedrock: 0, leaks: 0, community: 0, oficial: 0, mods: 0 };
-                allNewsData.forEach(item => {
-                    counts.all++;
-                    const cat = getCategory(item);
-                    if(counts[cat] !== undefined) counts[cat]++;
-                    else counts.community++;
-                });
-
-                // Actualizar UI de contadores
-                document.getElementById('count-all').textContent = `(${counts.all})`;
-                document.getElementById('count-java').textContent = `(${counts.java})`;
-                document.getElementById('count-bedrock').textContent = `(${counts.bedrock})`;
-                document.getElementById('count-leaks').textContent = `(${counts.leaks})`;
-                document.getElementById('count-community').textContent = `(${counts.community})`;
-                document.getElementById('count-oficial').textContent = `(${counts.oficial})`;
-                document.getElementById('count-mods').textContent = `(${counts.mods})`;
-                
-                renderCurrentPage();
-                setupFilters();
-            }
-
-            async function loadNews() {
-                if (!newsContainer) return;
-                // Mostrar skeletons
-                showSkeletons();
-
-                // 1. Intentar cargar desde Caché (localStorage)
-                const cached = localStorage.getItem(CACHE_KEY);
-                if (cached) {
-                    try {
-                        const parsedCache = JSON.parse(cached);
-                        const now = new Date().getTime();
-                        
-                        // Si la caché es válida (menos de 30 mins), usarla
-                        if (now - parsedCache.timestamp < CACHE_EXPIRY) {
-                            console.log("Noticias cargadas desde caché local ⚡");
-                            processAndRenderNews(parsedCache.items);
-                            return; // Salir, no hacemos fetch
-                        }
-                    } catch (e) {
-                        console.warn("Error al leer caché, recargando...");
-                    }
-                }
-
-                try {
-                    console.log("Caché expirada o inexistente. Obteniendo nuevas noticias...");
-
-                    // 1. Intentar cargar noticias propias desde el backend de GLauncher
-                    let backendItems = [];
-                    try {
-                        const backendRes = await fetch(`${BACKEND_URL}/api/news`);
-                        if (backendRes.ok) {
-                            const backendData = await backendRes.json();
-                            backendItems = backendData.map(item => ({
-                                title: item.title,
-                                link: item.link,
-                                description: item.summary,
-                                pubDate: item.date,
-                                author: "GLauncher Oficial",
-                                thumbnail: item.image.startsWith('/uploads/') ? `${BACKEND_URL}${item.image}` : item.image,
-                                category: "oficial"
-                            }));
-                        }
-                    } catch (e) {
-                        console.warn("Backend no disponible, cargando solo RSS.");
-                    }
-
-                    // Cargar todos los feeds en paralelo
-                    const responses = await Promise.all(FEEDS.map(url => fetch(url)));
-                    const results = await Promise.all(responses.map(res => res.json()));
-
-                    let fetchedItems = [...backendItems];
-                    
-                    // Combinar todas las noticias
-                    results.forEach(data => {
-                        if (data.status === 'ok' && data.items) {
-                            fetchedItems = fetchedItems.concat(data.items);
-                        }
-                    });
-
-                    // Guardar en Caché antes de procesar
-                    localStorage.setItem(CACHE_KEY, JSON.stringify({
-                        timestamp: new Date().getTime(),
-                        items: fetchedItems
-                    }));
-                    
-                    // Procesar y mostrar
-                    processAndRenderNews(fetchedItems);
-
-                } catch (error) {
-                    console.error('Error al cargar noticias:', error);
-                    newsContainer.innerHTML = '<p style="text-align: center; color: var(--neon-pink);">No se pudieron cargar las noticias. Inténtalo más tarde.</p>';
-                }
-            }
-
-            function setupFilters() {
-                const buttons = document.querySelectorAll('.news-tab-btn');
-
-                buttons.forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        // Activar botón
-                        buttons.forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-
-                        const category = btn.dataset.category;
-
-                        // Filtrar datos
-                        if (category === 'all') {
-                            filteredNews = allNewsData;
-                        } else {
-                            filteredNews = allNewsData.filter(item => getCategory(item) === category);
-                        }
-                        
-                        // Reiniciar a página 1 y renderizar
-                        currentPage = 1;
-                        renderCurrentPage();
-                    });
-                });
-            }
-
-            loadNews();
-        });
-    </script>
+    <script src="../js/news-script.js"></script>
 </body>
+</html>
