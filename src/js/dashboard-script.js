@@ -348,8 +348,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 let foundUsers = [];
 
-                // 1. Intentar buscar en Supabase (si está configurado)
-                if (window.glauncherSupabase) {
+                // 1. Buscar a través del endpoint oficial del Backend (/api/users/search)
+                try {
+                    const searchRes = await fetch(`${BACKEND_URL}/api/users/search?q=${encodeURIComponent(query)}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (searchRes.ok) {
+                        const usersList = await searchRes.json();
+                        if (Array.isArray(usersList) && usersList.length > 0) {
+                            foundUsers = usersList.filter(u => u.username.toLowerCase() !== (currentUser.username || '').toLowerCase());
+                        }
+                    }
+                } catch (bErr) {
+                    console.warn("Aviso al consultar /api/users/search:", bErr);
+                }
+
+                // 2. Intentar buscar directamente en Supabase si no devolvió resultados
+                if (foundUsers.length === 0 && window.glauncherSupabase) {
                     try {
                         const { data, error } = await window.glauncherSupabase
                             .from('users')
@@ -365,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                // 2. Si no encontró por Supabase o devolvió vacío, verificar existencia con el endpoint backend
+                // 3. Si no encontró por Supabase o devolvió vacío, verificar existencia con el endpoint check-username
                 if (foundUsers.length === 0) {
                     try {
                         const response = await fetch(`${BACKEND_URL}/api/auth/check-username`, {
