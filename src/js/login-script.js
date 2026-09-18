@@ -13,8 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const passwordInput = document.getElementById('password_login');
     const securityCodeInput = document.getElementById('security-code');
 
-    const verifyCodeButton = document.getElementById('verify-code-button');
-    const goBackButton = document.getElementById('go-back-login');
+    // Configurar enlaces OAuth dinámicos para que vuelvan al frontend correcto
+    const btnGoogle = document.getElementById('btn-login-google');
+    const btnMicrosoft = document.getElementById('btn-login-microsoft');
+    const currentOrigin = window.location.origin;
+
+    if (btnGoogle) {
+        btnGoogle.href = `${BACKEND_URL}/login/google?return_to=${encodeURIComponent(currentOrigin)}`;
+    }
+    if (btnMicrosoft) {
+        btnMicrosoft.href = `${BACKEND_URL}/login/microsoft?return_to=${encodeURIComponent(currentOrigin)}`;
+    }
 
     // Asegurarnos de que solo se ejecute si el formulario de login existe en la página
     if (loginForm) {
