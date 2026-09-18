@@ -1,6 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const BACKEND_URL = 'https://glauncher-api.onrender.com';
+    const BACKEND_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? 'http://localhost:3000'
+        : 'https://glauncher-api.onrender.com';
     const registerForm = document.getElementById('register-form');
+
+    // Configurar enlaces OAuth dinámicos para que vuelvan al frontend correcto
+    const btnGoogle = document.getElementById('btn-reg-google');
+    const btnMicrosoft = document.getElementById('btn-reg-microsoft');
+    const currentOrigin = window.location.origin;
+
+    if (btnGoogle) {
+        btnGoogle.href = `${BACKEND_URL}/login/google?return_to=${encodeURIComponent(currentOrigin)}`;
+    }
+    if (btnMicrosoft) {
+        btnMicrosoft.href = `${BACKEND_URL}/login/microsoft?return_to=${encodeURIComponent(currentOrigin)}`;
+    }
 
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
