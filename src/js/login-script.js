@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const usernameInput = document.getElementById('username_login');
     const passwordInput = document.getElementById('password_login');
     const securityCodeInput = document.getElementById('security-code');
+    const verifyCodeButton = document.getElementById('verify-code-button');
+    const goBackLogin = document.getElementById('go-back-login');
 
     // Configurar enlaces OAuth dinámicos para que vuelvan al frontend correcto
     const btnGoogle = document.getElementById('btn-login-google');
@@ -111,13 +113,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // --- Funcionalidad del botón "Volver" ---
-        goBackButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            codeEntrySection.style.display = 'none';
-            credentialsSection.style.display = 'block';
-            passwordInput.value = ''; // Limpiar contraseña por seguridad
-            securityCodeInput.value = '';
-        });
+        if (goBackLogin) {
+            goBackLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                codeEntrySection.style.display = 'none';
+                credentialsSection.style.display = 'block';
+                passwordInput.value = ''; // Limpiar contraseña por seguridad
+                securityCodeInput.value = '';
+            });
+        }
 
         // --- Mejora UX: Permitir solo números en el código de seguridad ---
         securityCodeInput.addEventListener('input', () => {
