@@ -15,13 +15,13 @@
 
   <!-- Descargas -->
   <url>
-    <loc>https://glauncher.vercel.app/download</loc>
+    <loc>https://glauncher.vercel.app/src/html/download</loc>
     <lastmod>2026-09-24T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://glauncher.vercel.app/download.html</loc>
+    <loc>https://glauncher.vercel.app/src/html/download.html</loc>
     <lastmod>2026-09-24T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
@@ -29,13 +29,13 @@
 
   <!-- Noticias -->
   <url>
-    <loc>https://glauncher.vercel.app/noticias</loc>
+    <loc>https://glauncher.vercel.app/src/html/noticias</loc>
     <lastmod>2026-09-24T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://glauncher.vercel.app/noticias.html</loc>
+    <loc>https://glauncher.vercel.app/src/html/noticias.html</loc>
     <lastmod>2026-09-24T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.75</priority>
@@ -43,13 +43,13 @@
 
   <!-- Tienda -->
   <url>
-    <loc>https://glauncher.vercel.app/shop</loc>
+    <loc>https://glauncher.vercel.app/src/html/shop</loc>
     <lastmod>2026-09-24T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://glauncher.vercel.app/shop.html</loc>
+    <loc>https://glauncher.vercel.app/src/html/shop.html</loc>
     <lastmod>2026-09-24T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.75</priority>
@@ -57,37 +57,37 @@
 
   <!-- Dashboard y Autenticación -->
   <url>
-    <loc>https://glauncher.vercel.app/dashboard</loc>
+    <loc>https://glauncher.vercel.app/src/html/dashboard</loc>
     <lastmod>2026-09-24T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://glauncher.vercel.app/dashboard.html</loc>
+    <loc>https://glauncher.vercel.app/src/html/dashboard.html</loc>
     <lastmod>2026-09-24T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://glauncher.vercel.app/login</loc>
+    <loc>https://glauncher.vercel.app/src/html/login</loc>
     <lastmod>2026-09-24T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://glauncher.vercel.app/login.html</loc>
+    <loc>https://glauncher.vercel.app/src/html/login.html</loc>
     <lastmod>2026-09-24T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
-    <loc>https://glauncher.vercel.app/register</loc>
+    <loc>https://glauncher.vercel.app/src/html/register</loc>
     <lastmod>2026-09-24T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://glauncher.vercel.app/register.html</loc>
+    <loc>https://glauncher.vercel.app/src/html/register.html</loc>
     <lastmod>2026-09-24T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
@@ -95,25 +95,25 @@
 
   <!-- Políticas Legales -->
   <url>
-    <loc>https://glauncher.vercel.app/privacy-policy</loc>
+    <loc>https://glauncher.vercel.app/src/html/privacy-policy</loc>
     <lastmod>2026-09-24T00:00:00+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.50</priority>
   </url>
   <url>
-    <loc>https://glauncher.vercel.app/privacy-policy.html</loc>
+    <loc>https://glauncher.vercel.app/src/html/privacy-policy.html</loc>
     <lastmod>2026-09-24T00:00:00+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.50</priority>
   </url>
   <url>
-    <loc>https://glauncher.vercel.app/terms-and-conditions</loc>
+    <loc>https://glauncher.vercel.app/src/html/terms-and-conditions</loc>
     <lastmod>2026-09-24T00:00:00+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.50</priority>
   </url>
   <url>
-    <loc>https://glauncher.vercel.app/terms-and-conditions.html</loc>
+    <loc>https://glauncher.vercel.app/src/html/terms-and-conditions.html</loc>
     <lastmod>2026-09-24T00:00:00+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.50</priority>
