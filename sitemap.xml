@@ -5,50 +5,118 @@
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
-<url>
-  <loc>https://glauncher.vercel.app/</loc>
-  <lastmod>2026-03-30T00:00:00+00:00</lastmod>
-  <priority>1.00</priority>
-</url>
-<url>
-  <loc>https://glauncher.vercel.app/noticias.html</loc>
-  <lastmod>2026-03-30T00:00:00+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://glauncher.vercel.app/shop.html</loc>
-  <lastmod>2026-03-30T00:00:00+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://glauncher.vercel.app/download.html</loc>
-  <lastmod>2026-03-30T00:00:00+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://glauncher.vercel.app/dashboard.html</loc>
-  <lastmod>2026-03-30T00:00:00+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://glauncher.vercel.app/login.html</loc>
-  <lastmod>2026-03-30T00:00:00+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://glauncher.vercel.app/register.html</loc>
-  <lastmod>2026-03-30T00:00:00+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://glauncher.vercel.app/privacy-policy.html</loc>
-  <lastmod>2026-03-30T00:00:00+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://glauncher.vercel.app/terms-and-conditions.html</loc>
-  <lastmod>2026-03-30T00:00:00+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
+  <!-- Página Principal -->
+  <url>
+    <loc>https://glauncher.vercel.app/</loc>
+    <lastmod>2026-09-24T00:00:00+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.00</priority>
+  </url>
+
+  <!-- Descargas -->
+  <url>
+    <loc>https://glauncher.vercel.app/download</loc>
+    <lastmod>2026-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://glauncher.vercel.app/download.html</loc>
+    <lastmod>2026-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- Noticias -->
+  <url>
+    <loc>https://glauncher.vercel.app/noticias</loc>
+    <lastmod>2026-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://glauncher.vercel.app/noticias.html</loc>
+    <lastmod>2026-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <!-- Tienda -->
+  <url>
+    <loc>https://glauncher.vercel.app/shop</loc>
+    <lastmod>2026-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://glauncher.vercel.app/shop.html</loc>
+    <lastmod>2026-09-24T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <!-- Dashboard y Autenticación -->
+  <url>
+    <loc>https://glauncher.vercel.app/dashboard</loc>
+    <lastmod>2026-09-24T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://glauncher.vercel.app/dashboard.html</loc>
+    <lastmod>2026-09-24T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://glauncher.vercel.app/login</loc>
+    <lastmod>2026-09-24T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://glauncher.vercel.app/login.html</loc>
+    <lastmod>2026-09-24T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://glauncher.vercel.app/register</loc>
+    <lastmod>2026-09-24T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://glauncher.vercel.app/register.html</loc>
+    <lastmod>2026-09-24T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+
+  <!-- Políticas Legales -->
+  <url>
+    <loc>https://glauncher.vercel.app/privacy-policy</loc>
+    <lastmod>2026-09-24T00:00:00+00:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.50</priority>
+  </url>
+  <url>
+    <loc>https://glauncher.vercel.app/privacy-policy.html</loc>
+    <lastmod>2026-09-24T00:00:00+00:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.50</priority>
+  </url>
+  <url>
+    <loc>https://glauncher.vercel.app/terms-and-conditions</loc>
+    <lastmod>2026-09-24T00:00:00+00:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.50</priority>
+  </url>
+  <url>
+    <loc>https://glauncher.vercel.app/terms-and-conditions.html</loc>
+    <lastmod>2026-09-24T00:00:00+00:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.50</priority>
+  </url>
 
 </urlset>
