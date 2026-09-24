@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <title>Para Victoria ✨</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6.5.1 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #09090b;
+      --card-bg: rgba(18, 18, 22, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent: #f43f5e;
+      --accent-hover: #e11d48;
+      --purple: #8b5cf6;
+      --text: #fafafa;
+      --text-muted: #a1a1aa;
+      --radius: 20px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Scrollbar personalizada para Firefox */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(244, 63, 94, 0.4) transparent;
+    }
+
+    /* Scrollbar personalizada para Chrome, Safari, Edge y WebKit */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #f43f5e, #8b5cf6);
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #fb7185, #a855f7);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+      background-image: 
+        radial-gradient(at 15% 15%, rgba(244, 63, 94, 0.12) 0px, transparent 50%),
+        radial-gradient(at 85% 85%, rgba(139, 92, 246, 0.12) 0px, transparent 50%);
+    }
+
+    /* Partículas sutiles de fondo */
+    .ambient-particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .ambient-dot {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      from { transform: translateY(105vh); opacity: 0; }
+      20% { opacity: 0.6; }
+      80% { opacity: 0.6; }
+      to { transform: translateY(-10vh); opacity: 0; }
+    }
+
+    /* Contenedor */
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 480px;
+      margin: auto;
+    }
+
+    /* Tarjeta principal */
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 40px 32px 36px;
+      text-align: center;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      border-color: rgba(255, 255, 255, 0.14);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Icono central de regalo interactivo */
+    .gift-btn {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 20px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.15), rgba(139, 92, 246, 0.15));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      color: #fb7185;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 8px 20px -6px rgba(244, 63, 94, 0.25);
+    }
+
+    .gift-btn:hover {
+      transform: scale(1.08) translateY(-2px);
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.25), rgba(139, 92, 246, 0.25));
+      border-color: rgba(244, 63, 94, 0.4);
+      color: #fff;
+    }
+
+    .gift-btn:active {
+      transform: scale(0.95);
+    }
+
+    .gift-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: -10px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .gift-hint:hover {
+      color: #fb7185;
+    }
+
+    /* Tag de estado */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 100px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      background: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #22c55e;
+    }
+
+    /* Título principal con máquina de escribir */
+    h1 {
+      font-size: clamp(1.75rem, 5vw, 2.3rem);
+      font-weight: 800;
+      letter-spacing: normal;
+      line-height: 1.3;
+      margin-bottom: 12px;
+      cursor: pointer;
+      user-select: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .greeting-prefix {
+      color: var(--text);
+    }
+
+    .name-target {
+      background: linear-gradient(135deg, #ffffff 40%, #fda4af 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-left: 0.25em;
+    }
+
+    .title-icon {
+      font-size: 1.15rem;
+      color: #f43f5e;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.1em;
+      background: #f43f5e;
+      margin-left: 2px;
+      animation: blink 0.8s infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* Mensaje descriptivo */
+    .desc-wrapper {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+
+    .desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      max-width: 380px;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    /* Botón de descarga principal */
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 15px 24px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #f43f5e, #e11d48);
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.98rem;
+      letter-spacing: -0.01em;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 10px 25px -5px rgba(244, 63, 94, 0.4);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px -4px rgba(244, 63, 94, 0.5);
+      background: linear-gradient(135deg, #fb7185, #f43f5e);
+    }
+
+    .download-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Acciones secundarias */
+    .secondary-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .action-sub-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      padding: 9px 15px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .action-sub-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.22);
+      transform: translateY(-1px);
+    }
+
+    /* Modal Tutorial */
+    .tuto-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 22px;
+      text-align: left;
+    }
+
+    .tuto-step {
+      display: flex;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(244, 63, 94, 0.18);
+      color: #fb7185;
+      font-weight: 700;
+      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-text h4 {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #fafafa;
+      margin-bottom: 3px;
+    }
+
+    .step-text p {
+      font-size: 0.8rem;
+      color: #a1a1aa;
+      line-height: 1.45;
+    }
+
+    .protect-alert {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.78rem;
+      color: #fde68a;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .protect-alert i {
+      color: #f59e0b;
+      margin-top: 2px;
+    }
+
+    /* Footer discreto */
+    .footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 0.8rem;
+      color: #71717a;
+    }
+
+    .footer span {
+      color: #a1a1aa;
+      font-weight: 500;
+    }
+
+    /* Modal de mensaje / carta */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .note-modal {
+      background: #18181b;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      max-width: 440px;
+      width: 100%;
+      max-height: 88vh;
+      max-height: 88dvh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 30px 24px 24px;
+      color: var(--text);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      transform: translateY(20px) scale(0.96);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-backdrop.active .note-modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .note-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .note-title {
+      font-family: 'Caveat', cursive;
+      font-size: 1.85rem;
+      color: #fda4af;
+      font-weight: 700;
+    }
+
+    .note-content {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: #d4d4d8;
+      margin-bottom: 22px;
+      white-space: pre-line;
+    }
+
+    .note-signature {
+      font-family: 'Caveat', cursive;
+      font-size: 1.5rem;
+      color: #fb7185;
+      text-align: right;
+      margin-bottom: 20px;
+    }
+
+    .note-close {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text);
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .note-close:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Botón flotante de audio */
+    .audio-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(24, 24, 27, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s ease;
+      z-index: 10;
+    }
+
+    .audio-btn:hover {
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: scale(1.06);
+    }
+
+    .audio-btn.playing {
+      color: #fb7185;
+      border-color: rgba(251, 113, 133, 0.4);
+    }
+
+    /* Corazón flotante al hacer clic */
+    .click-icon {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      color: #fb7185;
+      font-size: 1.1rem;
+      animation: floatBurst 1s ease-out forwards;
+    }
+
+    @keyframes floatBurst {
+      0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+      100% { transform: translate(calc(-50% + var(--dx)), calc(-50% - 60px)) scale(1.2); opacity: 0; }
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 32px 20px 28px; }
+      h1 { font-size: 1.65rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Partículas de ambiente -->
+  <div class="ambient-particles" id="ambientParticles"></div>
+
+  <div class="wrapper">
+    <div class="card">
+      
+      <!-- Icono interactivo estilo FontAwesome -->
+      <div class="gift-btn" id="giftButton" title="Toca aquí">
+        <i class="fa-solid fa-gift" id="giftIcon"></i>
+      </div>
+      <div class="gift-hint" id="giftHint">
+        <i class="fa-regular fa-lightbulb"></i>
+        <span>Toca la cajita para ver mensajes</span>
+      </div>
+
+      <div class="badge">
+        <span class="badge-dot"></span>
+        <span>Versión especial</span>
+      </div>
+
+      <!-- Título: Vicky fijo y solo rota el saludo -->
+      <h1 id="titleContainer" title="Haz clic para cambiar el saludo">
+        <span class="greeting-prefix" id="greetingPrefix">Hola</span>, <span class="name-target">Vicky</span>
+        <i class="fa-solid fa-sparkles title-icon" id="titleIcon"></i>
+        <span class="cursor"></span>
+      </h1>
+
+      <div class="desc-wrapper">
+        <p class="desc" id="messageText">
+          Preparé este pequeño detalle para ti con mucho aprecio. Espero que disfrutes mucho el juego y te diviertas.
+        </p>
+      </div>
+
+      <!-- Botón de Descarga Principal -->
+      <a href="https://file.mcpedl.org/uploads_files/16-09-2026/minecraft-26-51-music.apk" class="download-btn" id="downloadBtn" download>
+        <i class="fa-solid fa-download"></i>
+        <span>Descargar Minecraft</span>
+      </a>
+
+      <!-- Botones secundarios -->
+      <div class="secondary-actions">
+        <button class="action-sub-btn" id="openNoteBtn">
+          <i class="fa-regular fa-envelope"></i>
+          <span>Leer cartita</span>
+        </button>
+        <button class="action-sub-btn" id="openTutoBtn">
+          <i class="fa-solid fa-circle-question"></i>
+          <span>¿Cómo instalar? (Paso a paso)</span>
+        </button>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      Hecho por <span>Daniel Alejandro</span> para <span>Victoria</span>
+    </div>
+  </div>
+
+  <!-- 💌 Modal con cartita mejorada -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="note-modal">
+      <div class="note-header">
+        <h2 class="note-title">Para mi Vicky,</h2>
+        <i class="fa-solid fa-paper-plane" style="color: #fda4af;"></i>
+      </div>
+      <div class="note-content">
+Quería prepararte este pequeño detalle para recordarte lo especial que eres para mí y lo mucho que valoro cada momento que compartimos.
+
+Por que tú eres la victoria de mi vida y como tu no hay ninguna por tu corazon mas bello y hermoso que tienes con los demas. Me encanta verte sonreír, jugar juntos y compartir risas. 
+
+Gracias por ser tan única, linda y maravillosa siempre.
+      </div>
+      <div class="note-signature">
+        Con todo mi cariño,<br>
+        Daniel Alejandro ✨
+      </div>
+      <button class="note-close" id="closeNoteBtn">
+        <i class="fa-solid fa-check" style="margin-right: 6px;"></i> Guardar con aprecio
+      </button>
+    </div>
+  </div>
+
+  <!-- 📱 Modal: Tutorial Paso a Paso + Play Protect -->
+  <div class="modal-backdrop" id="tutoModalBackdrop">
+    <div class="note-modal" style="max-width: 480px;">
+      <div class="note-header">
+        <h2 class="note-title" style="font-size: 1.5rem; color: #fff;">Guía de instalación 🎮</h2>
+        <i class="fa-solid fa-mobile-screen-button" style="color: #fb7185;"></i>
+      </div>
+
+      <div class="protect-alert">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <div>
+          <strong>Si Play Protect bloquea la instalación:</strong><br>
+          Como se descarga directo desde el navegador (fuera de la tienda), Android suele mostrar una advertencia preventiva.
+        </div>
+      </div>
+
+      <div class="tuto-steps">
+        <div class="tuto-step">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            <h4>Descarga el archivo APK</h4>
+            <p>Toca el botón rojo <strong>"Descargar Minecraft"</strong> y espera a que se complete la descarga en tu celular.</p>
+          </div>
+        </div>
+
+        <div class="tuto-step">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            <h4>Desactivar Play Protect (por un momento)</h4>
+            <p>Abre la <strong>Google Play Store</strong> ➔ toca tu <strong>foto de perfil</strong> arriba a la derecha ➔ entra en <strong>Play Protect</strong> ➔ toca la <strong>ruedita de ajustes ⚙️</strong> arriba a la derecha ➔ desactiva <em>"Analizar las apps con Play Protect"</em>.</p>
+          </div>
+        </div>
+
+        <div class="tuto-step">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            <h4>Instalar el juego</h4>
+            <p>Ve a tus <strong>Descargas</strong> o toca la notificación del archivo descargado, selecciona <strong>Instalar</strong> (si te pide permiso de "fuentes desconocidas", dale aceptar) y ¡listo!</p>
+          </div>
+        </div>
+
+        <div class="tuto-step">
+          <div class="step-num">4</div>
+          <div class="step-text">
+            <h4>Vuelve a activar Play Protect</h4>
+            <p>Una vez que Minecraft esté instalado en tu pantalla de inicio, regresa a la Play Store y vuelve a encender Play Protect con total normalidad. ✨</p>
+          </div>
+        </div>
+      </div>
+
+      <button class="note-close" id="closeTutoBtn">
+        <i class="fa-solid fa-thumbs-up" style="margin-right: 6px;"></i> Entendido, ¡a jugar!
+      </button>
+    </div>
+  </div>
+
+  <!-- Botón de música ambiental -->
+  <button class="audio-btn" id="audioToggle" title="Música ambiental suave">
+    <i class="fa-solid fa-music"></i>
+  </button>
+  <audio id="bgAudio" loop preload="none">
+    <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // 1. Partículas sutiles
+    const particlesContainer = document.getElementById('ambientParticles');
+    for (let i = 0; i < 25; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'ambient-dot';
+      dot.style.left = Math.random() * 100 + '%';
+      dot.style.animationDuration = (8 + Math.random() * 8) + 's';
+      dot.style.animationDelay = (Math.random() * 5) + 's';
+      particlesContainer.appendChild(dot);
+    }
+
+    // 2. Múltiples saludos dinámicos (¡Vicky queda 100% fijo, solo se modifica el saludo!)
+    const greetings = [
+      { text: "Hola", icon: "fa-sparkles" },
+      { text: "Bienvenida", icon: "fa-star" },
+      { text: "¿Qué tal?", icon: "fa-gamepad" },
+      { text: "Un gusto verte", icon: "fa-face-smile" },
+      { text: "Especialmente para ti", icon: "fa-gift" },
+      { text: "Que tengas lindo día", icon: "fa-sun" },
+      { text: "Con mucho aprecio", icon: "fa-heart" },
+      { text: "Sonríe", icon: "fa-smile-beam" },
+      { text: "Mi jugadora favorita", icon: "fa-crown" },
+      { text: "Lista para jugar", icon: "fa-wand-magic-sparkles" },
+      { text: "La más pro", icon: "fa-fire" },
+      { text: "Siempre genial", icon: "fa-thumbs-up" }
+    ];
+
+    let currentGreeting = 0;
+    const prefixEl = document.getElementById('greetingPrefix');
+    const titleIconEl = document.getElementById('titleIcon');
+    const titleContainer = document.getElementById('titleContainer');
+    let isTyping = false;
+
+    async function setGreeting(item) {
+      isTyping = true;
+      let text = prefixEl.innerText;
+      while (text.length > 0) {
+        text = text.slice(0, -1);
+        prefixEl.innerText = text;
+        await new Promise(r => setTimeout(r, 40));
+      }
+      await new Promise(r => setTimeout(r, 160));
+      for (let i = 0; i < item.text.length; i++) {
+        prefixEl.innerText += item.text[i];
+        await new Promise(r => setTimeout(r, 60));
+      }
+      titleIconEl.className = `fa-solid ${item.icon} title-icon`;
+      isTyping = false;
+    }
+
+    setInterval(() => {
+      if (!isTyping) {
+        currentGreeting = (currentGreeting + 1) % greetings.length;
+        setGreeting(greetings[currentGreeting]);
+      }
+    }, 4500);
+
+    titleContainer.addEventListener('click', (e) => {
+      if (isTyping) return;
+      currentGreeting = (currentGreeting + 1) % greetings.length;
+      setGreeting(greetings[currentGreeting]);
+      spawnClickIcon(e.clientX, e.clientY, 'fa-heart');
+    });
+
+    // 3. Mensajes interactivos de la caja de regalo (FontAwesome + variedad)
+    const giftButton = document.getElementById('giftButton');
+    const giftIcon = document.getElementById('giftIcon');
+    const messageText = document.getElementById('messageText');
+    const giftHint = document.getElementById('giftHint');
+    let giftIndex = 0;
+
+    const secretMessages = [
+      { text: "Tú eres la victoria de mi vida. ✨", icon: "fa-heart" },
+      { text: "Victoria, siempre es genial compartir momentos y risas contigo. ✨", icon: "fa-star" },
+      { text: "¡Eres la mejor compañera de juego! Vamos a hacer construcciones increíbles. 🎮", icon: "fa-gamepad" },
+      { text: "Espero que te diviertas un montón jugando, te lo mereces. 🌸", icon: "fa-flower" },
+      { text: "Mejor que encontrar diamantes en la primera cueva. 💎", icon: "fa-gem" },
+      { text: "Hice cada detalle de esta página pensando en sacarte una sonrisa. 😊", icon: "fa-face-smile" },
+      { text: "Prometo no robarte los minerales ni tirarte a la lava en el juego 😂", icon: "fa-shield-halved" },
+      { text: "Tú pones las antorchas y yo cuido que los creepers no te exploten 🏹", icon: "fa-bow-arrow" },
+      { text: "Si construimos una casita en el juego, tú eliges toda la decoración 🏡", icon: "fa-house" },
+      { text: "La próxima misión es explorar una fortaleza juntos ⚔️", icon: "fa-compass" },
+      { text: "Nivel de jugadora pro: 100/100 🔥", icon: "fa-fire" }
+    ];
+
+    giftButton.addEventListener('click', (e) => {
+      giftIndex++;
+      const current = secretMessages[giftIndex % secretMessages.length];
+
+      messageText.style.opacity = '0';
+      messageText.style.transform = 'translateY(6px)';
+
+      setTimeout(() => {
+        messageText.innerText = current.text;
+        messageText.style.opacity = '1';
+        messageText.style.transform = 'translateY(0)';
+      }, 200);
+
+      giftIcon.className = `fa-solid ${current.icon || 'fa-gift'}`;
+      giftHint.querySelector('span').innerText = `Mensaje secreto #${(giftIndex % secretMessages.length) + 1}`;
+
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 25,
+          spread: 50,
+          origin: {
+            x: e.clientX / window.innerWidth,
+            y: e.clientY / window.innerHeight
+          },
+          colors: ['#fb7185', '#f43f5e', '#ffffff']
+        });
+      }
+
+      spawnClickIcon(e.clientX, e.clientY, 'fa-heart');
+    });
+
+    // 4. Modales: Cartita y Tutorial
+    const openNoteBtn = document.getElementById('openNoteBtn');
+    const closeNoteBtn = document.getElementById('closeNoteBtn');
+    const modalBackdrop = document.getElementById('modalBackdrop');
+
+    const openTutoBtn = document.getElementById('openTutoBtn');
+    const closeTutoBtn = document.getElementById('closeTutoBtn');
+    const tutoModalBackdrop = document.getElementById('tutoModalBackdrop');
+
+    // Cartita
+    openNoteBtn.addEventListener('click', () => {
+      modalBackdrop.classList.add('active');
+    });
+
+    closeNoteBtn.addEventListener('click', () => {
+      modalBackdrop.classList.remove('active');
+    });
+
+    modalBackdrop.addEventListener('click', (e) => {
+      if (e.target === modalBackdrop) {
+        modalBackdrop.classList.remove('active');
+      }
+    });
+
+    // Tutorial
+    openTutoBtn.addEventListener('click', () => {
+      tutoModalBackdrop.classList.add('active');
+    });
+
+    closeTutoBtn.addEventListener('click', () => {
+      tutoModalBackdrop.classList.remove('active');
+    });
+
+    tutoModalBackdrop.addEventListener('click', (e) => {
+      if (e.target === tutoModalBackdrop) {
+        tutoModalBackdrop.classList.remove('active');
+      }
+    });
+
+    // 5. Botón de Descarga con confeti elegante
+    const downloadBtn = document.getElementById('downloadBtn');
+    downloadBtn.addEventListener('click', () => {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 70,
+          spread: 75,
+          origin: { y: 0.65 },
+          colors: ['#f43f5e', '#fb7185', '#8b5cf6', '#ffffff']
+        });
+      }
+    });
+
+    // 6. Efecto al hacer clic en pantalla
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('button') || e.target.closest('a')) return;
+      spawnClickIcon(e.clientX, e.clientY, 'fa-heart');
+    });
+
+    function spawnClickIcon(x, y, iconClass) {
+      const el = document.createElement('i');
+      el.className = `fa-solid ${iconClass || 'fa-heart'} click-icon`;
+      const dx = (Math.random() - 0.5) * 50 + 'px';
+      el.style.setProperty('--dx', dx);
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1000);
+    }
+
+    // 7. Música ambiental
+    const audioBtn = document.getElementById('audioToggle');
+    const bgAudio = document.getElementById('bgAudio');
+    let playing = false;
+
+    audioBtn.addEventListener('click', () => {
+      if (!playing) {
+        bgAudio.volume = 0.35;
+        bgAudio.play().then(() => {
+          playing = true;
+          audioBtn.classList.add('playing');
+          audioBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+        }).catch(() => {});
+      } else {
+        bgAudio.pause();
+        playing = false;
+        audioBtn.classList.remove('playing');
+        audioBtn.innerHTML = '<i class="fa-solid fa-music"></i>';
+      }
+    });
+  </script>
+</body>
+</html>
