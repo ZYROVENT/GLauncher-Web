@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Para Victoria 🎁</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050505;
+      --surface: rgba(20, 20, 20, 0.6);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.16);
+      --text: #f5f5f5;
+      --text-secondary: #8a8a8a;
+      --accent: #3b82f6;
+      --accent-2: #8b5cf6;
+      --accent-glow: rgba(59, 130, 246, 0.4);
+      --radius: 16px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow: hidden;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 🌌 Fondo con gradientes animados */
+    .bg-gradient {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.15), transparent),
+        radial-gradient(ellipse 60% 50% at 80% 100%, rgba(139, 92, 246, 0.12), transparent),
+        radial-gradient(ellipse 50% 50% at 0% 50%, rgba(236, 72, 153, 0.08), transparent);
+      animation: bgShift 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgShift {
+      0% { transform: scale(1) translate(0, 0); }
+      100% { transform: scale(1.1) translate(-20px, -10px); }
+    }
+
+    /* ✨ Grid sutil de fondo */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 80%);
+    }
+
+    /* 🌟 Partículas flotantes */
+    .particles {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: white;
+      opacity: 0;
+      box-shadow: 0 0 6px 1px rgba(255,255,255,0.6);
+      animation: rise linear infinite;
+    }
+
+    @keyframes rise {
+      0% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+      }
+      10% { opacity: 0.7; }
+      90% { opacity: 0.7; }
+      100% {
+        transform: translateY(-10vh) scale(1);
+        opacity: 0;
+      }
+    }
+
+    /* Contenedor principal */
+    .container {
+      width: 100%;
+      max-width: 560px;
+      position: relative;
+      z-index: 1;
+      animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 🃏 Tarjeta con glassmorphism */
+    .card {
+      position: relative;
+      background: var(--surface);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 56px 40px 48px;
+      text-align: center;
+      overflow: hidden;
+      box-shadow:
+        0 1px 0 0 rgba(255,255,255,0.06) inset,
+        0 20px 60px -10px rgba(0, 0, 0, 0.7),
+        0 0 80px -20px var(--accent-glow);
+    }
+
+    /* Línea superior luminosa */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 20%;
+      right: 20%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.8), rgba(139, 92, 246, 0.8), transparent);
+      filter: blur(0.5px);
+    }
+
+    /* Resplandor que sigue el mouse */
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        400px circle at var(--mx, 50%) var(--my, 50%),
+        rgba(59, 130, 246, 0.12),
+        transparent 40%
+      );
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+
+    .card:hover::after { opacity: 1; }
+
+    /* 🎁 Icono con halo */
+    .icon-wrapper {
+      position: relative;
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-wrapper::before {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, var(--accent), var(--accent-2), var(--accent));
+      filter: blur(14px);
+      opacity: 0.5;
+      animation: spin 6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .icon-box {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 22px;
+      background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+      border: 1px solid var(--border-hover);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.6rem;
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.08) inset,
+        0 10px 30px rgba(0,0,0,0.5);
+      animation: float 3.5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    /* 🏷️ Badge superior */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      color: var(--text-secondary);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+    }
+
+    .badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* Título */
+    h1 {
+      font-size: clamp(1.8rem, 5.5vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 18px;
+      background: linear-gradient(180deg, #ffffff 30%, #a0a0a0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Mensaje */
+    .message {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.7;
+      margin: 0 auto 36px;
+      max-width: 420px;
+    }
+
+    /* 🚀 Botón de descarga premium */
+    .download-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 16px 40px;
+      border-radius: 12px;
+      border: none;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      color: white;
+      text-decoration: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.3) inset,
+        0 -1px 0 rgba(0,0,0,0.3) inset,
+        0 10px 30px -5px var(--accent-glow);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.3s ease;
+      overflow: hidden;
+      width: 100%;
+      max-width: 340px;
+    }
+
+    .download-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .download-btn:hover::before { left: 100%; }
+
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.35) inset,
+        0 -1px 0 rgba(0,0,0,0.3) inset,
+        0 18px 40px -8px var(--accent-glow);
+    }
+
+    .download-btn:active {
+      transform: translateY(0) scale(0.99);
+    }
+
+    .download-btn .icon {
+      font-size: 1.15rem;
+      transition: transform 0.3s ease;
+    }
+
+    .download-btn:hover .icon {
+      transform: translateY(2px);
+    }
+
+    /* Nota */
+    .note {
+      margin-top: 18px;
+      font-size: 0.78rem;
+      color: #555;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .note svg {
+      width: 12px;
+      height: 12px;
+      opacity: 0.5;
+    }
+
+    /* Pie */
+    .footer {
+      text-align: center;
+      margin-top: 28px;
+      color: #444;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+    }
+
+    .footer .heart {
+      color: #ec4899;
+      animation: heartbeat 1.4s ease-in-out infinite;
+      display: inline-block;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.25); }
+      50% { transform: scale(1); }
+    }
+
+    /* Móvil */
+    @media (max-width: 480px) {
+      .card { padding: 44px 24px 36px; }
+      .icon-wrapper { width: 76px; height: 76px; }
+      .icon-box { font-size: 2.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Fondo -->
+  <div class="bg-gradient"></div>
+  <div class="bg-grid"></div>
+  <div class="particles" id="particles"></div>
+
+  <div class="container">
+    <div class="card" id="card">
+      <div class="icon-wrapper">
+        <div class="icon-box">🎁</div>
+      </div>
+
+      <div class="badge">
+        <span class="dot"></span>
+        Regalo especial
+      </div>
+
+      <h1>Hola, Victoria</h1>
+
+      <p class="message">
+        Te preparé este pequeño detalle con mucho cariño.
+        Espero que lo disfrutes y que te dé horas y horas de diversión. ✨
+      </p>
+
+      <!-- 👇 Aquí pones tu enlace en el href -->
+      <a href="" class="download-btn" download>
+        <span class="icon">⬇️</span>
+        <span>Descargar Minecraft</span>
+      </a>
+
+      <p class="note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2v20M2 12h20"/>
+        </svg>
+        Haz clic para comenzar la descarga
+      </p>
+    </div>
+
+    <div class="footer">
+      Hecho por Daniel Alejandro para Victoria
+    </div>
+  </div>
+
+  <script>
+    // ✨ Generar partículas
+    const particles = document.getElementById('particles');
+    const count = 30;
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDuration = (6 + Math.random() * 8) + 's';
+      p.style.animationDelay = (Math.random() * 8) + 's';
+      const size = 1 + Math.random() * 3;
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      particles.appendChild(p);
+    }
+
+    // 🖱️ Resplandor que sigue el mouse
+    const card = document.getElementById('card');
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      card.style.setProperty('--mx', x + '%');
+      card.style.setProperty('--my', y + '%');
+    });
+  </script>
+</body>
+</html>
