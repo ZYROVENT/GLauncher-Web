@@ -765,24 +765,58 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- LÓGICA DE LOGROS ---
-    function initializeAchievements(userData) {
+    async function initializeAchievements(userData, friendsData) {
         const achievements = [
-            { id: 'pioneer', title: 'Pionero', description: 'Regístrate durante la fase BETA.', icon: 'https://cdn-icons-png.flaticon.com/512/3135/3135789.png', recommended: true, isUnlocked: (data) => new Date(data.created_at || Date.now()) < new Date('2027-01-01') },
-            { id: 'socialite', title: 'Sociable', description: 'Agrega a tu primer amigo a tu lista.', icon: 'https://cdn-icons-png.flaticon.com/512/1256/1256650.png', recommended: true, isUnlocked: (data) => (data.friends_count || 0) > 0 },
-            { id: 'gamer', title: 'Veterano', description: 'Juega más de 10 horas con GLauncher.', icon: 'https://cdn-icons-png.flaticon.com/512/808/808439.png', recommended: false, isUnlocked: (data) => (data.play_time_seconds || 0) >= 36000 },
-            { id: 'rich', title: 'Adinerado', description: 'Acumula 1,000 GCoins en tu saldo.', icon: 'https://cdn-icons-png.flaticon.com/512/2933/2933116.png', recommended: false, isUnlocked: (data) => (data.gcoins || 0) >= 1000 },
+            { id: 'first_download', title: 'Iniciando el Viaje', description: 'Descarga tu primera versión de Minecraft.', icon: 'fa-download', color: '#00f3ff' },
+            { id: 'first_launch', title: 'Primer Despegue', description: 'Inicia el juego por primera vez desde GLauncher.', icon: 'fa-play', color: '#00f3ff' },
+            { id: 'melomano', title: 'Melómano', description: 'Escucha tu primera canción en GMusic.', icon: 'fa-music', color: '#ff00ff' },
+            { id: 'rey_del_pop', title: 'Rey del PoP', description: 'Escucha una canción de Michael Jackson en GMusic.', icon: 'fa-crown', color: '#f1c40f' },
+            { id: 'socializer', title: 'Socializador', description: 'Envía tu primer mensaje en el GChat global.', icon: 'fa-comments', color: '#48dbfb' },
+            { id: 'stylist', title: 'Estilista', description: 'Personaliza tu skin por primera vez.', icon: 'fa-shirt', color: '#feca57' },
+            { id: 'configurator', title: 'Configurador', description: 'Modifica los ajustes técnicos del launcher.', icon: 'fa-gear', color: '#95afc0' },
+            { id: 'mod_hunter', title: 'Cazador de Mods', description: 'Busca contenido en la galería de Modrinth.', icon: 'fa-cubes', color: '#ff9f43' },
+            { id: 'veteran', title: 'Veterano', description: 'Abre el launcher al menos 5 veces.', icon: 'fa-calendar-check', color: '#ff4757' },
+            { id: 'explorer', title: 'Explorador', description: 'Visita todas las pestañas de navegación.', icon: 'fa-map-location-dot', color: '#2ed573' },
+            { id: 'cleaner', title: 'Limpieza Profunda', description: 'Elimina un avatar antiguo del historial.', icon: 'fa-broom', color: '#70a1ff' },
+            { id: 'server_adder', title: 'Arquitecto de Redes', description: 'Agrega tu primer servidor personalizado a la lista.', icon: 'fa-network-wired', color: '#48dbfb' },
+            { id: 'ram_master', title: 'Maestro del Java', description: 'Asigna más de 8GB de memoria RAM al juego.', icon: 'fa-microchip', color: '#f1c40f' },
+            { id: 'old_school', title: 'A la Antigua', description: 'Juega una versión clásica de Minecraft.', icon: 'fa-clock-rotate-left', color: '#ff9f43' },
+            { id: 'bg_collector', title: 'Coleccionista', description: 'Añade fondos personalizados al launcher.', icon: 'fa-images', color: '#ff00ff' },
+            { id: 'fullscreen_king', title: 'Rey de la Pantalla', description: 'Juega en pantalla completa.', icon: 'fa-expand', color: '#2ed573' },
+            { id: 'modloader_expert', title: 'Experto en Modloaders', description: 'Instala un modloader para Minecraft.', icon: 'fa-wand-magic-sparkles', color: '#ff9f43' },
+            { id: 'safety_first', title: 'La Seguridad Primero', description: 'Configura una carpeta de juego independiente.', icon: 'fa-shield-halved', color: '#48dbfb' },
+            { id: 'pioneer', title: 'Pionero', description: 'Regístrate durante la fase BETA.', icon: 'fa-rocket', recommended: true, isUnlocked: data => new Date(data.created_at || Date.now()) < new Date('2027-01-01') },
+            { id: 'socialite', title: 'Sociable', description: 'Agrega a tu primer amigo a tu lista.', icon: 'fa-user-group', recommended: true, isUnlocked: () => (friendsData?.friends || []).length > 0 },
+            { id: 'gamer', title: 'Veterano web', description: 'Juega más de 10 horas con GLauncher.', icon: 'fa-gamepad', isUnlocked: data => (data.play_time_seconds || 0) >= 36000 },
+            { id: 'rich', title: 'Adinerado', description: 'Acumula 1,000 GCoins en tu saldo.', icon: 'fa-coins', isUnlocked: data => (data.gcoins || 0) >= 1000 }
         ];
-
         const grid = document.getElementById('achievements-grid');
         const filterButtons = document.querySelectorAll('.achievements-filter-controls .filter-btn');
 
         if (!grid) return;
 
+        let persistedIds = new Set();
+        if (token) {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/achievements/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) {
+                    const result = await response.json().catch(() => ({}));
+                    throw new Error(result.message || `Error ${response.status}`);
+                }
+                const records = await response.json();
+                persistedIds = new Set(records.map(record => record.achievement_id));
+            } catch (error) {
+                console.warn('No se pudieron cargar los logros guardados:', error);
+            }
+        }
+
         function renderAchievements(filter = 'all') {
             grid.innerHTML = '';
             const userAchievements = achievements.map(ach => ({
                 ...ach,
-                unlocked: ach.isUnlocked(userData)
+                unlocked: persistedIds.has(ach.id) || Boolean(ach.isUnlocked?.(userData))
             }));
 
             let filtered = userAchievements;
@@ -799,7 +833,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const card = document.createElement('div');
                 card.className = `achievement-card ${ach.unlocked ? 'unlocked' : 'locked'}`;
                 card.innerHTML = `
-                    <img src="${ach.icon}" class="achievement-icon" alt="${ach.title}">
+                    <i class="fas ${ach.icon} achievement-icon" aria-hidden="true" style="color: ${ach.color || '#00f3ff'}"></i>
                     <div class="achievement-info">
                         <h4 style="color: ${ach.unlocked ? 'var(--neon-green)' : 'var(--text-color-light)'}">${ach.title}</h4>
                         <p style="font-size: 0.85em; color: var(--text-color-dark); margin: 6px 0;">${ach.description}</p>
