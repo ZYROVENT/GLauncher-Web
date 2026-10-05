@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const BACKEND_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
         ? 'http://localhost:3000'
         : 'https://glauncher-api.onrender.com';
-    const DEFAULT_AVATAR_URL = 'https://crafatar.com/avatars/606e2ff0-ed77-4842-9d6c-e1d3321c7838?size=100&overlay';
+    const DEFAULT_AVATAR_URL = '../assets/images/avatars/default-avatar.png';
     const PUSHER_KEY = 'a2fb8d4323a44da53c63';
     const GIPHY_KEY = '1At7olUkhbz0QZOZCPdbbpYngyLOe3CS';
     const token = localStorage.getItem('glauncher_token');
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gcoins: 100,
             play_time_seconds: 0,
             status: 'Disponible',
-            avatar_url: `https://crafatar.com/avatars/${decodedToken.username || 'steve'}?size=100&overlay`,
+            avatar_url: DEFAULT_AVATAR_URL,
             owned_cosmetics: []
         };
 
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const userRole = document.getElementById('user-role');
         const userRoleContainer = document.getElementById('user-role-container');
 
-        if (navAvatar) navAvatar.src = userData.avatar_url || userData.profile_picture_url || DEFAULT_AVATAR_URL;
+        if (navAvatar) setAvatarSource(navAvatar, userData.avatar_url || userData.profile_picture_url);
         if (navUsername) navUsername.textContent = userData.username || 'Usuario';
         if (userRole) userRole.textContent = userData.role || 'Jugador';
         if (userRoleContainer) userRoleContainer.style.display = 'block';
@@ -175,6 +175,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 2500);
             });
         }
+    }
+
+    function setAvatarSource(image, source) {
+        if (!image) return;
+        image.onerror = () => {
+            image.onerror = null;
+            image.src = DEFAULT_AVATAR_URL;
+        };
+        image.src = source || DEFAULT_AVATAR_URL;
     }
 
     // --- POBLAR ESTADÍSTICAS ---
@@ -840,7 +849,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const usernameInput = document.getElementById('username-change');
 
         if (usernameInput) usernameInput.value = userData.username || '';
-        if (avatarPreview) avatarPreview.src = userData.avatar_url || userData.profile_picture_url || DEFAULT_AVATAR_URL;
+        if (avatarPreview) setAvatarSource(avatarPreview, userData.avatar_url || userData.profile_picture_url);
 
         if (avatarFileInput) {
             avatarFileInput.addEventListener('change', () => {
@@ -870,7 +879,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const formData = new FormData();
                 formData.append('username', newUsername);
                 if (avatarFileInput && avatarFileInput.files[0]) {
-                    formData.append('avatar', avatarFileInput.files[0]);
+                    formData.append('avatar_file', avatarFileInput.files[0]);
                 }
 
                 try {
@@ -883,14 +892,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     const result = await response.json();
                     if (!response.ok) throw new Error(result.message || 'No se pudo actualizar el perfil.');
 
-                    window.showNotification('¡Perfil actualizado con éxito!', 'success');
+                    const updatedUser = result.user || {};
                     const navUsername = document.getElementById('nav-username');
-                    if (navUsername) navUsername.textContent = newUsername;
+                    if (navUsername) navUsername.textContent = updatedUser.username || newUsername;
+                    if (updatedUser.avatar_url || updatedUser.profile_picture_url) {
+                        setAvatarSource(document.getElementById('nav-avatar'), updatedUser.avatar_url || updatedUser.profile_picture_url);
+                        setAvatarSource(avatarPreview, updatedUser.avatar_url || updatedUser.profile_picture_url);
+                    }
+                    if (result.token) localStorage.setItem('glauncher_token', result.token);
+                    window.showNotification(result.message || '¡Perfil actualizado con éxito!', 'success');
                 } catch (error) {
-                    // Actualización local de respaldo
-                    const navUsername = document.getElementById('nav-username');
-                    if (navUsername) navUsername.textContent = newUsername;
-                    window.showNotification('Perfil actualizado localmente.', 'success');
+                    window.showNotification(error.message || 'No se pudo actualizar el perfil.', 'error');
                 } finally {
                     if (saveBtn) {
                         saveBtn.disabled = false;
