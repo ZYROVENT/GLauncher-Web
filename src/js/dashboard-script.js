@@ -482,6 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let currentRecipient = null;
         let chatChannel = null;
         let pollTimer = null;
+        let replyingToMessage = null;
         const renderedMessageIds = new Set();
 
         if (!conversationList) return;
@@ -493,6 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         document.getElementById('gchat-gif-search-btn')?.addEventListener('click', searchGifs);
+        document.getElementById('gchat-reply-cancel')?.addEventListener('click', cancelReply);
         gifQuery?.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
                 event.preventDefault();
@@ -539,6 +541,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const friendName = target.dataset.friendName;
             currentRecipient = { id: friendId, username: friendName };
             renderedMessageIds.clear();
+            cancelReply();
             messagesContainer.replaceChildren();
             gifPicker.hidden = true;
 
@@ -595,6 +598,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const messageEl = document.createElement('div');
             const isSent = String(msg.sender_id) === String(userData.id);
             messageEl.className = `gchat-message ${isSent ? 'sent' : 'received'}`;
+            if (msg.id) messageEl.id = `gchat-message-${msg.id}`;
+            if (msg.reply_to_message_id && msg.reply_to_message !== null) {
+                const quote = document.createElement('button');
+                quote.className = 'gchat-message-reply-preview';
+                quote.type = 'button';
+                quote.addEventListener('click', () => {
+                    document.getElementById(`gchat-message-${msg.reply_to_message_id}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                });
+                const quoteAuthor = document.createElement('strong');
+                quoteAuthor.textContent = msg.reply_to_username || 'Mensaje';
+                const quoteText = document.createElement('span');
+                quoteText.textContent = isGiphyUrl(msg.reply_to_message) ? 'GIF' : msg.reply_to_message;
+                quote.append(quoteAuthor, quoteText);
+                messageEl.appendChild(quote);
+            }
             const gifUrl = isGiphyUrl(content) ? content : null;
             if (gifUrl) {
                 const image = document.createElement('img');
@@ -608,10 +626,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 text.textContent = content;
                 messageEl.appendChild(text);
             }
+            if (msg.id) {
+                const replyButton = document.createElement('button');
+                replyButton.className = 'gchat-message-reply';
+                replyButton.type = 'button';
+                replyButton.textContent = 'Responder';
+                replyButton.addEventListener('click', () => beginReply(msg));
+                messageEl.appendChild(replyButton);
+            }
             if (msg.id) renderedMessageIds.add(String(msg.id));
             messagesContainer.querySelector('.placeholder-content')?.remove();
             messagesContainer.appendChild(messageEl);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function beginReply(msg) {
+            replyingToMessage = msg;
+            document.getElementById('gchat-replying-author').textContent =
+                String(msg.sender_id) === String(userData.id) ? 'Respondiendo a ti' : (msg.sender_username || currentRecipient?.username || 'Amigo');
+            const content = msg.message ?? msg.content ?? '';
+            document.getElementById('gchat-replying-content').textContent = isGiphyUrl(content) ? 'GIF' : content;
+            document.getElementById('gchat-replying').hidden = false;
+            document.getElementById('gchat-message-input').focus();
+        }
+
+        function cancelReply() {
+            replyingToMessage = null;
+            const replyBar = document.getElementById('gchat-replying');
+            if (replyBar) replyBar.hidden = true;
         }
 
         function isGiphyUrl(value) {
@@ -639,21 +681,29 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const input = document.getElementById('gchat-message-input');
             const content = input.value.trim();
+            const recipientId = currentRecipient?.id;
+            const replyToMessageId = replyingToMessage?.id || null;
 
-            if (!content || !currentRecipient) return;
+            if (!content || !recipientId) return;
 
             try {
-                const response = await fetch(`${BACKEND_URL}/api/gchat/send/${currentRecipient.id}`, {
+                const response = await fetch(`${BACKEND_URL}/api/gchat/send/${recipientId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ content })
+                    body: JSON.stringify({ content, replyToMessageId })
                 });
                 if (!response.ok) {
                     throw new Error(`No se pudo enviar el mensaje (${response.status}).`);
                 }
-                renderPrivateMessage(await response.json());
-                if (input.value.trim() === content) input.value = '';
-                gifPicker.hidden = true;
+                const sentMessage = await response.json();
+                if (String(currentRecipient?.id) === String(recipientId)) {
+                    renderPrivateMessage(sentMessage);
+                    if (replyingToMessage?.id === replyToMessageId) cancelReply();
+                    gifPicker.hidden = true;
+                }
+                if (String(currentRecipient?.id) === String(recipientId) && input.value.trim() === content) {
+                    input.value = '';
+                }
             } catch (error) {
                 window.showNotification(error.message, 'error');
             }

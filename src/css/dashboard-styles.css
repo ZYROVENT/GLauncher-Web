@@ -255,7 +255,8 @@
 .gchat-container {
     display: grid;
     grid-template-columns: 280px 1fr;
-    height: 65vh;
+    height: min(65vh, calc(100vh - 250px));
+    min-height: 340px;
     border: 1px solid rgba(0, 243, 255, 0.25);
     border-radius: 16px;
     background: rgba(22, 27, 34, 0.9);
@@ -265,6 +266,7 @@
 }
 
 .gchat-sidebar {
+    min-height: 0;
     background: rgba(13, 17, 23, 0.85);
     border-right: 1px solid rgba(0, 243, 255, 0.15);
     display: flex;
@@ -311,6 +313,7 @@
 
 .gchat-main {
     display: flex;
+    min-height: 0;
     flex-direction: column;
     background: rgba(22, 27, 34, 0.7);
     position: relative;
@@ -336,6 +339,7 @@
 
 .gchat-messages-container {
     flex-grow: 1;
+    min-height: 0;
     overflow-y: auto;
     padding: 20px;
     display: flex;
@@ -344,12 +348,83 @@
 }
 
 .gchat-message {
+    position: relative;
     max-width: 70%;
     padding: 12px 18px;
     border-radius: 14px;
     font-size: 0.95em;
     line-height: 1.5;
     word-wrap: break-word;
+}
+
+.gchat-message-reply,
+.gchat-message-reply-preview {
+    max-width: 100%;
+    border: 0;
+    color: #c6d7e8;
+    background: rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    text-align: left;
+}
+
+.gchat-message-reply {
+    display: block;
+    margin: 6px 0 0 auto;
+    padding: 2px 4px;
+    color: var(--neon-blue);
+    font-size: 0.72rem;
+}
+
+.gchat-message-reply-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+    margin: 0 0 8px;
+    padding: 6px 8px;
+    border-left: 2px solid var(--neon-blue);
+    border-radius: 3px;
+    font-size: 0.72rem;
+    overflow: hidden;
+}
+
+.gchat-message-reply-preview span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gchat-replying {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 0 20px 8px;
+    padding: 7px 9px;
+    border-left: 3px solid var(--neon-blue);
+    border-radius: 6px;
+    background: rgba(0, 243, 255, 0.08);
+}
+
+.gchat-replying[hidden] {
+    display: none;
+}
+
+.gchat-replying > div {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+    font-size: 0.72rem;
+}
+
+.gchat-replying > div span {
+    overflow: hidden;
+    color: #c6d7e8;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .gchat-message.sent {
@@ -1228,10 +1303,12 @@ input:checked + .slider:before {
 
     .gchat-container {
         grid-template-columns: 1fr;
-        height: 70vh;
+        height: min(70vh, calc(100dvh - 190px));
+        min-height: 360px;
     }
 
     .gchat-sidebar {
+        min-height: 0;
         max-height: 180px;
     }
 
