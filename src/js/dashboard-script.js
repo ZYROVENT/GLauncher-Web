@@ -4,7 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
         : 'https://glauncher-api.onrender.com';
     const DEFAULT_AVATAR_URL = 'https://crafatar.com/avatars/606e2ff0-ed77-4842-9d6c-e1d3321c7838?size=100&overlay';
     const PUSHER_KEY = 'a2fb8d4323a44da53c63';
+    const GIPHY_KEY = '1At7olUkhbz0QZOZCPdbbpYngyLOe3CS';
     const token = localStorage.getItem('glauncher_token');
+    let realtimePusher = null;
 
     // --- INICIALIZAR NAVEGACIÓN POR PESTAÑAS ---
     if (window.initializeTabNavigation) {
@@ -474,10 +476,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const messagesContainer = document.getElementById('gchat-messages-container');
         const inputForm = document.getElementById('gchat-input-form');
         const welcomeScreen = document.getElementById('gchat-welcome-screen');
+        const gifPicker = document.getElementById('gchat-gif-picker');
+        const gifResults = document.getElementById('gchat-gif-results');
+        const gifQuery = document.getElementById('gchat-gif-query');
         let currentRecipient = null;
         let chatChannel = null;
+        let pollTimer = null;
+        const renderedMessageIds = new Set();
 
         if (!conversationList) return;
+        document.getElementById('gchat-gif-toggle')?.addEventListener('click', () => {
+            gifPicker.hidden = !gifPicker.hidden;
+            if (!gifPicker.hidden) {
+                gifQuery.focus();
+                searchGifs();
+            }
+        });
+        document.getElementById('gchat-gif-search-btn')?.addEventListener('click', searchGifs);
+        gifQuery?.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                searchGifs();
+            }
+        });
 
         // 1. Poblar conversaciones con amigos
         conversationList.innerHTML = '';
@@ -517,67 +538,98 @@ document.addEventListener('DOMContentLoaded', () => {
             const friendId = target.dataset.friendId;
             const friendName = target.dataset.friendName;
             currentRecipient = { id: friendId, username: friendName };
+            renderedMessageIds.clear();
+            messagesContainer.replaceChildren();
+            gifPicker.hidden = true;
 
             if (welcomeScreen) welcomeScreen.style.display = 'none';
             if (messagesContainer) messagesContainer.style.display = 'flex';
             if (inputForm) inputForm.style.display = 'flex';
 
             await loadChatHistory(friendId);
-            if (typeof pusher !== 'undefined') {
-                subscribeToChatChannel(userData.id, friendId);
-            }
+            subscribeToChatChannel(userData.id, friendId);
+            if (pollTimer) clearInterval(pollTimer);
+            pollTimer = setInterval(() => {
+                if (currentRecipient?.id === friendId) loadChatHistory(friendId);
+            }, 5000);
         });
 
         // 3. Cargar historial
         async function loadChatHistory(friendId) {
             if (!messagesContainer) return;
-            messagesContainer.innerHTML = '<div style="text-align: center; color: var(--neon-blue); padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Cargando mensajes...</div>';
             try {
                 const response = await fetch(`${BACKEND_URL}/api/gchat/history/${friendId}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (response.ok) {
-                    const messages = await response.json();
-                    messagesContainer.innerHTML = '';
-                    if (Array.isArray(messages) && messages.length > 0) {
-                        messages.forEach(renderPrivateMessage);
-                    } else {
-                        messagesContainer.innerHTML = '<p class="placeholder-content">No hay mensajes previos. ¡Escribe un saludo!</p>';
-                    }
-                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                } else {
-                    messagesContainer.innerHTML = '<p class="placeholder-content">Inicia la conversación.</p>';
+                if (!response.ok) {
+                    throw new Error(`No se pudo cargar el historial del chat (${response.status}).`);
+                }
+                const messages = await response.json();
+                if (currentRecipient?.id !== friendId) return;
+                messagesContainer.querySelector('.gchat-history-error')?.remove();
+                messages.forEach(renderPrivateMessage);
+                if (!renderedMessageIds.size) {
+                    const empty = document.createElement('p');
+                    empty.className = 'placeholder-content';
+                    empty.textContent = 'No hay mensajes previos. ¡Escribe un saludo!';
+                    messagesContainer.replaceChildren(empty);
                 }
             } catch (error) {
-                messagesContainer.innerHTML = '<p class="placeholder-content">Inicia la conversación.</p>';
+                if (currentRecipient?.id === friendId) {
+                    let failure = messagesContainer.querySelector('.gchat-history-error');
+                    if (!failure) {
+                        failure = document.createElement('p');
+                        failure.className = 'placeholder-content gchat-history-error';
+                        messagesContainer.appendChild(failure);
+                    }
+                    failure.textContent = error.message;
+                }
             }
         }
 
         // 4. Renderizar mensaje
         function renderPrivateMessage(msg) {
             if (!messagesContainer) return;
+            if (msg.id && renderedMessageIds.has(String(msg.id))) return;
+            const content = msg.content ?? msg.message ?? '';
             const messageEl = document.createElement('div');
-            const isSent = msg.sender_id === userData.id;
+            const isSent = String(msg.sender_id) === String(userData.id);
             messageEl.className = `gchat-message ${isSent ? 'sent' : 'received'}`;
-            messageEl.innerHTML = `<p>${msg.content}</p>`;
+            const gifUrl = isGiphyUrl(content) ? content : null;
+            if (gifUrl) {
+                const image = document.createElement('img');
+                image.src = gifUrl;
+                image.alt = 'GIF';
+                image.loading = 'lazy';
+                image.referrerPolicy = 'no-referrer';
+                messageEl.appendChild(image);
+            } else {
+                const text = document.createElement('p');
+                text.textContent = content;
+                messageEl.appendChild(text);
+            }
+            if (msg.id) renderedMessageIds.add(String(msg.id));
+            messagesContainer.querySelector('.placeholder-content')?.remove();
             messagesContainer.appendChild(messageEl);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
+        function isGiphyUrl(value) {
+            return typeof value === 'string' && /^https:\/\/(?:[\w-]+\.)*giphy\.com\/[^\s]*$/i.test(value);
+        }
+
         // 5. Suscripción Pusher
         function subscribeToChatChannel(userId, friendId) {
-            if (chatChannel && typeof pusher !== 'undefined') {
-                pusher.unsubscribe(chatChannel.name);
-            }
-
-            const channelName = `private-chat-${Math.min(userId, friendId)}-${Math.max(userId, friendId)}`;
-            chatChannel = pusher.subscribe(channelName);
-
-            chatChannel.bind('new_message', (data) => {
-                if (currentRecipient && (data.sender_id == currentRecipient.id || data.recipient_id == currentRecipient.id)) {
+            if (!realtimePusher) return;
+            if (chatChannel) realtimePusher.unsubscribe(chatChannel.name);
+            const channelName = `chat-${[String(userId), String(friendId)].sort().join('-')}`;
+            chatChannel = realtimePusher.subscribe(channelName);
+            chatChannel.bind('new-message', (data) => {
+                if (currentRecipient && (
+                    String(data.sender_id) === String(currentRecipient.id) ||
+                    String(data.receiver_id || data.recipient_id) === String(currentRecipient.id)
+                )) {
                     renderPrivateMessage(data);
-                } else {
-                    window.showNotification('Nuevo mensaje recibido en GChat.', 'info');
                 }
             });
         }
@@ -590,20 +642,67 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!content || !currentRecipient) return;
 
-            // Renderizado optimista
-            renderPrivateMessage({ sender_id: userData.id, content });
-            input.value = '';
-
             try {
-                await fetch(`${BACKEND_URL}/api/gchat/send/${currentRecipient.id}`, {
+                const response = await fetch(`${BACKEND_URL}/api/gchat/send/${currentRecipient.id}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     body: JSON.stringify({ content })
                 });
+                if (!response.ok) {
+                    throw new Error(`No se pudo enviar el mensaje (${response.status}).`);
+                }
+                renderPrivateMessage(await response.json());
+                if (input.value.trim() === content) input.value = '';
+                gifPicker.hidden = true;
             } catch (error) {
-                window.showNotification('No se pudo enviar el mensaje.', 'error');
+                window.showNotification(error.message, 'error');
             }
         });
+
+        async function searchGifs() {
+            gifResults.replaceChildren();
+            const loading = document.createElement('p');
+            loading.className = 'placeholder-content';
+            loading.textContent = 'Buscando GIFs...';
+            gifResults.appendChild(loading);
+            const query = gifQuery.value.trim() || 'minecraft';
+            try {
+                const response = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_KEY}&q=${encodeURIComponent(query)}&limit=12&rating=pg`);
+                if (!response.ok) throw new Error('Giphy no pudo completar la búsqueda.');
+                const data = await response.json();
+                gifResults.replaceChildren();
+                for (const gif of data.data || []) {
+                    const url = gif.images?.fixed_height?.url;
+                    if (!isGiphyUrl(url)) continue;
+                    const button = document.createElement('button');
+                    button.className = 'gchat-gif-option';
+                    button.type = 'button';
+                    button.setAttribute('aria-label', 'Enviar GIF');
+                    const image = document.createElement('img');
+                    image.src = url;
+                    image.alt = gif.title || 'GIF';
+                    image.loading = 'lazy';
+                    button.appendChild(image);
+                    button.addEventListener('click', () => {
+                        document.getElementById('gchat-message-input').value = url;
+                        inputForm.requestSubmit();
+                    });
+                    gifResults.appendChild(button);
+                }
+                if (!gifResults.childElementCount) {
+                    const empty = document.createElement('p');
+                    empty.className = 'placeholder-content';
+                    empty.textContent = 'No se encontraron GIFs.';
+                    gifResults.appendChild(empty);
+                }
+            } catch (error) {
+                gifResults.replaceChildren();
+                const failure = document.createElement('p');
+                failure.className = 'placeholder-content';
+                failure.textContent = error.message;
+                gifResults.appendChild(failure);
+            }
+        }
     }
 
     // --- LÓGICA DE LOGROS ---
@@ -943,9 +1042,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function initializeRealtimeNotifications(userData, friendsData) {
         if (typeof Pusher === 'undefined') return;
         try {
-            const pusher = new Pusher(PUSHER_KEY, {
-                cluster: 'us2'
-            });
+            if (!realtimePusher) {
+                realtimePusher = new Pusher(PUSHER_KEY, { cluster: 'us2' });
+            }
+            const pusher = realtimePusher;
 
             // Suscripción al canal personal del usuario (por ID y por username)
             const userChanId = pusher.subscribe(`user-${userData.id}`);

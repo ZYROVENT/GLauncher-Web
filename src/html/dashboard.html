@@ -142,8 +142,20 @@
                             <div id="gchat-messages-container" class="gchat-messages-container" style="display: none;">
                                 <!-- Los mensajes se cargarán aquí -->
                             </div>
+                            <div id="gchat-gif-picker" class="gchat-gif-picker" hidden>
+                                <div class="gchat-gif-search">
+                                    <input type="search" id="gchat-gif-query" placeholder="Buscar GIF..." maxlength="100">
+                                    <button type="button" id="gchat-gif-search-btn" class="action-btn" aria-label="Buscar GIF">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                                <div id="gchat-gif-results" class="gchat-gif-results" aria-live="polite"></div>
+                            </div>
                             <form id="gchat-input-form" class="gchat-input-form" style="display: none;">
-                                <input type="text" id="gchat-message-input" placeholder="Escribe un mensaje...">
+                                <button type="button" id="gchat-gif-toggle" class="action-btn" aria-label="Elegir GIF" title="Enviar GIF">
+                                    <i class="fas fa-film"></i>
+                                </button>
+                                <input type="text" id="gchat-message-input" maxlength="1000" placeholder="Escribe un mensaje...">
                                 <button type="submit" class="action-btn save-btn">
                                     <i class="fas fa-paper-plane"></i>
                                 </button>
