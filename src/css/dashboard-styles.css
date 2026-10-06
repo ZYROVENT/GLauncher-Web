@@ -805,6 +805,198 @@
     margin-bottom: 4px;
 }
 
+.player-progression-card {
+    margin-top: 24px;
+    padding: 24px;
+    border: 1px solid rgba(0, 243, 255, 0.28);
+    border-radius: 16px;
+    background: linear-gradient(125deg, rgba(22, 27, 34, 0.95), rgba(0, 243, 255, 0.07));
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.28);
+}
+
+.player-progression-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.player-progression-heading h3 {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 0;
+    color: var(--text-color-light);
+}
+
+.player-progression-heading > i {
+    color: #ffd700;
+    font-size: 2rem;
+}
+
+.player-progression-eyebrow {
+    margin: 0 0 6px;
+    color: var(--neon-blue);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
+
+#player-rank {
+    padding: 5px 10px;
+    border: 1px solid rgba(255, 215, 0, 0.45);
+    border-radius: 999px;
+    color: #ffd700;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+}
+
+.player-progression-track {
+    height: 12px;
+    margin-top: 20px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#player-xp-fill {
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-green));
+    box-shadow: 0 0 14px rgba(0, 243, 255, 0.5);
+    transition: width 0.35s ease;
+}
+
+.player-progression-xp {
+    margin: 8px 0 0;
+    color: var(--text-color-dark);
+    text-align: right;
+    font-size: 0.88rem;
+}
+
+.level-reward-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 0.8fr);
+    align-items: center;
+    gap: 16px;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.level-reward-panel[hidden] {
+    display: none;
+}
+
+.level-reward-panel strong {
+    color: var(--neon-green);
+}
+
+.level-reward-panel p {
+    margin: 6px 0 0;
+    color: var(--text-color-dark);
+    font-size: 0.88rem;
+}
+
+.level-reward-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.level-reward-actions select {
+    min-width: 0;
+    flex: 1;
+    padding: 10px;
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    border-radius: 8px;
+    background: #161b22;
+    color: var(--text-color-light);
+}
+
+.level-reward-actions button {
+    white-space: nowrap;
+}
+
+.level-reward-status {
+    grid-column: 1 / -1;
+}
+
+.cosmetics-inventory-card {
+    margin-top: 20px;
+    padding: 24px;
+    border: 1px solid rgba(255, 0, 255, 0.2);
+    border-radius: 16px;
+    background: rgba(22, 27, 34, 0.82);
+}
+
+.cosmetics-inventory-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.cosmetics-inventory-heading h3 {
+    margin: 0;
+    color: var(--text-color-light);
+}
+
+#cosmetics-inventory-count {
+    color: var(--text-color-dark);
+    font-size: 0.85rem;
+}
+
+.cosmetics-inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+}
+
+.cosmetic-inventory-item {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.22);
+}
+
+.cosmetic-inventory-item.equipped {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 14px rgba(57, 255, 20, 0.12);
+}
+
+.cosmetic-inventory-preview {
+    display: grid;
+    min-height: 66px;
+    place-items: center;
+    padding: 12px;
+    border: 1px solid rgba(0, 243, 255, 0.18);
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.25);
+    color: var(--text-color-light);
+    text-align: center;
+}
+
+.cosmetic-inventory-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: var(--text-color-light);
+}
+
+.cosmetic-inventory-info span {
+    color: var(--text-color-dark);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+}
+
 /* --- Estilos para la Sección de Logros --- */
 .achievements-filter-controls {
     display: flex;
@@ -1313,5 +1505,13 @@ input:checked + .slider:before {
 
     .settings-layout {
         grid-template-columns: 1fr;
+    }
+
+    .level-reward-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .level-reward-actions {
+        flex-direction: column;
     }
 }

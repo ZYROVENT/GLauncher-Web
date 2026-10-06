@@ -211,6 +211,42 @@
                             <p class="text-color-dark">Tiempo de Juego</p>
                         </div>
                     </div>
+                    <article class="player-progression-card" aria-labelledby="player-progression-title">
+                        <div class="player-progression-heading">
+                            <div>
+                                <p class="player-progression-eyebrow">PROGRESO DEL JUGADOR</p>
+                                <h3 id="player-progression-title"><span id="player-level">Nivel --</span><span id="player-rank">JUGADOR GLOBAL</span></h3>
+                            </div>
+                            <i class="fas fa-trophy" aria-hidden="true"></i>
+                        </div>
+                        <div class="player-progression-track" role="progressbar" aria-label="Experiencia del nivel" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                            <div id="player-xp-fill"></div>
+                        </div>
+                        <p id="player-xp-label" class="player-progression-xp">0 / 100 XP para el siguiente nivel</p>
+                        <div id="level-reward-panel" class="level-reward-panel" hidden>
+                            <div>
+                                <strong id="level-reward-title">Recompensa disponible</strong>
+                                <p id="level-reward-description">Elige un cosmético de la tienda.</p>
+                            </div>
+                            <div class="level-reward-actions">
+                                <select id="level-reward-item" aria-label="Cosmético de recompensa"></select>
+                                <button id="claim-level-reward" class="action-btn save-btn" type="button">Reclamar gratis</button>
+                            </div>
+                            <p id="level-reward-status" class="level-reward-status" aria-live="polite"></p>
+                        </div>
+                    </article>
+                    <section class="cosmetics-inventory-card" aria-labelledby="cosmetics-inventory-title">
+                        <div class="cosmetics-inventory-heading">
+                            <div>
+                                <p class="player-progression-eyebrow">TU COLECCIÓN</p>
+                                <h3 id="cosmetics-inventory-title">Cosméticos</h3>
+                            </div>
+                            <span id="cosmetics-inventory-count">0 objetos</span>
+                        </div>
+                        <div id="cosmetics-inventory-grid" class="cosmetics-inventory-grid" aria-live="polite">
+                            <p class="placeholder-content">Cargando inventario...</p>
+                        </div>
+                    </section>
                 </section>
 
                 <!-- SECCIÓN DE LOGROS -->

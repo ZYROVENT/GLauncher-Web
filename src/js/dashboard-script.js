@@ -7,6 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const GIPHY_KEY = '1At7olUkhbz0QZOZCPdbbpYngyLOe3CS';
     const token = localStorage.getItem('glauncher_token');
     let realtimePusher = null;
+    let currentProgression = null;
+    let currentDashboardUserData = null;
+    let currentCosmeticInventory = { items: [], equipped: {} };
+    let cosmeticCatalog = [];
 
     // --- INICIALIZAR NAVEGACIÓN POR PESTAÑAS ---
     if (window.initializeTabNavigation) {
@@ -65,6 +69,36 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             userData.owned_cosmetics = userData.owned_cosmetics || [];
+            currentDashboardUserData = userData;
+
+            let progressionData = null;
+            try {
+                const progressionResponse = await fetch(`${BACKEND_URL}/api/progression/me`, { headers });
+                if (!progressionResponse.ok) {
+                    const result = await progressionResponse.json().catch(() => ({}));
+                    throw new Error(result.message || `Error ${progressionResponse.status}`);
+                }
+                progressionData = await progressionResponse.json();
+            } catch (progressionError) {
+                console.warn('No se pudo cargar el progreso de nivel:', progressionError);
+            }
+
+            let catalogData = [];
+            let inventoryData = { items: [], equipped: {} };
+            let cosmeticsLoadError = null;
+            try {
+                const [catalogResponse, inventoryResponse] = await Promise.all([
+                    fetch(`${BACKEND_URL}/api/shop/cosmetics`, { headers }),
+                    fetch(`${BACKEND_URL}/api/cosmetics/me`, { headers })
+                ]);
+                if (!catalogResponse.ok) throw new Error(`Error de catálogo ${catalogResponse.status}`);
+                if (!inventoryResponse.ok) throw new Error(`Error de inventario ${inventoryResponse.status}`);
+                catalogData = await catalogResponse.json();
+                inventoryData = await inventoryResponse.json();
+            } catch (cosmeticsError) {
+                cosmeticsLoadError = cosmeticsError;
+                console.warn('No se pudo cargar el catálogo o inventario de cosméticos:', cosmeticsError);
+            }
 
             // 2. Cargar amigos de forma no bloqueante
             let friendsData = { friends: [], pending: [], sent: [] };
@@ -89,6 +123,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // 4. Inicializar componentes del Dashboard
             populateSidebar(userData);
             populateStats(userData);
+            renderPlayerProgression(progressionData);
+            cosmeticCatalog = Array.isArray(catalogData) ? catalogData : [];
+            currentCosmeticInventory = inventoryData;
+            renderCosmeticsInventory(cosmeticsLoadError);
             renderFriendsList(friendsData);
             setupFriendSearch(userData, friendsData);
             initializeSettings(userData);
@@ -100,6 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn("Modo local/desconectado activo:", error);
             populateSidebar(userData);
             populateStats(userData);
+            renderPlayerProgression(null);
+            renderCosmeticsInventory(new Error('No se pudo conectar con el inventario de cosméticos.'));
             renderFriendsList({ friends: [], pending: [], sent: [] });
             setupFriendSearch(userData, { friends: [], pending: [], sent: [] });
             initializeSettings(userData);
@@ -197,6 +237,250 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cosmeticsEl) cosmeticsEl.textContent = (userData.owned_cosmetics || []).length;
         if (registerDateEl) registerDateEl.textContent = new Date(userData.created_at || Date.now()).toLocaleDateString('es-ES');
         if (playtimeEl) playtimeEl.textContent = `${Math.floor((userData.play_time_seconds || 0) / 3600)}h`;
+    }
+
+    function renderPlayerProgression(progression) {
+        const levelLabel = document.getElementById('player-level');
+        const rankLabel = document.getElementById('player-rank');
+        const xpLabel = document.getElementById('player-xp-label');
+        const xpFill = document.getElementById('player-xp-fill');
+        const progressTrack = document.querySelector('.player-progression-track');
+        const rewardPanel = document.getElementById('level-reward-panel');
+        const rewardTitle = document.getElementById('level-reward-title');
+        const rewardDescription = document.getElementById('level-reward-description');
+        const rewardSelect = document.getElementById('level-reward-item');
+        const claimButton = document.getElementById('claim-level-reward');
+        const rewardStatus = document.getElementById('level-reward-status');
+        if (!levelLabel || !rankLabel || !xpLabel || !xpFill || !rewardPanel || !rewardSelect || !claimButton) return;
+
+        currentProgression = progression;
+        if (!progression) {
+            levelLabel.textContent = 'Nivel no disponible';
+            rankLabel.textContent = 'Sin sincronizar';
+            xpLabel.textContent = 'No se pudo cargar el progreso de la cuenta.';
+            xpFill.style.width = '0%';
+            if (progressTrack) progressTrack.setAttribute('aria-valuenow', '0');
+            rewardPanel.hidden = true;
+            return;
+        }
+
+        const xpInLevel = Math.max(0, Math.min(99, Number(progression.xp_in_level) || 0));
+        const pendingRewards = Array.isArray(progression.pending_rewards) ? progression.pending_rewards : [];
+        const ownedCosmetics = new Set(Array.isArray(progression.owned_cosmetics) ? progression.owned_cosmetics : []);
+        const availableCosmetics = cosmeticCatalog.filter(item => !ownedCosmetics.has(item.item_id));
+        levelLabel.textContent = `Nivel ${Number(progression.level) || 1}`;
+        rankLabel.textContent = progression.rank || 'JUGADOR GLOBAL';
+        xpLabel.textContent = `${xpInLevel} / 100 XP para el siguiente nivel`;
+        xpFill.style.width = `${xpInLevel}%`;
+        if (progressTrack) progressTrack.setAttribute('aria-valuenow', String(xpInLevel));
+
+        rewardPanel.hidden = pendingRewards.length === 0;
+        rewardSelect.replaceChildren();
+        if (rewardStatus) rewardStatus.textContent = '';
+        if (pendingRewards.length) {
+            rewardTitle.textContent = `Recompensa disponible · Nivel ${pendingRewards[0]}`;
+            rewardDescription.textContent = pendingRewards.length > 1
+                ? `Tienes ${pendingRewards.length} recompensas pendientes. Escoge un cosmético por recompensa.`
+                : 'Escoge un cosmético disponible de la tienda; no se descontarán GCoins.';
+            availableCosmetics.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.item_id;
+                option.textContent = item.name;
+                rewardSelect.appendChild(option);
+            });
+            if (!availableCosmetics.length) {
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'Ya tienes todos los cosméticos disponibles';
+                rewardSelect.appendChild(option);
+            }
+        }
+        rewardSelect.disabled = availableCosmetics.length === 0;
+        claimButton.disabled = availableCosmetics.length === 0 || pendingRewards.length === 0;
+        claimButton.onclick = claimWebLevelReward;
+    }
+
+    function applyCosmeticCss(element, cssCode) {
+        if (!element || typeof cssCode !== 'string' || !cssCode.trim()) return;
+        if (/url\s*\(|expression\s*\(|@import|javascript:|<\/style|behavior\s*:|-moz-binding|image-set\s*\(|image\s*\(|element\s*\(|paint\s*\(|cross-fade\s*\(|\/\*|\*\/|\\/i.test(cssCode)) return;
+        const allowedProperties = new Set([
+            'background', 'background-color', 'background-image', 'backdrop-filter',
+            'border', 'border-color', 'border-radius', 'border-style', 'border-width',
+            'box-shadow', 'color', 'font-family', 'font-size', 'font-style',
+            'font-weight', 'letter-spacing', 'line-height', 'text-shadow'
+        ]);
+        const declarations = document.createElement('span').style;
+        declarations.cssText = cssCode;
+        for (let index = 0; index < declarations.length; index += 1) {
+            const property = declarations[index];
+            if (allowedProperties.has(property)) {
+                element.style.setProperty(property, declarations.getPropertyValue(property));
+            }
+        }
+    }
+
+    function applyEquippedBubble(message) {
+        const bubbleId = currentCosmeticInventory.equipped?.bubble;
+        const bubble = currentCosmeticInventory.items?.find(item => item.item_id === bubbleId && item.type === 'bubble');
+        if (!message) return;
+        const cosmeticProperties = [
+            'background', 'background-color', 'background-image', 'backdrop-filter',
+            'border', 'border-color', 'border-radius', 'border-style', 'border-width',
+            'box-shadow', 'color', 'font-family', 'font-size', 'font-style',
+            'font-weight', 'letter-spacing', 'line-height', 'text-shadow'
+        ];
+        cosmeticProperties.forEach(property => message.style.removeProperty(property));
+        const text = message.querySelector('p');
+        if (!bubble) {
+            if (text) cosmeticProperties.forEach(property => text.style.removeProperty(property));
+            return;
+        }
+        applyCosmeticCss(message, bubble.css_code);
+        if (!text) return;
+        const declarations = document.createElement('span').style;
+        declarations.cssText = bubble.css_code || '';
+        ['color', 'font-family', 'font-size', 'font-style', 'font-weight', 'letter-spacing', 'line-height', 'text-shadow']
+            .forEach(property => {
+                const value = declarations.getPropertyValue(property);
+                if (value) text.style.setProperty(property, value);
+                else text.style.removeProperty(property);
+            });
+    }
+
+    function refreshEquippedBubbles() {
+        document.querySelectorAll('.gchat-message.sent').forEach(applyEquippedBubble);
+    }
+
+    function renderCosmeticsInventory(error = null) {
+        const grid = document.getElementById('cosmetics-inventory-grid');
+        const count = document.getElementById('cosmetics-inventory-count');
+        if (!grid) return;
+        const items = Array.isArray(currentCosmeticInventory.items) ? currentCosmeticInventory.items : [];
+        if (count) count.textContent = `${items.length} ${items.length === 1 ? 'objeto' : 'objetos'}`;
+        grid.replaceChildren();
+        if (error) {
+            const failure = document.createElement('p');
+            failure.className = 'placeholder-content';
+            failure.textContent = error.message;
+            grid.appendChild(failure);
+            return;
+        }
+        if (!items.length) {
+            const empty = document.createElement('p');
+            empty.className = 'placeholder-content';
+            empty.textContent = 'Aún no tienes cosméticos. Consigue uno en la tienda o al subir de nivel.';
+            grid.appendChild(empty);
+            return;
+        }
+
+        items.forEach(item => {
+            const card = document.createElement('article');
+            card.className = `cosmetic-inventory-item${item.equipped ? ' equipped' : ''}`;
+            const preview = document.createElement('div');
+            preview.className = 'cosmetic-inventory-preview';
+            preview.textContent = item.type === 'bubble' ? 'Vista previa de tu mensaje' : (item.icon || '✦');
+            if (item.type === 'bubble') applyCosmeticCss(preview, item.css_code);
+            const info = document.createElement('div');
+            info.className = 'cosmetic-inventory-info';
+            const name = document.createElement('strong');
+            name.textContent = item.name || item.item_id;
+            const type = document.createElement('span');
+            type.textContent = item.type;
+            info.append(name, type);
+            const button = document.createElement('button');
+            button.className = 'action-btn save-btn';
+            button.type = 'button';
+            button.textContent = item.equipped
+                ? 'Quitar'
+                : item.enabled === false ? 'Retirado' : 'Equipar';
+            button.disabled = item.enabled === false && !item.equipped;
+            if (!button.disabled) button.addEventListener('click', () => setCosmeticEquipped(item));
+            card.append(preview, info, button);
+            grid.appendChild(card);
+        });
+    }
+
+    async function setCosmeticEquipped(item) {
+        const equip = !item.equipped;
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/cosmetics/equip`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ type: item.type, item_id: equip ? item.item_id : null })
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message || `Error ${response.status}`);
+            currentCosmeticInventory.equipped = {
+                ...currentCosmeticInventory.equipped,
+                [item.type]: equip ? item.item_id : null
+            };
+            currentCosmeticInventory.items = currentCosmeticInventory.items.map(cosmetic => ({
+                ...cosmetic,
+                equipped: equip ? cosmetic.item_id === item.item_id : (
+                    cosmetic.type === item.type ? false : cosmetic.equipped
+                )
+            }));
+            renderCosmeticsInventory();
+            refreshEquippedBubbles();
+            if (window.showNotification) {
+                window.showNotification(equip ? `${item.name} equipado.` : `${item.name} quitado.`, 'success');
+            }
+        } catch (error) {
+            if (window.showNotification) window.showNotification(error.message, 'error');
+        }
+    }
+
+    async function claimWebLevelReward() {
+        if (!currentProgression || !Array.isArray(currentProgression.pending_rewards)) return;
+        const level = currentProgression.pending_rewards[0];
+        const itemId = document.getElementById('level-reward-item')?.value;
+        const claimButton = document.getElementById('claim-level-reward');
+        const rewardStatus = document.getElementById('level-reward-status');
+        if (!level || !itemId || !claimButton) return;
+
+        claimButton.disabled = true;
+        if (rewardStatus) rewardStatus.textContent = 'Reclamando recompensa...';
+        let claimed = false;
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/progression/rewards/claim`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ level, item_id: itemId })
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message || `Error ${response.status}`);
+            claimed = true;
+
+            currentDashboardUserData.owned_cosmetics = [
+                ...new Set([...(currentDashboardUserData.owned_cosmetics || []), itemId])
+            ];
+            populateStats(currentDashboardUserData);
+            const catalogItem = cosmeticCatalog.find(item => item.item_id === itemId);
+            if (catalogItem) {
+                currentCosmeticInventory.items.push({
+                    ...catalogItem,
+                    source: 'level_reward',
+                    equipped: false
+                });
+            }
+            renderCosmeticsInventory();
+            const progressionResponse = await fetch(`${BACKEND_URL}/api/progression/me`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!progressionResponse.ok) {
+                const progressionError = await progressionResponse.json().catch(() => ({}));
+                throw new Error(progressionError.message || `Error ${progressionResponse.status}`);
+            }
+            renderPlayerProgression(await progressionResponse.json());
+            if (window.showNotification) window.showNotification('¡Cosmético reclamado gratis!', 'success');
+        } catch (error) {
+            const message = claimed
+                ? `La recompensa se reclamó, pero no se pudo actualizar el progreso: ${error.message}`
+                : error.message;
+            if (rewardStatus) rewardStatus.textContent = message;
+            if (window.showNotification) window.showNotification(message, claimed ? 'warning' : 'error');
+            claimButton.disabled = claimed;
+        }
     }
 
     // --- RENDERIZAR LISTA DE AMIGOS ---
@@ -646,6 +930,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (msg.id) renderedMessageIds.add(String(msg.id));
             messagesContainer.querySelector('.placeholder-content')?.remove();
             messagesContainer.appendChild(messageEl);
+            if (isSent) applyEquippedBubble(messageEl);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
