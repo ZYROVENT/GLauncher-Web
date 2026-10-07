@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let editingBubbleId = null;
     let selectedStickerFile = null;
     let localStickerUrl = null;
-    let stickerConfig = { image_url: '', x: 78, y: 24, size: 26, rotation: 0 };
+    let stickerConfig = { image_url: '', x: 82, y: 50, size: 22, rotation: 0 };
     let pointerAction = null;
     let catalogBubbles = [];
     let activeCatalogFilter = 'all';
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const match = declaration.trim().match(/^([a-z-]+)\s*:\s*(.+)$/i);
             if (match) preview.style.setProperty(match[1].toLowerCase(), match[2].trim());
         }
-        preview.textContent = '¡Hola! Esta es mi nueva burbuja.';
+        preview.querySelector('.bubble-preview-text').textContent = '¡Hola! Esta es mi nueva burbuja.';
         return true;
     }
 
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         stickerImage.style.width = `${stickerConfig.size}%`;
         stickerImage.style.transform = `translate(-50%, -50%) rotate(${stickerConfig.rotation}deg)`;
         resizeHandle.style.left = `calc(${stickerConfig.x}% + ${stickerConfig.size / 2}%)`;
-        resizeHandle.style.top = `calc(${stickerConfig.y}% + ${stickerConfig.size / 2}%)`;
+        resizeHandle.style.top = `calc(${stickerConfig.y}% + 36%)`;
         document.getElementById('sticker-size').value = String(stickerConfig.size);
         document.getElementById('sticker-size-value').value = `${stickerConfig.size}%`;
         document.getElementById('sticker-rotation').value = String(stickerConfig.rotation);
@@ -130,18 +130,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (localStickerUrl) URL.revokeObjectURL(localStickerUrl);
         selectedStickerFile = file;
         localStickerUrl = URL.createObjectURL(file);
-        stickerConfig = { ...stickerConfig, x: 78, y: 24, size: 26, rotation: 0 };
-        stickerFeedback.textContent = `${file.name} · arrástralo sobre la vista previa para posicionarlo.`;
+        stickerConfig = { ...stickerConfig, x: 82, y: 50, size: 22, rotation: 0 };
+        stickerFeedback.textContent = `${file.name} · muévelo por la zona derecha para no tapar el texto.`;
         renderSticker();
     }
 
     function setStickerConfig(config = {}) {
+        const clamp = (value, min, max, fallback) =>
+            Number.isFinite(value) ? Math.max(min, Math.min(max, value)) : fallback;
         stickerConfig = {
             image_url: typeof config.image_url === 'string' ? config.image_url : '',
-            x: Number.isFinite(config.x) ? config.x : 78,
-            y: Number.isFinite(config.y) ? config.y : 24,
-            size: Number.isFinite(config.size) ? config.size : 26,
-            rotation: Number.isFinite(config.rotation) ? config.rotation : 0
+            x: clamp(config.x, 77, 85, 82),
+            y: clamp(config.y, 42, 58, 50),
+            size: clamp(config.size, 8, 30, 22),
+            rotation: clamp(config.rotation, -180, 180, 0)
         };
         renderSticker();
     }
@@ -187,6 +189,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('bubble-price').value = String(bubble.price ?? 0);
         document.getElementById('bubble-description').value = bubble.description || '';
         cssInput.value = bubble.css_code || '';
+        const fontFamily = currentCssDeclarations().get('font-family') || '';
+        document.getElementById('bubble-font').value = ['Minecraftia', 'MinecraftTen', 'Montserrat-Bold']
+            .find(font => fontFamily.replace(/["']/g, '').split(',')[0].trim().toLowerCase() === font.toLowerCase()) || '';
         document.querySelector('#bubble-form .panel-heading h2').textContent = `Editar: ${bubble.name}`;
         document.querySelector('#bubble-form .admin-eyebrow').textContent = 'EDITANDO COSMÉTICO';
         submitButton.innerHTML = '<i class="fas fa-save"></i> Guardar cambios';
@@ -196,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (localStickerUrl) URL.revokeObjectURL(localStickerUrl);
         localStickerUrl = null;
         setStickerConfig(bubble.sticker_config);
-        stickerFeedback.textContent = stickerConfig.image_url ? 'Arrastra el sticker en la vista previa para cambiar su posición.' : '';
+        stickerFeedback.textContent = stickerConfig.image_url ? 'Arrastra el sticker por la zona derecha para dejar libre el texto.' : 'Sin sticker · colócalo en la zona derecha para dejar libre el texto.';
         updatePreview();
         setFormFeedback('');
         form.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -217,6 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('bubble-border-color').value = '#8fd3ff';
         document.getElementById('bubble-radius').value = '16';
         document.getElementById('bubble-radius-value').value = '16 px';
+        document.getElementById('bubble-font').value = '';
         document.querySelector('#bubble-form .panel-heading h2').textContent = 'Crear burbuja';
         document.querySelector('#bubble-form .admin-eyebrow').textContent = 'NUEVO COSMÉTICO';
         submitButton.innerHTML = '<i class="fas fa-plus"></i> Crear burbuja';
@@ -439,8 +445,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('bubble-radius-value').value = `${radius} px`;
         updateCssProperty({ 'border-radius': `${radius}px` });
     });
+    document.getElementById('bubble-font').addEventListener('change', event => {
+        const family = event.target.value;
+        if (family) updateCssProperty({ 'font-family': `"${family}", sans-serif` });
+        else updateCssProperty({}, ['font-family']);
+    });
     document.getElementById('sticker-size').addEventListener('input', event => {
-        stickerConfig.size = Number(event.target.value);
+        stickerConfig.size = Math.min(30, Number(event.target.value));
         document.getElementById('sticker-size-value').value = `${stickerConfig.size}%`;
         renderSticker();
     });
@@ -464,13 +475,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     stage.addEventListener('pointermove', event => {
         if (!pointerAction || event.pointerId !== pointerAction.pointerId) return;
-        const bounds = stage.getBoundingClientRect();
+        const bounds = preview.getBoundingClientRect();
         if (pointerAction.type === 'move') {
-            stickerConfig.x = Math.max(0, Math.min(100, ((event.clientX - bounds.left) / bounds.width) * 100));
-            stickerConfig.y = Math.max(0, Math.min(100, ((event.clientY - bounds.top) / bounds.height) * 100));
+            stickerConfig.x = Math.max(77, Math.min(85, ((event.clientX - bounds.left) / bounds.width) * 100));
+            stickerConfig.y = Math.max(42, Math.min(58, ((event.clientY - bounds.top) / bounds.height) * 100));
         } else {
             const delta = event.clientX - pointerAction.startX + event.clientY - pointerAction.startY;
-            stickerConfig.size = Math.max(8, Math.min(60, pointerAction.startSize + (delta / bounds.width) * 100));
+            stickerConfig.size = Math.max(8, Math.min(30, pointerAction.startSize + (delta / bounds.width) * 100));
             document.getElementById('sticker-size-value').value = `${Math.round(stickerConfig.size)}%`;
         }
         renderSticker();

@@ -89,6 +89,15 @@
                             <label>Texto <input id="bubble-text-color" type="color" value="#ffffff"><output>Color del mensaje</output></label>
                             <label>Borde <input id="bubble-border-color" type="color" value="#8fd3ff"><output>Contorno</output></label>
                             <label class="range-control">Redondeo <input id="bubble-radius" type="range" min="0" max="36" value="16"><output id="bubble-radius-value">16 px</output></label>
+                            <label class="font-control">Fuente
+                                <select id="bubble-font">
+                                    <option value="">Predeterminada</option>
+                                    <option value="Minecraftia">Minecraftia</option>
+                                    <option value="MinecraftTen">Minecraft Ten</option>
+                                    <option value="Montserrat-Bold">Montserrat Bold</option>
+                                </select>
+                                <output>Vista previa y chat</output>
+                            </label>
                         </div>
                         <small class="field-hint">Cambia los controles para actualizar la vista previa al instante.</small>
                     </div>
@@ -113,18 +122,20 @@
                     <label class="sticker-upload-button" for="sticker-file"><i class="fas fa-cloud-upload-alt"></i> Elegir imagen <span>PNG, JPG o WebP · hasta 5 MB</span></label>
                     <input id="sticker-file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
                     <div id="sticker-drop-zone" class="sticker-drop-zone" tabindex="0" aria-label="Vista previa de la burbuja; arrastra aquí una imagen" aria-describedby="sticker-feedback">
-                        <div id="bubble-preview" class="bubble-preview">¡Hola! Esta es mi nueva burbuja.</div>
-                        <img id="sticker-preview" class="sticker-preview" alt="" hidden draggable="false">
-                        <button id="sticker-resize" class="sticker-resize" type="button" aria-label="Arrastra para cambiar el tamaño del sticker" title="Arrastra para cambiar el tamaño"><i class="fas fa-up-right-and-down-left-from-center"></i></button>
+                        <div id="bubble-preview" class="bubble-preview">
+                            <span class="bubble-preview-text">¡Hola! Esta es mi nueva burbuja.</span>
+                            <img id="sticker-preview" class="sticker-preview" alt="" hidden draggable="false">
+                            <button id="sticker-resize" class="sticker-resize" type="button" aria-label="Arrastra para cambiar el tamaño del sticker" title="Arrastra para cambiar el tamaño"><i class="fas fa-up-right-and-down-left-from-center"></i></button>
+                        </div>
                         <span class="sticker-drop-overlay"><i class="fas fa-cloud-upload-alt"></i> Suelta tu sticker aquí</span>
                         <span class="stage-hint"><i class="fas fa-hand-pointer"></i> Arrastra para mover</span>
                     </div>
                     <div class="sticker-controls">
-                        <label><span><i class="fas fa-expand-alt"></i> Tamaño <output id="sticker-size-value">26%</output></span><input id="sticker-size" type="range" min="8" max="60" value="26"></label>
+                        <label><span><i class="fas fa-expand-alt"></i> Tamaño <output id="sticker-size-value">22%</output></span><input id="sticker-size" type="range" min="8" max="30" value="22"></label>
                         <label><span><i class="fas fa-sync-alt"></i> Rotación <output id="sticker-rotation-value">0°</output></span><input id="sticker-rotation" type="range" min="-180" max="180" value="0"></label>
                         <button id="remove-sticker" class="admin-secondary-button remove-sticker-button" type="button" disabled><i class="fas fa-trash"></i> Quitar sticker</button>
                     </div>
-                    <p id="sticker-feedback" class="preview-hint sticker-feedback" role="status" aria-live="polite">Sin sticker · puedes continuar sin imagen.</p>
+                    <p id="sticker-feedback" class="preview-hint sticker-feedback" role="status" aria-live="polite">Sin sticker · colócalo en la zona derecha para dejar libre el texto.</p>
                 </section>
 
                 <div class="admin-form-actions">

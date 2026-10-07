@@ -321,14 +321,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function addBubbleSticker(container, config) {
         container.querySelector('.gchat-bubble-sticker')?.remove();
-        if (!config || typeof config.image_url !== 'string') return;
+        if (!config || typeof config.image_url !== 'string') {
+            container.style.paddingRight = '';
+            container.style.minHeight = '';
+            return;
+        }
         try {
             const imageUrl = new URL(config.image_url);
             const storageOrigin = typeof SUPABASE_URL === 'string'
                 ? new URL(SUPABASE_URL).origin
                 : 'https://ouqpeojilykkrmatijxp.supabase.co';
             if (imageUrl.protocol !== 'https:' || imageUrl.origin !== storageOrigin ||
-                !/^\/storage\/v1\/object\/public\/cosmetic-stickers\/[a-z0-9][a-z0-9_-]{1,63}\.webp$/.test(imageUrl.pathname)) return;
+                !/^\/storage\/v1\/object\/public\/cosmetic-stickers\/[a-z0-9][a-z0-9_-]{1,63}\.webp$/.test(imageUrl.pathname)) {
+                container.style.paddingRight = '';
+                container.style.minHeight = '';
+                return;
+            }
 
             const image = document.createElement('img');
             image.className = 'gchat-bubble-sticker';
@@ -345,15 +353,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 zIndex: '2',
                 pointerEvents: 'none',
                 maxWidth: 'none',
-                maxHeight: 'none',
+                maxHeight: '58px',
+                height: 'auto',
                 objectFit: 'contain',
-                left: `${clamp(config.x, 0, 100, 78)}%`,
-                top: `${clamp(config.y, 0, 100, 24)}%`,
-                width: `${clamp(config.size, 8, 60, 26)}%`,
+                left: `${clamp(config.x, 77, 85, 82)}%`,
+                top: `${clamp(config.y, 42, 58, 50)}%`,
+                width: `${clamp(config.size, 8, 30, 22)}%`,
                 transform: `translate(-50%, -50%) rotate(${clamp(config.rotation, -180, 180, 0)}deg)`
             });
+            container.style.paddingRight = '46%';
+            container.style.minHeight = '72px';
             container.append(image);
         } catch (error) {
+            container.style.paddingRight = '';
+            container.style.minHeight = '';
             console.warn('[Cosmetics] Sticker URL no válida:', error);
         }
     }
@@ -369,10 +382,12 @@ document.addEventListener('DOMContentLoaded', () => {
             'font-weight', 'letter-spacing', 'line-height', 'text-shadow'
         ];
         cosmeticProperties.forEach(property => message.style.removeProperty(property));
-        message.querySelector('.gchat-bubble-sticker')?.remove();
         const text = message.querySelector('p');
         if (!bubble) {
-            if (text) cosmeticProperties.forEach(property => text.style.removeProperty(property));
+            if (text) {
+                cosmeticProperties.forEach(property => text.style.removeProperty(property));
+                addBubbleSticker(text, null);
+            }
             return;
         }
         applyCosmeticCss(message, bubble.css_code);

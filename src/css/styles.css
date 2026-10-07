@@ -7,6 +7,30 @@
     font-weight: normal;
     font-style: normal;
 }
+
+@font-face {
+    font-family: 'Minecraftia';
+    src: url('../assets/fonts/Minecraftia-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'MinecraftTen';
+    src: url('../assets/fonts/MinecraftTen.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Montserrat-Bold';
+    src: url('../assets/fonts/Montserrat-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
 /*
  * ==================================================================================
  * GLAUNCHER WEB UI - NEON RGB STYLESHEET (1100+ líneas)
