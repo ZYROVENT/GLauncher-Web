@@ -324,6 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!config || typeof config.image_url !== 'string') {
             container.style.paddingRight = '';
             container.style.minHeight = '';
+            container.style.minWidth = '';
             return;
         }
         try {
@@ -335,6 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 !/^\/storage\/v1\/object\/public\/cosmetic-stickers\/[a-z0-9][a-z0-9_-]{1,63}\.webp$/.test(imageUrl.pathname)) {
                 container.style.paddingRight = '';
                 container.style.minHeight = '';
+                container.style.minWidth = '';
                 return;
             }
 
@@ -347,26 +349,28 @@ document.addEventListener('DOMContentLoaded', () => {
             image.referrerPolicy = 'no-referrer';
             const clamp = (value, min, max, fallback) =>
                 Number.isFinite(value) ? Math.max(min, Math.min(max, value)) : fallback;
+            container.style.minWidth = 'min(280px, 100%)';
             container.style.position = 'relative';
             Object.assign(image.style, {
                 position: 'absolute',
                 zIndex: '2',
                 pointerEvents: 'none',
-                maxWidth: 'none',
+                maxWidth: '58px',
                 maxHeight: '58px',
                 height: 'auto',
                 objectFit: 'contain',
-                left: `${clamp(config.x, 77, 85, 82)}%`,
+                left: `${clamp(config.x, 82, 88, 85)}%`,
                 top: `${clamp(config.y, 42, 58, 50)}%`,
-                width: `${clamp(config.size, 8, 30, 22)}%`,
+                width: `${clamp(config.size, 8, 20, 18)}%`,
                 transform: `translate(-50%, -50%) rotate(${clamp(config.rotation, -180, 180, 0)}deg)`
             });
-            container.style.paddingRight = '46%';
+            container.style.paddingRight = '78px';
             container.style.minHeight = '72px';
             container.append(image);
         } catch (error) {
             container.style.paddingRight = '';
             container.style.minHeight = '';
+            container.style.minWidth = '';
             console.warn('[Cosmetics] Sticker URL no válida:', error);
         }
     }
@@ -384,10 +388,8 @@ document.addEventListener('DOMContentLoaded', () => {
         cosmeticProperties.forEach(property => message.style.removeProperty(property));
         const text = message.querySelector('p');
         if (!bubble) {
-            if (text) {
-                cosmeticProperties.forEach(property => text.style.removeProperty(property));
-                addBubbleSticker(text, null);
-            }
+            if (text) cosmeticProperties.forEach(property => text.style.removeProperty(property));
+            addBubbleSticker(message, null);
             return;
         }
         applyCosmeticCss(message, bubble.css_code);
@@ -400,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (value) text.style.setProperty(property, value);
                 else text.style.removeProperty(property);
             });
-        addBubbleSticker(text, bubble.sticker_config);
+        addBubbleSticker(message, bubble.sticker_config);
     }
 
     function refreshEquippedBubbles() {

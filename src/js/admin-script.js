@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let editingBubbleId = null;
     let selectedStickerFile = null;
     let localStickerUrl = null;
-    let stickerConfig = { image_url: '', x: 82, y: 50, size: 22, rotation: 0 };
+    let stickerConfig = { image_url: '', x: 85, y: 50, size: 18, rotation: 0 };
     let pointerAction = null;
     let catalogBubbles = [];
     let activeCatalogFilter = 'all';
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         stickerImage.style.width = `${stickerConfig.size}%`;
         stickerImage.style.transform = `translate(-50%, -50%) rotate(${stickerConfig.rotation}deg)`;
         resizeHandle.style.left = `calc(${stickerConfig.x}% + ${stickerConfig.size / 2}%)`;
-        resizeHandle.style.top = `calc(${stickerConfig.y}% + 36%)`;
+        resizeHandle.style.top = `calc(${stickerConfig.y}% + ${stickerConfig.size / 2}%)`;
         document.getElementById('sticker-size').value = String(stickerConfig.size);
         document.getElementById('sticker-size-value').value = `${stickerConfig.size}%`;
         document.getElementById('sticker-rotation').value = String(stickerConfig.rotation);
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (localStickerUrl) URL.revokeObjectURL(localStickerUrl);
         selectedStickerFile = file;
         localStickerUrl = URL.createObjectURL(file);
-        stickerConfig = { ...stickerConfig, x: 82, y: 50, size: 22, rotation: 0 };
+        stickerConfig = { ...stickerConfig, x: 85, y: 50, size: 18, rotation: 0 };
         stickerFeedback.textContent = `${file.name} · muévelo por la zona derecha para no tapar el texto.`;
         renderSticker();
     }
@@ -140,9 +140,9 @@ document.addEventListener('DOMContentLoaded', () => {
             Number.isFinite(value) ? Math.max(min, Math.min(max, value)) : fallback;
         stickerConfig = {
             image_url: typeof config.image_url === 'string' ? config.image_url : '',
-            x: clamp(config.x, 77, 85, 82),
+            x: clamp(config.x, 82, 88, 85),
             y: clamp(config.y, 42, 58, 50),
-            size: clamp(config.size, 8, 30, 22),
+            size: clamp(config.size, 8, 20, 18),
             rotation: clamp(config.rotation, -180, 180, 0)
         };
         renderSticker();
@@ -451,7 +451,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else updateCssProperty({}, ['font-family']);
     });
     document.getElementById('sticker-size').addEventListener('input', event => {
-        stickerConfig.size = Math.min(30, Number(event.target.value));
+        stickerConfig.size = Math.min(20, Number(event.target.value));
         document.getElementById('sticker-size-value').value = `${stickerConfig.size}%`;
         renderSticker();
     });
@@ -477,11 +477,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!pointerAction || event.pointerId !== pointerAction.pointerId) return;
         const bounds = preview.getBoundingClientRect();
         if (pointerAction.type === 'move') {
-            stickerConfig.x = Math.max(77, Math.min(85, ((event.clientX - bounds.left) / bounds.width) * 100));
+            stickerConfig.x = Math.max(82, Math.min(88, ((event.clientX - bounds.left) / bounds.width) * 100));
             stickerConfig.y = Math.max(42, Math.min(58, ((event.clientY - bounds.top) / bounds.height) * 100));
         } else {
             const delta = event.clientX - pointerAction.startX + event.clientY - pointerAction.startY;
-            stickerConfig.size = Math.max(8, Math.min(30, pointerAction.startSize + (delta / bounds.width) * 100));
+            stickerConfig.size = Math.max(8, Math.min(20, pointerAction.startSize + (delta / bounds.width) * 100));
             document.getElementById('sticker-size-value').value = `${Math.round(stickerConfig.size)}%`;
         }
         renderSticker();

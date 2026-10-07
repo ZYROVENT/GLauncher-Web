@@ -954,10 +954,10 @@
     top: 50%;
     right: auto;
     bottom: auto;
-    width: min(78%, 310px);
+    width: min(92%, 460px);
     min-height: 76px;
-    max-width: 78%;
-    padding: 13px 17px;
+    max-width: 92%;
+    padding: 13px 16px;
     border-radius: 14px;
     transform: translate(-50%, -50%);
     box-shadow: 0 10px 35px rgba(0, 0, 0, .25);
@@ -965,6 +965,7 @@
 
 .sticker-preview {
     filter: drop-shadow(0 3px 5px rgba(0, 0, 0, .3));
+    max-width: 20%;
 }
 
 .sticker-drop-overlay {
@@ -1328,10 +1329,10 @@
     inset: auto;
     left: 50%;
     top: 50%;
-    width: min(78%, 330px);
+    width: min(92%, 460px);
     min-height: 84px;
-    max-width: 78%;
-    padding: 14px 46% 14px 16px;
+    max-width: 92%;
+    padding: 14px 16px;
     overflow-wrap: anywhere;
     overflow: hidden;
     box-sizing: border-box;
@@ -1342,13 +1343,41 @@
     position: relative;
     z-index: 1;
     display: block;
-    width: 100%;
+    width: 62%;
     text-align: left;
+    overflow-wrap: break-word;
+    word-break: normal;
 }
 
 .sticker-preview {
     height: auto;
     max-height: 72%;
+}
+
+.sticker-preview {
+    max-width: 20%;
+}
+
+.visual-controls .font-control {
+    gap: 8px;
+}
+
+.font-control select {
+    width: 100%;
+    min-height: 42px;
+    padding: 8px 10px;
+    border: 1px solid rgba(142, 161, 184, .2);
+    border-radius: 7px;
+    background: #0b111a;
+    color: #eef8ff;
+    font: inherit;
+    font-size: .78rem;
+}
+
+.font-control select:focus-visible {
+    border-color: var(--neon-blue);
+    outline: 2px solid rgba(0, 243, 255, .2);
+    outline-offset: 1px;
 }
 
 .sticker-resize {
