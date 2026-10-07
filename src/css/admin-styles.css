@@ -125,6 +125,16 @@
     font-weight: 700;
 }
 
+.admin-form-grid .admin-field {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 8px;
+    color: #eaf0f8;
+    font-size: .9rem;
+    font-weight: 700;
+}
+
 .admin-form-grid input,
 .admin-form-grid textarea {
     width: 100%;
@@ -157,8 +167,170 @@
     line-height: 1.45;
 }
 
+.visual-controls {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin: 2px 0;
+}
+
+.visual-controls label,
+.sticker-controls label {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 7px;
+    color: #cbd7e5;
+    font-size: .78rem;
+    font-weight: 600;
+}
+
+.visual-controls input[type="color"] {
+    width: 100%;
+    height: 37px;
+    padding: 3px;
+    cursor: pointer;
+}
+
+.range-control output,
+.sticker-controls output {
+    color: var(--neon-blue);
+    font-size: .75rem;
+}
+
+.visual-controls input[type="range"],
+.sticker-controls input[type="range"] {
+    width: 100%;
+    accent-color: var(--neon-blue);
+}
+
 .admin-full-width {
     grid-column: 1 / -1;
+}
+
+.sticker-editor {
+    display: grid;
+    justify-items: start;
+    gap: 13px;
+    margin-top: 20px;
+    padding: 16px;
+    border: 1px solid rgba(174, 184, 200, .16);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, .025);
+}
+
+.sticker-upload-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border: 1px solid rgba(0, 243, 255, .35);
+    border-radius: 8px;
+    background: rgba(0, 243, 255, .08);
+    color: #d6faff;
+    cursor: pointer;
+    font-size: .84rem;
+    font-weight: 700;
+}
+
+.sticker-drop-zone {
+    position: relative;
+    width: min(100%, 430px);
+    height: 158px;
+    overflow: hidden;
+    border: 1px dashed rgba(0, 243, 255, .42);
+    border-radius: 12px;
+    background:
+        linear-gradient(45deg, rgba(255, 255, 255, .025) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(255, 255, 255, .025) 25%, transparent 25%),
+        #101720;
+    background-size: 16px 16px;
+    touch-action: none;
+}
+
+.sticker-drop-zone.drag-over {
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 0 3px rgba(0, 243, 255, .13);
+}
+
+.sticker-drop-zone .bubble-preview {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 18px 22px;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.sticker-preview {
+    position: absolute;
+    z-index: 2;
+    max-width: none;
+    max-height: none;
+    object-fit: contain;
+    cursor: move;
+    touch-action: none;
+    user-select: none;
+}
+
+.sticker-preview[hidden],
+.sticker-resize[hidden] {
+    display: none;
+}
+
+.sticker-resize {
+    position: absolute;
+    z-index: 3;
+    display: grid;
+    width: 25px;
+    height: 25px;
+    padding: 0;
+    place-items: center;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    background: #087f9b;
+    color: #fff;
+    cursor: nwse-resize;
+    font-size: .65rem;
+    touch-action: none;
+}
+
+.sticker-drop-overlay {
+    position: absolute;
+    z-index: 4;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 15, 24, .78);
+    color: #fff;
+    font-weight: 800;
+    pointer-events: none;
+}
+
+.sticker-drop-zone.drag-over .sticker-drop-overlay {
+    display: flex;
+}
+
+.sticker-controls {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+    gap: 12px;
+}
+
+.sticker-controls .admin-secondary-button {
+    justify-self: start;
+}
+
+.sticker-feedback {
+    margin: 0;
 }
 
 .bubble-preview-block {
@@ -335,6 +507,23 @@
     gap: 10px;
 }
 
+.bubble-admin-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.bubble-edit-button {
+    padding: 7px 10px;
+    border: 1px solid rgba(0, 243, 255, .35);
+    border-radius: 7px;
+    background: rgba(0, 243, 255, .08);
+    color: #d6faff;
+    cursor: pointer;
+    font: inherit;
+    font-size: .78rem;
+    font-weight: 700;
+}
+
 .bubble-state {
     color: #aeb8c8;
     font-size: .78rem;
@@ -368,6 +557,14 @@
     }
 
     .admin-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .visual-controls {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .sticker-controls {
         grid-template-columns: 1fr;
     }
 

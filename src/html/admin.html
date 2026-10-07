@@ -72,29 +72,55 @@
                         Descripción
                         <input id="bubble-description" name="description" maxlength="500" placeholder="Describe el estilo de la burbuja.">
                     </label>
+                    <div class="admin-field admin-full-width">
+                        <span>Editor visual</span>
+                        <div class="visual-controls">
+                            <label>Fondo <input id="bubble-background" type="color" value="#182848"></label>
+                            <label>Texto <input id="bubble-text-color" type="color" value="#ffffff"></label>
+                            <label>Borde <input id="bubble-border-color" type="color" value="#8fd3ff"></label>
+                            <label class="range-control">Redondeo <input id="bubble-radius" type="range" min="0" max="36" value="16"><output id="bubble-radius-value">16 px</output></label>
+                        </div>
+                        <small>Usa los controles visuales o edita directamente las declaraciones CSS de abajo.</small>
+                    </div>
                     <label class="admin-full-width">
-                        Estilo CSS
+                        Código CSS
                         <textarea id="bubble-css" name="css_code" required maxlength="12000" rows="6" spellcheck="false">background: linear-gradient(135deg, #182848, #4b6cb7); border: 2px solid #8fd3ff; border-radius: 16px; color: #ffffff; box-shadow: 0 0 12px #4b6cb7;</textarea>
                         <small>Solo declaraciones visuales separadas por punto y coma; no incluyas selectores ni llaves. No se aceptan URLs ni código externo.</small>
                     </label>
                 </div>
 
-                <div class="bubble-preview-block">
+                <section class="sticker-editor" aria-labelledby="sticker-editor-heading">
                     <div>
-                        <span class="preview-label">VISTA PREVIA</span>
-                        <p class="preview-hint">Así se verá un mensaje con esta burbuja.</p>
+                        <span id="sticker-editor-heading" class="preview-label">STICKER DE IMAGEN</span>
+                        <p class="preview-hint">Carga o arrastra un PNG, JPEG o WebP a la burbuja. Arrastra el sticker para ubicarlo.</p>
                     </div>
+                    <label class="sticker-upload-button" for="sticker-file"><i class="fas fa-upload"></i> Elegir imagen (máx. 5 MB)</label>
+                    <input id="sticker-file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+                    <div id="sticker-drop-zone" class="sticker-drop-zone" tabindex="0" aria-label="Vista previa de la burbuja; arrastra aquí una imagen">
+                        <div id="bubble-preview" class="bubble-preview">¡Hola! Esta es mi nueva burbuja.</div>
+                        <img id="sticker-preview" class="sticker-preview" alt="" hidden draggable="false">
+                        <button id="sticker-resize" class="sticker-resize" type="button" aria-label="Arrastra para cambiar el tamaño del sticker" title="Arrastra para cambiar el tamaño"><i class="fas fa-up-right-and-down-left-from-center"></i></button>
+                        <span class="sticker-drop-overlay">Suelta la imagen aquí</span>
+                    </div>
+                    <div class="sticker-controls">
+                        <label>Tamaño del sticker <input id="sticker-size" type="range" min="8" max="60" value="26"><output id="sticker-size-value">26%</output></label>
+                        <label>Rotación <input id="sticker-rotation" type="range" min="-180" max="180" value="0"><output id="sticker-rotation-value">0°</output></label>
+                        <button id="remove-sticker" class="admin-secondary-button" type="button" disabled><i class="fas fa-trash"></i> Quitar sticker</button>
+                    </div>
+                    <p id="sticker-feedback" class="preview-hint" role="status" aria-live="polite"></p>
+                </section>
+
+                <div class="bubble-preview-block">
                     <div class="preview-message">
                         <span class="preview-avatar">G</span>
-                        <div>
-                            <span class="preview-username">TuUsuario</span>
-                            <div id="bubble-preview" class="bubble-preview">¡Hola! Esta es mi nueva burbuja.</div>
-                        </div>
+                        <div><span class="preview-username">TuUsuario</span></div>
                     </div>
+                    <span class="preview-hint">El sticker se guarda junto con la burbuja y aparece en web y launcher.</span>
                 </div>
 
                 <div class="admin-form-actions">
-                    <button class="admin-primary-button" type="submit"><i class="fas fa-plus"></i> Crear burbuja</button>
+                    <button id="save-bubble" class="admin-primary-button" type="submit"><i class="fas fa-plus"></i> Crear burbuja</button>
+                    <button id="cancel-edit" class="admin-secondary-button" type="button" hidden>Cancelar edición</button>
                     <span id="form-feedback" class="form-feedback" role="status" aria-live="polite"></span>
                 </div>
             </form>

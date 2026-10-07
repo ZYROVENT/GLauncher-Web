@@ -319,6 +319,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function addBubbleSticker(container, config) {
+        container.querySelector('.gchat-bubble-sticker')?.remove();
+        if (!config || typeof config.image_url !== 'string') return;
+        try {
+            const imageUrl = new URL(config.image_url);
+            const storageOrigin = typeof SUPABASE_URL === 'string'
+                ? new URL(SUPABASE_URL).origin
+                : 'https://ouqpeojilykkrmatijxp.supabase.co';
+            if (imageUrl.protocol !== 'https:' || imageUrl.origin !== storageOrigin ||
+                !/^\/storage\/v1\/object\/public\/cosmetic-stickers\/[a-z0-9][a-z0-9_-]{1,63}\.webp$/.test(imageUrl.pathname)) return;
+
+            const image = document.createElement('img');
+            image.className = 'gchat-bubble-sticker';
+            image.src = imageUrl.href;
+            image.alt = '';
+            image.setAttribute('aria-hidden', 'true');
+            image.loading = 'lazy';
+            image.referrerPolicy = 'no-referrer';
+            const clamp = (value, min, max, fallback) =>
+                Number.isFinite(value) ? Math.max(min, Math.min(max, value)) : fallback;
+            container.style.position = 'relative';
+            Object.assign(image.style, {
+                position: 'absolute',
+                zIndex: '2',
+                pointerEvents: 'none',
+                maxWidth: 'none',
+                maxHeight: 'none',
+                objectFit: 'contain',
+                left: `${clamp(config.x, 0, 100, 78)}%`,
+                top: `${clamp(config.y, 0, 100, 24)}%`,
+                width: `${clamp(config.size, 8, 60, 26)}%`,
+                transform: `translate(-50%, -50%) rotate(${clamp(config.rotation, -180, 180, 0)}deg)`
+            });
+            container.append(image);
+        } catch (error) {
+            console.warn('[Cosmetics] Sticker URL no válida:', error);
+        }
+    }
+
     function applyEquippedBubble(message) {
         const bubbleId = currentCosmeticInventory.equipped?.bubble;
         const bubble = currentCosmeticInventory.items?.find(item => item.item_id === bubbleId && item.type === 'bubble');
@@ -330,6 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'font-weight', 'letter-spacing', 'line-height', 'text-shadow'
         ];
         cosmeticProperties.forEach(property => message.style.removeProperty(property));
+        message.querySelector('.gchat-bubble-sticker')?.remove();
         const text = message.querySelector('p');
         if (!bubble) {
             if (text) cosmeticProperties.forEach(property => text.style.removeProperty(property));
@@ -345,6 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (value) text.style.setProperty(property, value);
                 else text.style.removeProperty(property);
             });
+        addBubbleSticker(text, bubble.sticker_config);
     }
 
     function refreshEquippedBubbles() {
@@ -379,7 +420,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const preview = document.createElement('div');
             preview.className = 'cosmetic-inventory-preview';
             preview.textContent = item.type === 'bubble' ? 'Vista previa de tu mensaje' : (item.icon || '✦');
-            if (item.type === 'bubble') applyCosmeticCss(preview, item.css_code);
+            if (item.type === 'bubble') {
+                applyCosmeticCss(preview, item.css_code);
+                addBubbleSticker(preview, item.sticker_config);
+            }
             const info = document.createElement('div');
             info.className = 'cosmetic-inventory-info';
             const name = document.createElement('strong');
