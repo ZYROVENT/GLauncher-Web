@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let localStickerUrl = null;
     let stickerConfig = { image_url: '', x: 78, y: 24, size: 26, rotation: 0 };
     let pointerAction = null;
+    let catalogBubbles = [];
+    let activeCatalogFilter = 'all';
 
     function setStatus(message, kind = '') {
         status.textContent = message;
@@ -228,13 +230,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderBubbles(items) {
         bubbleList.replaceChildren();
-        const bubbles = items.filter(item => item.type === 'bubble');
-        document.getElementById('bubble-count').textContent = String(bubbles.length);
+        catalogBubbles = items.filter(item => item.type === 'bubble');
+        document.getElementById('bubble-count').textContent = String(catalogBubbles.length);
+        const query = document.getElementById('bubble-search').value.trim().toLocaleLowerCase();
+        document.getElementById('clear-bubble-search').hidden = !query;
+        const bubbles = catalogBubbles.filter(bubble => {
+            const matchesQuery = !query ||
+                bubble.name.toLocaleLowerCase().includes(query) ||
+                bubble.item_id.toLocaleLowerCase().includes(query);
+            const matchesState = activeCatalogFilter === 'all' ||
+                (activeCatalogFilter === 'enabled' && bubble.enabled) ||
+                (activeCatalogFilter === 'disabled' && !bubble.enabled);
+            return matchesQuery && matchesState;
+        });
 
         if (!bubbles.length) {
             const empty = document.createElement('p');
             empty.className = 'bubble-empty';
-            empty.textContent = 'Aún no hay burbujas en el catálogo.';
+            empty.textContent = catalogBubbles.length
+                ? 'No hay burbujas que coincidan con la búsqueda o el filtro.'
+                : 'Aún no hay burbujas en el catálogo.';
             bubbleList.append(empty);
             return;
         }
@@ -383,6 +398,23 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('cancel-edit').addEventListener('click', resetEditor);
     document.getElementById('refresh-bubbles').addEventListener('click', loadBubbles);
     cssInput.addEventListener('input', updatePreview);
+    document.getElementById('bubble-search').addEventListener('input', () => renderBubbles(catalogBubbles));
+    document.getElementById('clear-bubble-search').addEventListener('click', () => {
+        document.getElementById('bubble-search').value = '';
+        document.getElementById('bubble-search').focus();
+        renderBubbles(catalogBubbles);
+    });
+    document.querySelectorAll('.catalog-filter').forEach(button => {
+        button.addEventListener('click', () => {
+            activeCatalogFilter = button.dataset.filter;
+            document.querySelectorAll('.catalog-filter').forEach(filterButton => {
+                const isActive = filterButton === button;
+                filterButton.classList.toggle('active', isActive);
+                filterButton.setAttribute('aria-pressed', String(isActive));
+            });
+            renderBubbles(catalogBubbles);
+        });
+    });
     stickerInput.addEventListener('change', () => setStickerFile(stickerInput.files[0]));
     document.getElementById('remove-sticker').addEventListener('click', () => {
         selectedStickerFile = null;

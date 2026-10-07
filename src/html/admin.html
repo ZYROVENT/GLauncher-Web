@@ -32,9 +32,12 @@
                 <h1><i class="fas fa-comment-dots"></i> Burbujas de GChat</h1>
                 <p>Crea y administra estilos que se guardarán en el catálogo y podrán cargarse desde la app.</p>
             </div>
-            <button id="refresh-bubbles" class="admin-secondary-button" type="button">
-                <i class="fas fa-sync-alt"></i> Actualizar catálogo
-            </button>
+            <div class="admin-heading-actions">
+                <span class="storage-badge"><i class="fas fa-cloud"></i> Catálogo en la nube</span>
+                <button id="refresh-bubbles" class="admin-secondary-button" type="button">
+                    <i class="fas fa-sync-alt"></i> Actualizar
+                </button>
+            </div>
         </section>
 
         <div id="admin-status" class="admin-status" role="status" aria-live="polite">Verificando permisos de administrador…</div>
@@ -45,78 +48,84 @@
                     <div>
                         <p class="admin-eyebrow">NUEVO COSMÉTICO</p>
                         <h2>Crear burbuja</h2>
+                        <p class="panel-description">Personaliza el estilo y pruébalo en vivo antes de publicarlo.</p>
                     </div>
                     <span class="panel-icon"><i class="fas fa-wand-magic-sparkles"></i></span>
                 </div>
 
+                <ol class="editor-steps" aria-label="Pasos para crear una burbuja">
+                    <li><span>01</span><div><strong>Identidad</strong><small>Nombre y precio</small></div></li>
+                    <li><span>02</span><div><strong>Diseño</strong><small>Colores y forma</small></div></li>
+                    <li><span>03</span><div><strong>Sticker</strong><small>Imagen opcional</small></div></li>
+                </ol>
+
                 <div class="admin-form-grid">
-                    <label>
+                    <label class="form-field">
                         Identificador
                         <input id="bubble-id" name="item_id" required minlength="2" maxlength="64" pattern="[a-z0-9][a-z0-9_-]{1,63}" placeholder="bubble_neon" autocomplete="off">
                         <small>Único; usa minúsculas, números, guion o guion bajo.</small>
                     </label>
-                    <label>
+                    <label class="form-field">
                         Nombre
                         <input id="bubble-name" name="name" required maxlength="100" placeholder="Neón galáctico">
                     </label>
-                    <label>
+                    <label class="form-field">
                         Icono
                         <input id="bubble-icon" name="icon" required maxlength="32" value="💬" placeholder="✨">
                         <small>Emoji o icono corto.</small>
                     </label>
-                    <label>
+                    <label class="form-field">
                         Precio en GCoins
                         <input id="bubble-price" name="price" type="number" min="0" max="100000" step="1" required value="100">
                     </label>
-                    <label class="admin-full-width">
+                    <label class="form-field admin-full-width">
                         Descripción
                         <input id="bubble-description" name="description" maxlength="500" placeholder="Describe el estilo de la burbuja.">
                     </label>
                     <div class="admin-field admin-full-width">
-                        <span>Editor visual</span>
+                        <span class="field-heading"><i class="fas fa-palette"></i> Apariencia de la burbuja</span>
                         <div class="visual-controls">
-                            <label>Fondo <input id="bubble-background" type="color" value="#182848"></label>
-                            <label>Texto <input id="bubble-text-color" type="color" value="#ffffff"></label>
-                            <label>Borde <input id="bubble-border-color" type="color" value="#8fd3ff"></label>
+                            <label>Fondo <input id="bubble-background" type="color" value="#182848"><output>Color base</output></label>
+                            <label>Texto <input id="bubble-text-color" type="color" value="#ffffff"><output>Color del mensaje</output></label>
+                            <label>Borde <input id="bubble-border-color" type="color" value="#8fd3ff"><output>Contorno</output></label>
                             <label class="range-control">Redondeo <input id="bubble-radius" type="range" min="0" max="36" value="16"><output id="bubble-radius-value">16 px</output></label>
                         </div>
-                        <small>Usa los controles visuales o edita directamente las declaraciones CSS de abajo.</small>
+                        <small class="field-hint">Cambia los controles para actualizar la vista previa al instante.</small>
                     </div>
-                    <label class="admin-full-width">
-                        Código CSS
-                        <textarea id="bubble-css" name="css_code" required maxlength="12000" rows="6" spellcheck="false">background: linear-gradient(135deg, #182848, #4b6cb7); border: 2px solid #8fd3ff; border-radius: 16px; color: #ffffff; box-shadow: 0 0 12px #4b6cb7;</textarea>
-                        <small>Solo declaraciones visuales separadas por punto y coma; no incluyas selectores ni llaves. No se aceptan URLs ni código externo.</small>
-                    </label>
+                    <details class="advanced-css admin-full-width">
+                        <summary><i class="fas fa-code"></i><span><strong>CSS avanzado</strong><small>Opcional · declaraciones visuales seguras</small></span><i class="fas fa-chevron-down summary-chevron"></i></summary>
+                        <label class="form-field">
+                            Declaraciones CSS
+                            <textarea id="bubble-css" name="css_code" required maxlength="12000" rows="5" spellcheck="false">background: linear-gradient(135deg, #182848, #4b6cb7); border: 2px solid #8fd3ff; border-radius: 16px; color: #ffffff; box-shadow: 0 0 12px #4b6cb7;</textarea>
+                            <small>Solo propiedades visuales separadas por punto y coma. Sin selectores, llaves, URLs ni código externo.</small>
+                        </label>
+                    </details>
                 </div>
 
                 <section class="sticker-editor" aria-labelledby="sticker-editor-heading">
-                    <div>
-                        <span id="sticker-editor-heading" class="preview-label">STICKER DE IMAGEN</span>
-                        <p class="preview-hint">Carga o arrastra un PNG, JPEG o WebP a la burbuja. Arrastra el sticker para ubicarlo.</p>
+                    <div class="sticker-editor-heading">
+                        <span class="sticker-heading-icon"><i class="fas fa-face-smile"></i></span>
+                        <div>
+                            <span id="sticker-editor-heading" class="preview-label">Sticker decorativo</span>
+                            <p class="preview-hint">Dale un toque único a tu burbuja con una imagen.</p>
+                        </div>
                     </div>
-                    <label class="sticker-upload-button" for="sticker-file"><i class="fas fa-upload"></i> Elegir imagen (máx. 5 MB)</label>
+                    <label class="sticker-upload-button" for="sticker-file"><i class="fas fa-cloud-upload-alt"></i> Elegir imagen <span>PNG, JPG o WebP · hasta 5 MB</span></label>
                     <input id="sticker-file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
-                    <div id="sticker-drop-zone" class="sticker-drop-zone" tabindex="0" aria-label="Vista previa de la burbuja; arrastra aquí una imagen">
+                    <div id="sticker-drop-zone" class="sticker-drop-zone" tabindex="0" aria-label="Vista previa de la burbuja; arrastra aquí una imagen" aria-describedby="sticker-feedback">
                         <div id="bubble-preview" class="bubble-preview">¡Hola! Esta es mi nueva burbuja.</div>
                         <img id="sticker-preview" class="sticker-preview" alt="" hidden draggable="false">
                         <button id="sticker-resize" class="sticker-resize" type="button" aria-label="Arrastra para cambiar el tamaño del sticker" title="Arrastra para cambiar el tamaño"><i class="fas fa-up-right-and-down-left-from-center"></i></button>
-                        <span class="sticker-drop-overlay">Suelta la imagen aquí</span>
+                        <span class="sticker-drop-overlay"><i class="fas fa-cloud-upload-alt"></i> Suelta tu sticker aquí</span>
+                        <span class="stage-hint"><i class="fas fa-hand-pointer"></i> Arrastra para mover</span>
                     </div>
                     <div class="sticker-controls">
-                        <label>Tamaño del sticker <input id="sticker-size" type="range" min="8" max="60" value="26"><output id="sticker-size-value">26%</output></label>
-                        <label>Rotación <input id="sticker-rotation" type="range" min="-180" max="180" value="0"><output id="sticker-rotation-value">0°</output></label>
-                        <button id="remove-sticker" class="admin-secondary-button" type="button" disabled><i class="fas fa-trash"></i> Quitar sticker</button>
+                        <label><span><i class="fas fa-expand-alt"></i> Tamaño <output id="sticker-size-value">26%</output></span><input id="sticker-size" type="range" min="8" max="60" value="26"></label>
+                        <label><span><i class="fas fa-sync-alt"></i> Rotación <output id="sticker-rotation-value">0°</output></span><input id="sticker-rotation" type="range" min="-180" max="180" value="0"></label>
+                        <button id="remove-sticker" class="admin-secondary-button remove-sticker-button" type="button" disabled><i class="fas fa-trash"></i> Quitar sticker</button>
                     </div>
-                    <p id="sticker-feedback" class="preview-hint" role="status" aria-live="polite"></p>
+                    <p id="sticker-feedback" class="preview-hint sticker-feedback" role="status" aria-live="polite">Sin sticker · puedes continuar sin imagen.</p>
                 </section>
-
-                <div class="bubble-preview-block">
-                    <div class="preview-message">
-                        <span class="preview-avatar">G</span>
-                        <div><span class="preview-username">TuUsuario</span></div>
-                    </div>
-                    <span class="preview-hint">El sticker se guarda junto con la burbuja y aparece en web y launcher.</span>
-                </div>
 
                 <div class="admin-form-actions">
                     <button id="save-bubble" class="admin-primary-button" type="submit"><i class="fas fa-plus"></i> Crear burbuja</button>
@@ -130,7 +139,19 @@
                     <div>
                         <p class="admin-eyebrow">CATÁLOGO SQL</p>
                         <h2>Burbujas existentes <span id="bubble-count" class="bubble-count">0</span></h2>
+                        <p class="panel-description">Administra estilos publicados y edítalos cuando quieras.</p>
                     </div>
+                </div>
+                <label class="catalog-search">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <span class="sr-only">Buscar burbujas</span>
+                    <input id="bubble-search" type="search" placeholder="Buscar por nombre o ID…" autocomplete="off">
+                    <button id="clear-bubble-search" type="button" aria-label="Limpiar búsqueda" hidden><i class="fas fa-times"></i></button>
+                </label>
+                <div class="catalog-filters" role="group" aria-label="Filtrar burbujas">
+                    <button class="catalog-filter active" type="button" data-filter="all" aria-pressed="true">Todas</button>
+                    <button class="catalog-filter" type="button" data-filter="enabled" aria-pressed="false">Activas</button>
+                    <button class="catalog-filter" type="button" data-filter="disabled" aria-pressed="false">Inactivas</button>
                 </div>
                 <div id="bubble-list" class="bubble-list" aria-live="polite"></div>
             </section>
