@@ -307,7 +307,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (recoveryStage === 'request') {
                 // Etapa 1: Validar datos y enviar código de recuperación al Gmail
-                btnRequestEmailChange?.setAttribute('disabled', 'true');
                 resetSubmitBtn.disabled = true;
                 resetSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando código a Gmail...';
 
@@ -341,6 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 } catch (error) {
                     window.showNotification(error.message || 'Error al enviar el código de recuperación a tu Gmail.', 'error');
+                    resetSubmitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Código al Gmail';
                 } finally {
                     resetSubmitBtn.disabled = false;
                 }
