@@ -307,45 +307,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (recoveryStage === 'request') {
                 // Etapa 1: Validar datos y enviar código de recuperación al Gmail
+                btnRequestEmailChange?.setAttribute('disabled', 'true');
                 resetSubmitBtn.disabled = true;
                 resetSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando código a Gmail...';
 
                 try {
-                    // 1. Enviar correo de restablecimiento con OTP a través de Supabase Auth
-                    let mailSuccess = false;
-                    if (supabaseClient) {
-                        try {
-                            const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-                                redirectTo: `${window.location.origin}${window.location.pathname}?reset=true`
-                            });
-                            if (!error) {
-                                mailSuccess = true;
-                            } else {
-                                console.warn('Supabase resetPasswordForEmail info:', error.message);
-                            }
-                        } catch (supaErr) {
-                            console.warn('Supabase reset request caught:', supaErr);
-                        }
-                    }
+                    // Llamar directamente al backend de GLauncher que despacha el código por Nodemailer
+                    const response = await fetch(`${BACKEND_URL}/api/auth/forgot_password`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            username, 
+                            security_code: securityPin,
+                            security_pin: securityPin,
+                            email
+                        })
+                    });
 
-                    // 2. Disparar endpoint de recuperación en el Backend de GLauncher
-                    try {
-                        const response = await fetch(`${BACKEND_URL}/api/auth/forgot_password`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ 
-                                username, 
-                                security_code: securityPin,
-                                security_pin: securityPin,
-                                email
-                            })
-                        });
-                        const data = await response.json().catch(() => ({}));
-                        if (response.ok) {
-                            mailSuccess = true;
-                        }
-                    } catch (netErr) {
-                        console.warn('Backend forgot_password notice:', netErr);
+                    const data = await response.json().catch(() => ({}));
+
+                    if (!response.ok) {
+                        throw new Error(data.message || 'Error al validar tus datos o enviar el correo.');
                     }
 
                     // Pasar a la Etapa 2: Ingresar código recibido en Gmail y nueva contraseña
@@ -355,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (resetNewPasswordInput) resetNewPasswordInput.required = true;
                     
                     resetSubmitBtn.innerHTML = '<i class="fas fa-key"></i> Guardar Nueva Contraseña';
-                    window.showNotification(`¡Código enviado con éxito a ${email}! Revisa tu bandeja de entrada o spam.`, 'success');
+                    window.showNotification(data.message || `¡Código enviado con éxito a ${email}! Revisa tu bandeja de entrada o spam.`, 'success');
 
                 } catch (error) {
                     window.showNotification(error.message || 'Error al enviar el código de recuperación a tu Gmail.', 'error');

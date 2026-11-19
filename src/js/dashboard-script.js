@@ -1343,47 +1343,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 btnRequestEmailChange.disabled = true;
-                btnRequestEmailChange.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando clave y enviando código...';
+                btnRequestEmailChange.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando y enviando código...';
 
                 try {
-                    // 1. Validar la contraseña contra el backend
-                    const authCheck = await fetch(`${BACKEND_URL}/api/user/verify_password`, {
+                    // Enviar solicitud de cambio y despacho de OTP directo al backend de GLauncher
+                    const response = await fetch(`${BACKEND_URL}/api/user/request_email_change`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                        body: JSON.stringify({ password: currentPassword })
-                    }).catch(() => null);
+                        headers: { 
+                            'Content-Type': 'application/json', 
+                            'Authorization': `Bearer ${token}` 
+                        },
+                        body: JSON.stringify({ 
+                            current_password: currentPassword, 
+                            new_email: newEmail 
+                        })
+                    });
 
-                    if (authCheck && !authCheck.ok && authCheck.status === 401) {
-                        const errData = await authCheck.json().catch(() => ({}));
-                        throw new Error(errData.message || 'La contraseña actual es incorrecta.');
-                    }
+                    const data = await response.json().catch(() => ({}));
 
-                    // 2. Enviar código de confirmación a la nueva cuenta de Gmail
-                    const supabaseClient = window.glauncherSupabase;
-                    let sentMail = false;
-
-                    if (supabaseClient) {
-                        try {
-                            const { error } = await supabaseClient.auth.updateUser(
-                                { email: newEmail },
-                                { emailRedirectTo: `${window.location.origin}${window.location.pathname}` }
-                            );
-                            if (!error) sentMail = true;
-                        } catch (supaErr) {
-                            console.warn('Supabase updateUser email notice:', supaErr);
-                        }
-                    }
-
-                    // 3. Notificar al backend para generar y despachar OTP de cambio de email
-                    try {
-                        const apiRes = await fetch(`${BACKEND_URL}/api/user/request_email_change`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                            body: JSON.stringify({ current_password: currentPassword, new_email: newEmail })
-                        });
-                        if (apiRes.ok) sentMail = true;
-                    } catch (netErr) {
-                        console.warn('Backend request_email_change notice:', netErr);
+                    if (!response.ok) {
+                        throw new Error(data.message || 'Error al autorizar el cambio de correo.');
                     }
 
                     pendingTargetEmail = newEmail;
@@ -1398,7 +1377,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         changeEmailOtpInput.focus();
                     }
 
-                    window.showNotification(`¡Contraseña autorizada! Hemos enviado un código a ${newEmail}. Ingrésalo para finalizar.`, 'success');
+                    window.showNotification(data.message || `¡Código enviado a ${newEmail}! Revisa tu bandeja de entrada o spam.`, 'success');
 
                 } catch (error) {
                     window.showNotification(error.message || 'Error al autorizar el cambio de correo.', 'error');
@@ -1422,50 +1401,35 @@ document.addEventListener('DOMContentLoaded', () => {
                     btnVerifyEmailChange.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Confirmando código...';
 
                     try {
-                        const supabaseClient = window.glauncherSupabase;
-                        let verified = false;
+                    // Guardar nuevo email en backend de GLauncher
+                    const changeRes = await fetch(`${BACKEND_URL}/api/user/confirm_email_change`, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json', 
+                            'Authorization': `Bearer ${token}` 
+                        },
+                        body: JSON.stringify({
+                            new_email: pendingTargetEmail,
+                            code: otpCode
+                        })
+                    });
 
-                        // Verificar OTP con Supabase Auth si está conectado
-                        if (supabaseClient && pendingTargetEmail) {
-                            try {
-                                const { data, error } = await supabaseClient.auth.verifyOtp({
-                                    email: pendingTargetEmail,
-                                    token: otpCode,
-                                    type: 'email_change'
-                                });
-                                if (!error && data?.user) verified = true;
-                            } catch (otpErr) {
-                                console.warn('Supabase email_change OTP verify notice:', otpErr);
-                            }
-                        }
+                    const result = await changeRes.json().catch(() => ({}));
 
-                        // Guardar nuevo email en backend de GLauncher
-                        const changeRes = await fetch(`${BACKEND_URL}/api/user/confirm_email_change`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                            body: JSON.stringify({
-                                new_email: pendingTargetEmail,
-                                code: otpCode,
-                                password: pendingAuthorizedPassword
-                            })
-                        });
+                    if (changeRes.ok) {
+                        userData.email = pendingTargetEmail;
+                        if (currentEmailDisplay) currentEmailDisplay.value = pendingTargetEmail;
+                        window.showNotification(result.message || '¡Tu correo Gmail se ha actualizado exitosamente!', 'success');
 
-                        const result = await changeRes.json().catch(() => ({}));
-
-                        if (changeRes.ok || verified) {
-                            userData.email = pendingTargetEmail;
-                            if (currentEmailDisplay) currentEmailDisplay.value = pendingTargetEmail;
-                            window.showNotification('¡Tu correo Gmail se ha actualizado exitosamente!', 'success');
-
-                            // Limpiar y regresar al paso 1
-                            changeEmailForm.reset();
-                            if (changeEmailStep2) changeEmailStep2.style.display = 'none';
-                            if (changeEmailStep1) changeEmailStep1.style.display = 'block';
-                            pendingTargetEmail = '';
-                            pendingAuthorizedPassword = '';
-                        } else {
-                            throw new Error(result.message || 'El código ingresado es incorrecto o expiró.');
-                        }
+                        // Limpiar y regresar al paso 1
+                        changeEmailForm.reset();
+                        if (changeEmailStep2) changeEmailStep2.style.display = 'none';
+                        if (changeEmailStep1) changeEmailStep1.style.display = 'block';
+                        pendingTargetEmail = '';
+                        pendingAuthorizedPassword = '';
+                    } else {
+                        throw new Error(result.message || 'El código ingresado es incorrecto o expiró.');
+                    }
 
                     } catch (error) {
                         window.showNotification(error.message || 'Código inválido. Intenta nuevamente.', 'error');
