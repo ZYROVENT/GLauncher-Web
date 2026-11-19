@@ -1686,12 +1686,13 @@ input:checked + .slider:before {
     top: calc(100% + 5px);
     left: 0;
     width: 100%;
-    background: rgba(13, 17, 23, 0.95);
-    border: 1px solid var(--neon-blue);
+    background: rgba(13, 17, 23, 0.98);
+    border: 1px solid var(--neon-cyan);
     border-radius: 12px;
-    z-index: 100;
+    z-index: 999999;
     overflow: hidden;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 243, 255, 0.25);
+    backdrop-filter: blur(14px);
 }
 
 .status-option {
@@ -1812,24 +1813,52 @@ input:checked + .slider:before {
         width: 100%;
         border-right: none;
         border-bottom: 1px solid rgba(0, 243, 255, 0.2);
-        padding: 15px 10px;
+        padding: 12px 10px;
         position: sticky;
         top: 0;
+        z-index: 1000;
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+        background: rgba(10, 14, 22, 0.95);
+        backdrop-filter: blur(14px);
+    }
+
+    /* Ocultar barra superior al hacer scroll hacia abajo en celular */
+    .floating-nav.nav-hidden {
+        transform: translateY(-110%);
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* Eliminar el botón Iniciar Juego en móviles */
+    .nav-actions-section .launch-button,
+    #launch-game-btn {
+        display: none !important;
+    }
+
+    .nav-actions-section {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding-top: 0;
     }
 
     .nav-profile-section {
-        margin: 0 5px 12px 5px;
-        padding: 12px;
+        margin: 0 5px 8px 5px;
+        padding: 10px;
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 12px;
         text-align: left;
     }
 
     .nav-avatar {
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
         margin-bottom: 0;
+    }
+
+    .status-options {
+        z-index: 999999 !important;
     }
 
     .nav-links-section {

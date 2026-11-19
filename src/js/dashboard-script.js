@@ -24,6 +24,21 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // --- Control de auto-ocultamiento de la barra superior al hacer scroll hacia abajo en celulares ---
+    let lastScrollY = window.scrollY;
+    const floatingNav = document.querySelector('.floating-nav');
+    window.addEventListener('scroll', () => {
+        if (window.innerWidth <= 992 && floatingNav) {
+            const currentY = window.scrollY;
+            if (currentY > 70 && currentY > lastScrollY + 5) {
+                floatingNav.classList.add('nav-hidden');
+            } else if (currentY < lastScrollY - 5 || currentY <= 30) {
+                floatingNav.classList.remove('nav-hidden');
+            }
+            lastScrollY = currentY;
+        }
+    }, { passive: true });
+
     // Función para decodificar JWT sin librerías externas
     function parseJwt(tokenStr) {
         try {
@@ -217,7 +232,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function setAvatarSource(image, source) {
+    function getValidAvatar(url, username) {
+        if (!url || url === DEFAULT_AVATAR_URL || url.includes('default-avatar.png')) {
+            return `https://crafatar.com/avatars/${encodeURIComponent(username || 'steve')}?size=100&overlay=true`;
+        }
+    function setAvatarSource(image, source, username) {
+        if (!image) return;
+        const fallback = getValidAvatar('', username);
+        image.onerror = () => {
+            image.onerror = null;
+            image.src = fallback;
+        };
+        image.src = getValidAvatar(source, username);
+    }
         if (!image) return;
         image.onerror = () => {
             image.onerror = null;
@@ -558,9 +585,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (pending.length > 0) {
             friendsListContainer.innerHTML += '<h4 style="grid-column: 1/-1; color: var(--neon-pink); margin-top: 10px;"><i class="fas fa-inbox"></i> Solicitudes Pendientes</h4>';
             pending.forEach(user => {
+                const avatar = getValidAvatar(user.avatar_url, user.username);
                 friendsListContainer.innerHTML += `
                     <div class="friend-item" data-user-id="${user.id}" data-user-status="${user.status || 'Disponible'}">
-                        <img src="${user.avatar_url || DEFAULT_AVATAR_URL}" alt="Avatar" class="friend-avatar">
+                        <img src="${avatar}" alt="Avatar" class="friend-avatar" onerror="this.src='https://crafatar.com/avatars/${encodeURIComponent(user.username)}?size=100&overlay=true'">
                         <div class="friend-info">
                             <span class="friend-name">
                                 <span class="status-indicator online"></span>
@@ -581,9 +609,10 @@ document.addEventListener('DOMContentLoaded', () => {
         friendsListContainer.innerHTML += '<h4 style="grid-column: 1/-1; color: var(--neon-blue); margin-top: 15px;"><i class="fas fa-user-friends"></i> Mis Amigos (' + friends.length + ')</h4>';
         if (friends.length > 0) {
             friends.forEach(user => {
+                const avatar = getValidAvatar(user.avatar_url, user.username);
                 friendsListContainer.innerHTML += `
                     <div class="friend-item" data-user-id="${user.id}" data-user-status="${user.status || 'Disponible'}">
-                        <img src="${user.avatar_url || DEFAULT_AVATAR_URL}" alt="Avatar" class="friend-avatar">
+                        <img src="${avatar}" alt="Avatar" class="friend-avatar" onerror="this.src='https://crafatar.com/avatars/${encodeURIComponent(user.username)}?size=100&overlay=true'">
                         <div class="friend-info">
                             <span class="friend-name">
                                 <span class="status-indicator online"></span>
@@ -605,9 +634,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sent.length > 0) {
             friendsListContainer.innerHTML += '<h4 style="grid-column: 1/-1; color: var(--text-color-dark); margin-top: 15px;"><i class="fas fa-paper-plane"></i> Solicitudes Enviadas</h4>';
             sent.forEach(user => {
+                const avatar = getValidAvatar(user.avatar_url, user.username);
                 friendsListContainer.innerHTML += `
                     <div class="friend-item" data-user-id="${user.id}" data-user-status="${user.status || 'Disponible'}">
-                        <img src="${user.avatar_url || DEFAULT_AVATAR_URL}" alt="Avatar" class="friend-avatar">
+                        <img src="${avatar}" alt="Avatar" class="friend-avatar" onerror="this.src='https://crafatar.com/avatars/${encodeURIComponent(user.username)}?size=100&overlay=true'">
                         <div class="friend-info">
                             <span class="friend-name">
                                 <span class="status-indicator online"></span>
@@ -1082,13 +1112,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (friends.length > 0) {
             friends.forEach(friend => {
+                const avatar = getValidAvatar(friend.avatar_url, friend.username);
                 const convoItem = document.createElement('div');
                 convoItem.className = 'gchat-conversation-item';
                 convoItem.dataset.friendId = friend.id;
                 convoItem.dataset.friendName = friend.username;
                 convoItem.dataset.userStatus = friend.status || 'Disponible';
                 convoItem.innerHTML = `
-                    <img src="${friend.avatar_url || DEFAULT_AVATAR_URL}" alt="Avatar" class="friend-avatar">
+                    <img src="${avatar}" alt="Avatar" class="friend-avatar" onerror="this.src='https://crafatar.com/avatars/${encodeURIComponent(friend.username)}?size=100&overlay=true'">
                     <div class="friend-info">
                         <span class="friend-name">
                             <span class="status-indicator online"></span>
