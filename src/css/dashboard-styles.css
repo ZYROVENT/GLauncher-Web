@@ -284,6 +284,52 @@
     justify-content: space-between;
 }
 
+/* Buscador de amigos en GChat con estilo Neón */
+.gchat-search-container {
+    position: relative;
+    padding: 12px 14px 8px 14px;
+    background: rgba(10, 14, 20, 0.6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.gchat-search-container .gchat-search-icon {
+    position: absolute;
+    left: 26px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--neon-blue);
+    opacity: 0.7;
+    font-size: 0.88em;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.gchat-search-container input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(0, 243, 255, 0.22);
+    border-radius: 20px;
+    padding: 9px 14px 9px 36px;
+    color: #fff;
+    font-size: 0.88em;
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
+}
+
+.gchat-search-container input:focus {
+    border-color: var(--neon-cyan);
+    background: rgba(0, 0, 0, 0.7);
+    box-shadow: 0 0 14px rgba(0, 243, 255, 0.25), inset 0 0 8px rgba(0, 243, 255, 0.1);
+}
+
+.gchat-search-container input:focus + .gchat-search-icon,
+.gchat-search-container:focus-within .gchat-search-icon {
+    color: var(--neon-pink);
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+}
+
 #gchat-conversation-list {
     flex-grow: 1;
     overflow-y: auto;
@@ -449,12 +495,220 @@
     border-radius: 8px;
 }
 
+/* --- Header de Conversación Activa --- */
+.gchat-active-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 20px;
+    background: rgba(13, 17, 23, 0.95);
+    border-bottom: 1px solid rgba(0, 243, 255, 0.15);
+    backdrop-filter: blur(8px);
+}
+
+.gchat-back-btn {
+    display: none;
+    background: rgba(0, 243, 255, 0.1);
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    color: var(--neon-cyan);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.25s ease;
+}
+
+.gchat-back-btn:hover {
+    background: var(--neon-cyan);
+    color: #000;
+    box-shadow: 0 0 12px rgba(0, 243, 255, 0.5);
+    transform: scale(1.08);
+}
+
+.gchat-active-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.gchat-active-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid var(--neon-cyan);
+    object-fit: cover;
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+}
+
+.gchat-active-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.gchat-active-name-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: #fff;
+    font-size: 1em;
+    letter-spacing: 0.3px;
+}
+
+.gchat-active-status-label {
+    font-size: 0.78em;
+    color: #94a3b8;
+}
+
+/* --- Panel de Fluent Emojis 3D --- */
+.gchat-emoji-picker {
+    margin: 0 20px 10px;
+    padding: 12px;
+    border: 1px solid rgba(255, 0, 255, 0.25);
+    border-radius: 14px;
+    background: rgba(13, 17, 23, 0.98);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 0, 255, 0.15);
+    animation: gchatPopUp 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.gchat-emoji-picker[hidden] {
+    display: none;
+}
+
+.gchat-picker-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.gchat-picker-tabs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+}
+
+.gchat-picker-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.gchat-emoji-cat-btn,
+.gchat-gif-tag-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    padding: 6px 12px;
+    border-radius: 18px;
+    font-size: 0.8em;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.gchat-emoji-cat-btn:hover,
+.gchat-gif-tag-btn:hover {
+    background: rgba(255, 0, 255, 0.15);
+    border-color: var(--neon-pink);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.gchat-emoji-cat-btn.active {
+    background: linear-gradient(135deg, #ff00ff, #9900ff);
+    border-color: #ff00ff;
+    color: #fff;
+    box-shadow: 0 0 12px rgba(255, 0, 255, 0.4);
+    font-weight: 600;
+}
+
+.gchat-gif-tag-btn.active {
+    background: linear-gradient(135deg, #00f3ff, #0066ff);
+    border-color: #00f3ff;
+    color: #fff;
+    box-shadow: 0 0 12px rgba(0, 243, 255, 0.4);
+    font-weight: 600;
+}
+
+.gchat-picker-search-input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 7px 12px;
+    color: #fff;
+    font-size: 0.85em;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.gchat-picker-search-input:focus {
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.2);
+}
+
+.gchat-emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+    gap: 6px;
+    max-height: 190px;
+    overflow-y: auto;
+    padding: 4px;
+}
+
+.gchat-emoji-item {
+    background: transparent;
+    border: none;
+    font-size: 1.45em;
+    padding: 4px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.gchat-emoji-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.35) rotate(4deg);
+}
+
+.gchat-emoji-item:active {
+    transform: scale(0.95);
+}
+
+@keyframes gchatPopUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 .gchat-gif-picker {
     margin: 0 20px 10px;
-    padding: 10px;
-    border: 1px solid rgba(0, 243, 255, 0.2);
-    border-radius: 10px;
-    background: rgba(13, 17, 23, 0.95);
+    padding: 12px;
+    border: 1px solid rgba(0, 243, 255, 0.25);
+    border-radius: 14px;
+    background: rgba(13, 17, 23, 0.98);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 243, 255, 0.15);
+    animation: gchatPopUp 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .gchat-gif-picker[hidden] {
@@ -469,61 +723,182 @@
 .gchat-gif-search input {
     min-width: 0;
     flex: 1;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.45);
     border: 1px solid rgba(0, 243, 255, 0.3);
-    border-radius: 8px;
-    padding: 8px 10px;
+    border-radius: 10px;
+    padding: 9px 14px;
     color: #fff;
+    font-size: 0.9em;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.gchat-gif-search input:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+}
+
+.gchat-gif-search button {
+    border-radius: 10px;
+    padding: 0 16px;
+    background: linear-gradient(135deg, rgba(0, 243, 255, 0.2), rgba(0, 243, 255, 0.1));
+    border: 1px solid var(--neon-blue);
+    color: var(--neon-cyan);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.gchat-gif-search button:hover {
+    background: var(--neon-cyan);
+    color: #000;
+    box-shadow: 0 0 14px rgba(0, 243, 255, 0.4);
 }
 
 .gchat-gif-results {
     display: grid;
-    max-height: 180px;
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-    gap: 6px;
-    margin-top: 8px;
+    max-height: 190px;
+    grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+    gap: 8px;
+    margin-top: 10px;
     overflow-y: auto;
+    padding: 2px;
 }
 
 .gchat-gif-option {
     overflow: hidden;
     padding: 0;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
+    border-radius: 8px;
     background: #111;
     cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s;
+}
+
+.gchat-gif-option:hover {
+    transform: translateY(-2px) scale(1.03);
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
 }
 
 .gchat-gif-option img {
     display: block;
     width: 100%;
-    height: 70px;
+    height: 75px;
     object-fit: cover;
 }
 
+/* --- Barra de Entrada de GChat & Botones de Colores --- */
 .gchat-input-form {
     display: flex;
-    padding: 15px 20px;
-    gap: 12px;
-    background: rgba(13, 17, 23, 0.9);
+    align-items: center;
+    padding: 14px 20px;
+    gap: 10px;
+    background: rgba(13, 17, 23, 0.95);
     border-top: 1px solid rgba(0, 243, 255, 0.15);
+    position: relative;
+}
+
+/* Botón de Emoji con degradado neón Amarillo/Naranja */
+#gchat-emoji-toggle {
+    background: linear-gradient(135deg, rgba(254, 202, 87, 0.18), rgba(255, 159, 67, 0.1));
+    border: 1px solid rgba(254, 202, 87, 0.5);
+    color: #feca57;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25em;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#gchat-emoji-toggle:hover {
+    background: linear-gradient(135deg, #feca57, #ff9f43);
+    color: #0b0f19;
+    box-shadow: 0 0 16px rgba(254, 202, 87, 0.6);
+    transform: translateY(-2px) scale(1.08);
+}
+
+#gchat-emoji-toggle:active {
+    transform: scale(0.94);
+}
+
+/* Botón de GIF con degradado neón Magenta/Violeta */
+#gchat-gif-toggle {
+    background: linear-gradient(135deg, rgba(255, 0, 255, 0.18), rgba(153, 0, 255, 0.1));
+    border: 1px solid rgba(255, 0, 255, 0.5);
+    color: #ff00ff;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15em;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#gchat-gif-toggle:hover {
+    background: linear-gradient(135deg, #ff00ff, #9900ff);
+    color: #fff;
+    box-shadow: 0 0 16px rgba(255, 0, 255, 0.6);
+    transform: translateY(-2px) scale(1.08);
+}
+
+#gchat-gif-toggle:active {
+    transform: scale(0.94);
 }
 
 .gchat-input-form input {
     flex-grow: 1;
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(0, 243, 255, 0.3);
-    border-radius: 10px;
-    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 243, 255, 0.28);
+    border-radius: 22px;
+    padding: 12px 18px;
     color: #fff;
     outline: none;
     font-size: 0.95em;
-    transition: border-color 0.2s;
+    transition: all 0.25s ease;
 }
 
 .gchat-input-form input:focus {
-    border-color: var(--neon-pink);
-    box-shadow: 0 0 10px rgba(255, 0, 255, 0.2);
+    border-color: var(--neon-cyan);
+    background: rgba(0, 0, 0, 0.7);
+    box-shadow: 0 0 14px rgba(0, 243, 255, 0.25);
+}
+
+/* Botón Enviar con estilo Neón Cyan */
+.gchat-input-form button[type="submit"] {
+    background: linear-gradient(135deg, #00f3ff, #0077ff);
+    border: none;
+    color: #0b0f19;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 0 12px rgba(0, 243, 255, 0.4);
+}
+
+.gchat-input-form button[type="submit"]:hover {
+    background: linear-gradient(135deg, #39ff14, #00f3ff);
+    color: #000;
+    box-shadow: 0 0 18px rgba(57, 255, 20, 0.6);
+    transform: translateY(-2px) scale(1.08);
+}
+
+.gchat-input-form button[type="submit"]:active {
+    transform: scale(0.94);
 }
 
 /* --- Estilos para la Sección de Amigos --- */
@@ -1494,13 +1869,73 @@ input:checked + .slider:before {
 
     .gchat-container {
         grid-template-columns: 1fr;
-        height: min(70vh, calc(100dvh - 190px));
-        min-height: 360px;
+        height: min(78vh, calc(100dvh - 170px));
+        min-height: 480px;
+        position: relative;
     }
 
     .gchat-sidebar {
         min-height: 0;
-        max-height: 180px;
+        height: 100%;
+        max-height: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gchat-sidebar.mobile-hidden {
+        display: none !important;
+    }
+
+    .gchat-main {
+        display: none;
+        height: 100%;
+        flex-direction: column;
+    }
+
+    .gchat-main.mobile-active {
+        display: flex !important;
+    }
+
+    .gchat-back-btn {
+        display: flex !important;
+    }
+
+    .gchat-input-form {
+        padding: 10px 12px;
+        gap: 6px;
+    }
+
+    #gchat-emoji-toggle,
+    #gchat-gif-toggle,
+    .gchat-input-form button[type="submit"] {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        font-size: 1.05em;
+        border-radius: 10px;
+    }
+
+    .gchat-input-form input {
+        padding: 10px 14px;
+        font-size: 0.9em;
+    }
+
+    .gchat-emoji-picker,
+    .gchat-gif-picker {
+        margin: 0 10px 8px;
+        padding: 8px;
+    }
+
+    .gchat-emoji-grid {
+        grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+        max-height: 160px;
+    }
+
+    .gchat-message {
+        max-width: 86%;
+        padding: 10px 14px;
+        font-size: 0.9em;
     }
 
     .settings-layout {

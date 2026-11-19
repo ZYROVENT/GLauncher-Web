@@ -833,6 +833,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const gifPicker = document.getElementById('gchat-gif-picker');
         const gifResults = document.getElementById('gchat-gif-results');
         const gifQuery = document.getElementById('gchat-gif-query');
+        const emojiToggle = document.getElementById('gchat-emoji-toggle');
+        const emojiPicker = document.getElementById('gchat-emoji-picker');
+        const emojiGrid = document.getElementById('gchat-emoji-grid');
+        const emojiSearch = document.getElementById('gchat-emoji-search');
+        const searchFriendsInput = document.getElementById('gchat-search-input');
+        const backToListBtn = document.getElementById('gchat-back-to-list-btn');
+        const gchatSidebar = document.getElementById('gchat-sidebar');
+        const gchatMain = document.getElementById('gchat-main');
+        const gchatActiveHeader = document.getElementById('gchat-active-header');
+        const gchatActiveAvatar = document.getElementById('gchat-active-avatar');
+        const gchatActiveName = document.getElementById('gchat-active-name');
+        const gchatActiveStatusDot = document.getElementById('gchat-active-status-dot');
+        const gchatActiveStatusLabel = document.getElementById('gchat-active-status-label');
+
         let currentRecipient = null;
         let chatChannel = null;
         let pollTimer = null;
@@ -840,8 +854,214 @@ document.addEventListener('DOMContentLoaded', () => {
         const renderedMessageIds = new Set();
 
         if (!conversationList) return;
+
+        // --- Filtro en tiempo real para el buscador de chats ---
+        if (searchFriendsInput) {
+            searchFriendsInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase().trim();
+                const items = conversationList.querySelectorAll('.gchat-conversation-item');
+                items.forEach(item => {
+                    const name = (item.dataset.friendName || '').toLowerCase();
+                    item.style.display = name.includes(term) ? 'flex' : 'none';
+                });
+            });
+        }
+
+        // --- Botón de Volver a la Lista de Amigos en Móviles ---
+        if (backToListBtn) {
+            backToListBtn.addEventListener('click', () => {
+                currentRecipient = null;
+                document.querySelectorAll('.gchat-conversation-item').forEach(i => i.classList.remove('active'));
+                if (gchatSidebar) gchatSidebar.classList.remove('mobile-hidden');
+                if (gchatMain) gchatMain.classList.remove('mobile-active');
+                if (gchatActiveHeader) gchatActiveHeader.style.display = 'none';
+                if (welcomeScreen) welcomeScreen.style.display = 'flex';
+                if (messagesContainer) messagesContainer.style.display = 'none';
+                if (inputForm) inputForm.style.display = 'none';
+                if (emojiPicker) emojiPicker.hidden = true;
+                if (gifPicker) gifPicker.hidden = true;
+            });
+        }
+
+        // --- Panel de Fluent Emojis 3D ---
+        const EMOJI_LIST = [
+            // Smileys & caras
+            { char: '😀', cat: 'smileys', name: 'sonrisa' },
+            { char: '😃', cat: 'smileys', name: 'feliz' },
+            { char: '😄', cat: 'smileys', name: 'risa' },
+            { char: '😁', cat: 'smileys', name: 'dientes' },
+            { char: '😆', cat: 'smileys', name: 'divertido' },
+            { char: '😂', cat: 'smileys', name: 'llorando risa' },
+            { char: '🤣', cat: 'smileys', name: 'rodando risa' },
+            { char: '😊', cat: 'smileys', name: 'rubor' },
+            { char: '😇', cat: 'smileys', name: 'angel' },
+            { char: '🙂', cat: 'smileys', name: 'sonreir' },
+            { char: '🙃', cat: 'smileys', name: 'al reves' },
+            { char: '😉', cat: 'smileys', name: 'guiño' },
+            { char: '😍', cat: 'smileys', name: 'enamorado' },
+            { char: '🥰', cat: 'smileys', name: 'cariño' },
+            { char: '😘', cat: 'smileys', name: 'beso' },
+            { char: '😋', cat: 'smileys', name: 'delicioso' },
+            { char: '😜', cat: 'smileys', name: 'lengua guiño' },
+            { char: '🤪', cat: 'smileys', name: 'loco' },
+            { char: '😎', cat: 'smileys', name: 'lentes cool' },
+            { char: '🤩', cat: 'smileys', name: 'estrellas' },
+            { char: '🥳', cat: 'smileys', name: 'fiesta' },
+            { char: '😏', cat: 'smileys', name: 'presumido' },
+            { char: '😒', cat: 'smileys', name: 'desagrado' },
+            { char: '😞', cat: 'smileys', name: 'decepcionado' },
+            { char: '😔', cat: 'smileys', name: 'triste' },
+            { char: '😢', cat: 'smileys', name: 'lagrima' },
+            { char: '😭', cat: 'smileys', name: 'llorando' },
+            { char: '😤', cat: 'smileys', name: 'triunfo enojo' },
+            { char: '😡', cat: 'smileys', name: 'furioso' },
+            { char: '🤬', cat: 'smileys', name: 'insulto' },
+            { char: '🤯', cat: 'smileys', name: 'cabeza explota' },
+            { char: '😳', cat: 'smileys', name: 'sonrojado sorpresa' },
+            { char: '🥵', cat: 'smileys', name: 'calor' },
+            { char: '🥶', cat: 'smileys', name: 'frio' },
+            { char: '😱', cat: 'smileys', name: 'grito miedo' },
+            { char: '😴', cat: 'smileys', name: 'durmiendo' },
+            { char: '💀', cat: 'smileys', name: 'calavera muerto' },
+            { char: '👻', cat: 'smileys', name: 'fantasma' },
+            { char: '👽', cat: 'smileys', name: 'alien' },
+            { char: '🤖', cat: 'smileys', name: 'robot' },
+
+            // Gestos
+            { char: '👍', cat: 'gestures', name: 'pulgar arriba bien' },
+            { char: '👎', cat: 'gestures', name: 'pulgar abajo mal' },
+            { char: '👌', cat: 'gestures', name: 'perfecto ok' },
+            { char: '✌️', cat: 'gestures', name: 'paz victoria' },
+            { char: '🤞', cat: 'gestures', name: 'dedos cruzados suerte' },
+            { char: '🤟', cat: 'gestures', name: 'rock amor' },
+            { char: '🤘', cat: 'gestures', name: 'metal rock' },
+            { char: '🤙', cat: 'gestures', name: 'llamame shaka' },
+            { char: '👈', cat: 'gestures', name: 'izquierda' },
+            { char: '👉', cat: 'gestures', name: 'derecha' },
+            { char: '👆', cat: 'gestures', name: 'arriba' },
+            { char: '👇', cat: 'gestures', name: 'abajo' },
+            { char: '☝️', cat: 'gestures', name: 'uno arriba' },
+            { char: '✋', cat: 'gestures', name: 'mano alto' },
+            { char: '🤚', cat: 'gestures', name: 'dorso mano' },
+            { char: '🖐️', cat: 'gestures', name: 'cinco mano' },
+            { char: '🖖', cat: 'gestures', name: 'vulcano' },
+            { char: '👋', cat: 'gestures', name: 'saludo adios' },
+            { char: '👏', cat: 'gestures', name: 'aplausos' },
+            { char: '🙌', cat: 'gestures', name: 'manos arriba alabanza' },
+            { char: '🤝', cat: 'gestures', name: 'apreton manos trato' },
+            { char: '🙏', cat: 'gestures', name: 'por favor gracias rezo' },
+            { char: '💪', cat: 'gestures', name: 'fuerza musculo' },
+
+            // Corazones
+            { char: '❤️', cat: 'hearts', name: 'corazon rojo amor' },
+            { char: '🧡', cat: 'hearts', name: 'corazon naranja' },
+            { char: '💛', cat: 'hearts', name: 'corazon amarillo' },
+            { char: '💚', cat: 'hearts', name: 'corazon verde' },
+            { char: '💙', cat: 'hearts', name: 'corazon azul' },
+            { char: '💜', cat: 'hearts', name: 'corazon morado' },
+            { char: '🖤', cat: 'hearts', name: 'corazon negro' },
+            { char: '🤍', cat: 'hearts', name: 'corazon blanco' },
+            { char: '🤎', cat: 'hearts', name: 'corazon marron' },
+            { char: '💔', cat: 'hearts', name: 'corazon roto' },
+            { char: '💖', cat: 'hearts', name: 'corazon brillos' },
+            { char: '💗', cat: 'hearts', name: 'corazon creciendo' },
+            { char: '💓', cat: 'hearts', name: 'corazon latiendo' },
+            { char: '💞', cat: 'hearts', name: 'corazones girando' },
+            { char: '💕', cat: 'hearts', name: 'dos corazones' },
+            { char: '🔥', cat: 'hearts', name: 'fuego fuego crack' },
+            { char: '✨', cat: 'hearts', name: 'brillos magia estrella' },
+            { char: '⭐', cat: 'hearts', name: 'estrella' },
+            { char: '🌟', cat: 'hearts', name: 'estrella brillante' },
+
+            // Gaming & Minecraft
+            { char: '🎮', cat: 'gaming', name: 'mando juego joystick' },
+            { char: '🕹️', cat: 'gaming', name: 'arcade palanca' },
+            { char: '🎲', cat: 'gaming', name: 'dado juego' },
+            { char: '🏆', cat: 'gaming', name: 'trofeo victoria campeon' },
+            { char: '🥇', cat: 'gaming', name: 'medalla oro primero' },
+            { char: '🥈', cat: 'gaming', name: 'medalla plata segundo' },
+            { char: '🥉', cat: 'gaming', name: 'medalla bronce tercero' },
+            { char: '👑', cat: 'gaming', name: 'corona rey' },
+            { char: '💎', cat: 'gaming', name: 'diamante gema minecraft' },
+            { char: '⚔️', cat: 'gaming', name: 'espadas batalla pvp' },
+            { char: '🛡️', cat: 'gaming', name: 'escudo defensa' },
+            { char: '🏹', cat: 'gaming', name: 'arco flecha' },
+            { char: '💣', cat: 'gaming', name: 'bomba tnt creeper' },
+            { char: '🧱', cat: 'gaming', name: 'bloque ladrillo minecraft' },
+            { char: '⛏️', cat: 'gaming', name: 'pico minar minecraft' },
+            { char: '🪓', cat: 'gaming', name: 'hacha madera minecraft' },
+            { char: '🧪', cat: 'gaming', name: 'pocion pocima' },
+            { char: '🥩', cat: 'gaming', name: 'comida carne chuleta' },
+            { char: '🍎', cat: 'gaming', name: 'manzana dorada' },
+            { char: '👾', cat: 'gaming', name: 'monstruo space invader' },
+            { char: '🚀', cat: 'gaming', name: 'cohete despegue velocidad' },
+            { char: '🎯', cat: 'gaming', name: 'diana objetivo certero' }
+        ];
+
+        function renderEmojis(filterCat = 'all', filterSearch = '') {
+            if (!emojiGrid) return;
+            emojiGrid.innerHTML = '';
+            const search = filterSearch.toLowerCase().trim();
+
+            const filtered = EMOJI_LIST.filter(e => {
+                const matchCat = filterCat === 'all' || e.cat === filterCat;
+                const matchSearch = !search || e.name.toLowerCase().includes(search) || e.char.includes(search);
+                return matchCat && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                emojiGrid.innerHTML = '<p class="placeholder-content" style="grid-column: 1/-1; padding: 15px;">No se encontraron emojis.</p>';
+                return;
+            }
+
+            filtered.forEach(e => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'gchat-emoji-item';
+                btn.textContent = e.char;
+                btn.title = e.name;
+                btn.addEventListener('click', () => {
+                    const msgInput = document.getElementById('gchat-message-input');
+                    if (msgInput) {
+                        msgInput.value += e.char;
+                        msgInput.focus();
+                    }
+                });
+                emojiGrid.appendChild(btn);
+            });
+        }
+
+        renderEmojis();
+
+        // Tabs de categorías de emojis
+        document.querySelectorAll('.gchat-emoji-cat-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.gchat-emoji-cat-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const cat = btn.dataset.cat || 'all';
+                renderEmojis(cat, emojiSearch?.value || '');
+            });
+        });
+
+        // Buscador de emojis
+        emojiSearch?.addEventListener('input', (e) => {
+            const activeCat = document.querySelector('.gchat-emoji-cat-btn.active')?.dataset.cat || 'all';
+            renderEmojis(activeCat, e.target.value);
+        });
+
+        // Toggle del panel de emojis
+        emojiToggle?.addEventListener('click', () => {
+            if (!emojiPicker) return;
+            emojiPicker.hidden = !emojiPicker.hidden;
+            if (!emojiPicker.hidden && gifPicker) gifPicker.hidden = true;
+            if (!emojiPicker.hidden && emojiSearch) emojiSearch.focus();
+        });
+
+        // Toggle del panel de GIFs
         document.getElementById('gchat-gif-toggle')?.addEventListener('click', () => {
+            if (!gifPicker) return;
             gifPicker.hidden = !gifPicker.hidden;
+            if (!gifPicker.hidden && emojiPicker) emojiPicker.hidden = true;
             if (!gifPicker.hidden) {
                 gifQuery.focus();
                 searchGifs();
@@ -902,6 +1122,25 @@ document.addEventListener('DOMContentLoaded', () => {
             if (welcomeScreen) welcomeScreen.style.display = 'none';
             if (messagesContainer) messagesContainer.style.display = 'flex';
             if (inputForm) inputForm.style.display = 'flex';
+
+            // Actualizar cabecera activa de conversación
+            if (gchatActiveHeader) {
+                gchatActiveHeader.style.display = 'flex';
+                if (gchatActiveName) gchatActiveName.textContent = friendName;
+                const friendAvatar = target.querySelector('.friend-avatar')?.src || DEFAULT_AVATAR_URL;
+                if (gchatActiveAvatar) gchatActiveAvatar.src = friendAvatar;
+                const status = target.dataset.userStatus || 'Disponible';
+                if (gchatActiveStatusLabel) gchatActiveStatusLabel.textContent = status;
+                if (gchatActiveStatusDot) {
+                    gchatActiveStatusDot.className = 'status-indicator ' + (status === 'Ausente' ? 'away' : (status === 'Ocupado' ? 'busy' : 'online'));
+                }
+            }
+
+            // Modo móvil: ocultar barra lateral y mostrar chat completo con botón volver
+            if (window.innerWidth <= 992) {
+                if (gchatSidebar) gchatSidebar.classList.add('mobile-hidden');
+                if (gchatMain) gchatMain.classList.add('mobile-active');
+            }
 
             await loadChatHistory(friendId);
             subscribeToChatChannel(userData.id, friendId);
