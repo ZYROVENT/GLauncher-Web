@@ -1,0 +1,9 @@
+# Archivo robots.txt para GLauncher
+# Permite a todos los rastreadores web (como Google) indexar el sitio público.
+User-agent: *
+Disallow: /victoria.html
+Disallow: /victoria
+Allow: /
+
+# Le indica a los rastreadores dónde encontrar el mapa del sitio.
+Sitemap: https://glauncher.vercel.app/sitemap.xml

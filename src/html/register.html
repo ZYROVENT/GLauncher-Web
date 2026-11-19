@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>GLauncher - Registrar Cuenta</title>
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <link rel="stylesheet" href="../css/login-styles.css"> <!-- Reutilizamos los estilos del login -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <!-- Spinner de Carga, Notificaciones y Pantalla Offline -->
+    <div id="loader-overlay" class="loader-overlay"><div class="spinner"></div></div>
+    <div id="notification-container"></div>
+    <div id="offline-overlay" class="offline-overlay"><div class="offline-content"><i class="fas fa-wifi"></i><h2>Sin Conexión</h2><p>Revisa tu red e inténtalo de nuevo.</p></div></div>
+
+    <header class="header">
+        <div class="logo-container">
+            <img src="../assets/images/favicon.png" alt="Logo de GLauncher" class="logo">
+            <h1>GLauncher</h1>
+        </div>
+        <nav class="auth-buttons">
+            <a href="../../index.html" class="auth-button">Inicio</a> 
+            <a href="noticias.html" class="auth-button">Noticias</a>
+            <a href="shop.html" class="auth-button">Tienda</a>
+            <a href="download.html" class="auth-button">Descargas</a>
+            <a href="dashboard.html" class="auth-button">Dashboard</a>
+            <a href="login.html" class="auth-button">Iniciar Sesión</a>
+            <a href="register.html" class="auth-button active">Registrar</a>
+            <a href="https://www.youtube.com/@zyrovent" target="_blank" class="auth-button youtube-button" title="Visita mi canal de YouTube">
+                <i class="fab fa-youtube"></i> Canal
+            </a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="auth-container">
+            <div class="auth-horizontal-card">
+                <!-- Panel Lateral Izquierdo: Información y Beneficios del Registro -->
+                <aside class="auth-info-panel register-info-panel">
+                    <div>
+                        <div class="auth-brand-area">
+                            <img src="../assets/images/favicon.png" alt="Logo de GLauncher" class="auth-brand-logo">
+                            <span class="auth-brand-title">GLAUNCHER</span>
+                        </div>
+                        <h3 class="auth-info-heading">Crea tu identidad de jugador</h3>
+                        <p class="auth-info-subtext">Regístrate en pocos segundos y desbloquea el launcher definitivo para disfrutar de tus mods, servidores y amigos en PC y Móvil.</p>
+                        
+                        <ul class="auth-features-list">
+                            <li class="auth-feature-item">
+                                <div class="auth-feature-icon icon-pink"><i class="fas fa-gift"></i></div>
+                                <div><strong>Recompensas y Tienda</strong><br><span style="color:#94a3b8;">Reclama GCoins diarios gratis para personalizar tu skin.</span></div>
+                            </li>
+                            <li class="auth-feature-item">
+                                <div class="auth-feature-icon icon-green"><i class="fas fa-mobile-alt"></i></div>
+                                <div><strong>GLauncher Mobile Ready</strong><br><span style="color:#94a3b8;">Tu misma cuenta funciona en tu PC y en tu teléfono Android.</span></div>
+                            </li>
+                            <li class="auth-feature-item">
+                                <div class="auth-feature-icon"><i class="fas fa-user-lock"></i></div>
+                                <div><strong>Recuperación por Gmail</strong><br><span style="color:#94a3b8;">Recupera tu acceso fácilmente si olvidas tu contraseña.</span></div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="auth-info-footer">
+                        <i class="fas fa-bolt text-neon-pink"></i> Registro 100% gratuito sin compras obligatorias
+                    </div>
+                </aside>
+
+                <!-- Panel Derecho: Formulario de Registro -->
+                <div class="auth-form-panel">
+                    <div class="auth-mode-tabs">
+                        <a href="login.html" class="auth-mode-tab"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
+                        <a href="register.html" class="auth-mode-tab active-pink"><i class="fas fa-user-plus"></i> Registrarse</a>
+                    </div>
+
+                    <div class="auth-header-wrap" style="text-align: left; margin-bottom: 20px;">
+                        <h2 style="justify-content: flex-start; color: var(--neon-pink);"><i class="fas fa-user-plus"></i> Crear Cuenta</h2>
+                        <p class="auth-welcome-sub" style="margin-bottom: 0;">Completa los datos para crear tu perfil de jugador.</p>
+                    </div>
+                    
+                    <form id="register-form">
+                        
+                        <div class="form-group">
+                            <input type="text" id="reg-username" name="username" class="neon-input-field" placeholder=" " required autocomplete="username">
+                            <label for="reg-username"><i class="fas fa-user"></i> Nombre de Usuario</label>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="email" id="reg-email" name="email" class="neon-input-field" placeholder=" " required autocomplete="email">
+                            <label for="reg-email"><i class="fas fa-envelope"></i> Correo Electrónico (Gmail)</label>
+                        </div>
+                        
+                        <div class="form-group" style="position: relative;">
+                            <input type="password" id="reg-password" name="password" class="neon-input-field" placeholder=" " required autocomplete="new-password">
+                            <label for="reg-password"><i class="fas fa-key"></i> Contraseña</label>
+                            <i class="fas fa-eye password-toggle" id="toggle-reg-password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #ccc; z-index: 10;"></i>
+                            <div class="password-strength-meter">
+                                <div id="password-strength-bar" class="password-strength-bar"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="position: relative;">
+                            <input type="password" id="confirm-password" name="confirm_password" class="neon-input-field" placeholder=" " required autocomplete="new-password">
+                            <label for="confirm-password"><i class="fas fa-lock"></i> Confirmar Contraseña</label>
+                            <i class="fas fa-eye password-toggle" id="toggle-confirm-password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #ccc; z-index: 10;"></i>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" id="security-code" name="security_code" class="neon-input-field" placeholder=" " required maxlength="6" pattern="\d{6}">
+                            <label for="security-code"><i class="fas fa-keypad"></i> Código de Seguridad (6 dígitos)</label>
+                        </div>
+
+                        <!-- Captcha Propio GLauncher -->
+                        <div class="captcha-box-wrapper" id="reg-captcha-box">
+                            <div class="captcha-box-header">
+                                <span><i class="fas fa-robot"></i> Verificación Anti-Bot</span>
+                                <span style="font-size: 0.75em; color: var(--neon-blue);">Seguridad GLauncher</span>
+                            </div>
+                            <div class="captcha-display-area">
+                                <canvas id="reg-captcha-canvas" class="captcha-canvas" width="220" height="48" title="Código de seguridad"></canvas>
+                                <button type="button" id="reg-refresh-captcha" class="captcha-refresh-btn" title="Generar nuevo código" aria-label="Nuevo código">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            </div>
+                            <div class="form-group captcha-input-group">
+                                <input type="text" id="reg-captcha-input" class="neon-input-field" placeholder=" " maxlength="6" autocomplete="off" required>
+                                <label for="reg-captcha-input"><i class="fas fa-check-shield"></i> Escribe el código de la imagen</label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="auth-button-action btn-pink-glow">
+                            <i class="fas fa-rocket"></i> Registrar y Jugar
+                        </button>
+                    </form>
+                    
+                    <div class="social-login-options">
+                        <p class="social-login-divider"><span>O regístrate con</span></p>
+                        <a href="https://glauncher-api.onrender.com/login/google" role="button" class="social-login-button google" title="Google" id="btn-reg-google"><i class="fab fa-google"></i></a>
+                        <a href="https://glauncher-api.onrender.com/login/microsoft" role="button" class="social-login-button microsoft" title="Microsoft" id="btn-reg-microsoft"><i class="fab fa-microsoft"></i></a>
+                    </div>
+
+                    <p class="auth-footer-text" style="margin-top: 18px; text-align: center;">
+                        ¿Ya tienes cuenta? <a href="login.html" class="neon-hover-text">¡Inicia sesión aquí!</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>GLauncher &copy; 2026. Todos los derechos reservados.</p>
+        <p>Desarrollador Principal: <a href="https://www.youtube.com/@zyrovent" target="_blank" class="neon-hover-text">◈𝐙𝐘𝐑𝐎𝐕𝐄𝐍𝐓◈</a></p>
+    </footer>
+    
+    <!-- Barra de Navegación Inferior (Solo para Móviles) -->
+    <nav class="bottom-nav">
+        <a href="../../index.html"><i class="fas fa-home"></i><span>Inicio</span></a>
+        <a href="shop.html"><i class="fa-solid fa-shop"></i><span>Tienda</span></a>
+        <a href="noticias.html"><i class="fas fa-newspaper"></i><span>Noticias</span></a>
+        <a href="download.html"><i class="fas fa-download"></i><span>Descargas</span></a>
+        <a href="dashboard.html" class="active"><i class="fas fa-user-circle"></i><span>Perfil</span></a>
+    </nav>
+
+    <!-- Banner de Consentimiento de Cookies -->
+    <div id="cookie-banner" class="cookie-consent-banner">
+        <p class="cookie-text">
+            Utilizamos cookies para mejorar tu experiencia en nuestro sitio. Al continuar, aceptas nuestro uso de cookies. <a href="privacy-policy.html">Leer más</a>.
+        </p>
+        <button id="accept-cookie-btn" class="auth-button-action cookie-accept-btn" style="background-color: var(--neon-green); box-shadow: var(--shadow-green);">Aceptar</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/global-script.js"></script>
+    <!-- Script específico para la página de registro -->
+    <script src="../js/register-script.js" defer></script>
+</body>
+</html>

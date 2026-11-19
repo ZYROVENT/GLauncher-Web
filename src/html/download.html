@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>GLauncher - Centro de Descargas</title>
+    <link rel="stylesheet" href="../css/styles.css"> 
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <link rel="stylesheet" href="../css/download-styles.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Spinner de Carga, Notificaciones y Pantalla Offline -->
+    <div id="loader-overlay" class="loader-overlay"><div class="spinner"></div></div>
+    <div id="notification-container"></div>
+    <div id="offline-overlay" class="offline-overlay"><div class="offline-content"><i class="fas fa-wifi"></i><h2>Sin Conexión</h2><p>Revisa tu red e inténtalo de nuevo.</p></div></div>
+    
+
+    <header class="header">
+        <div class="logo-container">
+            <img src="../assets/images/favicon.png" alt="Logo de GLauncher" class="logo">
+            <img src="../assets/images/minecraft_title.png" alt="Título de GLauncher" class="logo-title-img">
+        </div>
+        <nav class="auth-buttons">
+            <a href="../../index.html" class="auth-button">Inicio</a> 
+            <a href="noticias.html" class="auth-button">Noticias</a>
+            <a href="shop.html" class="auth-button">Tienda</a>
+            <a href="download.html" class="auth-button active">Descargas</a>
+            <a href="dashboard.html" class="auth-button">Dashboard</a>
+            <a href="login.html" class="auth-button">Iniciar Sesión</a>
+            <a href="register.html" class="auth-button">Registrar</a>
+            <a href="https://www.youtube.com/@zyrovent" target="_blank" class="auth-button youtube-button" title="Visita mi canal de YouTube">
+                <i class="fab fa-youtube"></i> Canal
+            </a>
+        </nav>
+    </header>
+
+    <main class="main-content download-page">
+        <div class="download-container">
+            
+            <h2 class="neon-title"><i class="fas fa-download"></i> CENTRO DE DESCARGAS - GLAUNCHER</h2>
+            <p class="subtitle-text">Selecciona tu sistema operativo para obtener la versión más estable y rápida.</p>
+
+            <div class="download-info-box">
+                <div class="version-banner-header">
+                    <div>
+                        <h3 class="box-title text-neon-green" id="version-display-title">VERSIÓN MÁS RECIENTE: V1.1 (Escritorio)</h3>
+                        <p class="box-description" id="version-display-desc">Esta versión incluye cambios en la GUI de Inicio, GMusic, Ajustes y Mi Cuenta. También fueron solucionados los errores que impedían la descarga de mods y modloaders.</p>
+                    </div>
+                </div>
+
+                <div class="download-tabs">
+                    <nav class="tab-nav">
+                        <button class="tab-button active" data-tab="desktop"><i class="fas fa-desktop"></i> Escritorio</button>
+                        <button class="tab-button tab-btn-mobile-highlight" data-tab="mobile">
+                            <i class="fas fa-mobile-alt"></i> Móvil 
+                            <span class="tab-new-badge">¡NUEVO!</span>
+                        </button>
+                    </nav>
+
+                    <!-- Pestaña de Escritorio -->
+                    <div id="desktop" class="tab-content active">
+                        <div class="download-grid">
+                            <div class="download-card platform-windows">
+                                <i class="fab fa-windows card-icon"></i>
+                                <h4>Windows</h4>
+                                <p class="card-description">Instalador recomendado para Windows 7 8 8.1 10 y 11.</p>
+                                <div class="button-group">
+                                    <a href="https://github.com/ZYROVENT/GLauncher/releases/download/v1.1.0/GLauncher-Setup-1.1.0.exe" class="download-button" aria-label="Descargar para Windows 10 y 11"><i class="fas fa-download"></i>Windows 10,11 x32/64-bit</a>
+                                    <a href="https://github.com/ZYROVENT/GLauncher/releases/download/v1.1.0/GLauncher-SetupWin78-1.1.0.exe" class="download-button" aria-label="Descargar para Windows 7, 8 y 8.1"><i class="fas fa-download"></i>Windows 7,8 x32/64-Bit</a>
+                                </div>
+                            </div>
+                            <div class="download-card platform-macos">
+                                <i class="fas fa-laptop-code card-icon"></i>
+                                <h4>macOS</h4>
+                                <p class="card-description">Versión nativa para Apple Silicon y Intel.</p>
+                                <button class="download-button is-disabled" disabled><i class="fas fa-clock"></i> Próximamente</button>
+                            </div>
+                            <div class="download-card platform-linux">
+                                <i class="fab fa-linux card-icon"></i>
+                                <h4>Linux</h4>
+                                <p class="card-description">Paquete universal para la mayoría de distros. Nota: ejecuta este comando en la terminal de la carpeta del launcher(.zip) [chmod +x glauncher] despues [./glauncher --no-sandbox]</p>
+                                <a href="https://github.com/ZYROVENT/GLauncher/releases/download/v1.1.0/glauncher1.1-linux.zip" class="download-button" aria-label="Descargar para Linux"><i class="fas fa-download"></i>.ZIP</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pestaña de Móvil -->
+                    <div id="mobile" class="tab-content">
+                        <!-- Banner destacado GLauncher Mobile -->
+                        <div class="mobile-highlight-banner">
+                            <div class="mobile-highlight-badge">
+                                <span class="badge-pulse"></span>
+                                <i class="fas fa-sparkles"></i> LANZAMIENTO OFICIAL V1.0
+                            </div>
+                            <h3 class="mobile-highlight-title">¡GLauncher Mobile ya está aquí!</h3>
+                            <p class="mobile-highlight-desc">
+                                Disfruta la experiencia de GLauncher en la palma de tu mano: gestión de cuenta, cosméticos exclusivos, chat en tiempo real GChat, tienda de GCoins y noticias al instante.
+                            </p>
+                            <div class="mobile-highlight-features">
+                                <div class="m-feat-tag"><i class="fas fa-comments text-neon-blue"></i> GChat en Vivo</div>
+                                <div class="m-feat-tag"><i class="fas fa-gem text-neon-pink"></i> Sincronización de Cosméticos</div>
+                                <div class="m-feat-tag"><i class="fas fa-bolt text-neon-green"></i> 100% Optimizado y Ligero</div>
+                            </div>
+                        </div>
+
+                        <div class="download-grid">
+                            <div class="download-card platform-android mobile-featured-card">
+                                <div class="card-status-badge available"><i class="fas fa-check-circle"></i> Disponible</div>
+                                <i class="fab fa-android card-icon"></i>
+                                <h4>Android (APK Oficial)</h4>
+                                <span class="version-tag">Versión 1.0.0 &bull; 64-bit</span>
+                                <p class="card-description">Instalador oficial directo sin intermediarios. Compatible con Android 8.0 en adelante.</p>
+                                <div class="button-group mobile-buttons-stack">
+                                    <a href="https://github.com/ZYROVENT/GLauncher-Mobile/releases/download/v0.1.0-beta/glauncher-beta-v0.1.apk" class="download-button btn-primary-download" aria-label="Descargar GLauncher para Android"><i class="fas fa-download"></i> Descargar APK (ARM64)</a>
+                                    <a href="https://github.com/ZYROVENT/GLauncher-Mobile/releases" target="_blank" rel="noopener noreferrer" class="download-button btn-secondary-download"><i class="fab fa-github"></i> Ver en GitHub Releases</a>
+                                </div>
+                            </div>
+                            <div class="download-card platform-ios">
+                                <div class="card-status-badge upcoming"><i class="fas fa-clock"></i> En Desarrollo</div>
+                                <i class="fab fa-apple card-icon"></i>
+                                <h4>iOS (iPhone & iPad)</h4>
+                                <span class="version-tag">TestFlight &bull; Próximamente</span>
+                                <p class="card-description">La versión nativa para iPhone y iPad con Liquid Glass se encuentra en proceso de empaquetado.</p>
+                                <button class="download-button is-disabled" disabled><i class="fas fa-lock"></i> Próximamente (TestFlight)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="requirements-box">
+                <h3 class="box-title text-neon-pink"><i class="fas fa-microchip"></i> REQUISITOS DEL SISTEMA</h3>
+                <ul class="req-list">
+                    <li><i class="fas fa-check text-neon-green"></i> <strong>SO:</strong> Windows 7/8/10/11 (64-bit) o Linux/macOS reciente.</li>
+                    <li><i class="fas fa-check text-neon-green"></i> <strong>CPU:</strong> Mínimo Dual Core 1.8 GHz.</li>
+                    <li><i class="fas fa-check text-neon-green"></i> <strong>RAM:</strong> 2 GB asignados (Mínimo).</li>
+                    <li><i class="fas fa-check text-neon-green"></i> <strong>Java:</strong> Java 8 o superior.</li>
+                </ul>
+            </div>
+            
+            <p class="disclaimer-text">
+                <i class="fas fa-shield-alt text-neon-pink"></i> El GLauncher es 100% seguro y libre de virus. Proyecto desarrollado por <a href="https://www.youtube.com/@zyrovent" target="_blank" class="neon-hover-text">◈𝐙𝐘𝐑𝐎𝐕𝐄𝐍𝐓◈</a>.
+            </p>
+
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>GLauncher &copy; 2026. Todos los derechos reservados.</p>
+        <p>Desarrollador Principal: <a href="https://www.youtube.com/@zyrovent" target="_blank" class="neon-hover-text">◈𝐙𝐘𝐑𝐎𝐕𝐄𝐍𝐓◈</a></p>
+    </footer>
+    
+    <!-- Elementos de audio para los efectos de sonido -->
+    <audio id="tab-switch-sound" src="../assets/sounds/click_sound.mp3" preload="auto"></audio>
+    <audio id="card-hover-sound" src="../assets/sounds/ui-tick-2.mp3" preload="auto"></audio>
+
+    <!-- Barra de Navegación Inferior (Solo para Móviles) -->
+    <nav class="bottom-nav">
+        <a href="../../index.html"><i class="fas fa-home"></i><span>Inicio</span></a>
+        <a href="shop.html"><i class="fa-solid fa-shop"></i><span>Tienda</span></a>
+        <a href="noticias.html"><i class="fas fa-newspaper"></i><span>Noticias</span></a>
+        <a href="download.html" class="active"><i class="fas fa-download"></i><span>Descargas</span></a>
+        <a href="dashboard.html"><i class="fas fa-user-circle"></i><span>Perfil</span></a>
+    </nav>
+
+    <script src="../js/global-script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const downloadCards = document.querySelectorAll('.download-card');
+            const tabSound = document.getElementById('tab-switch-sound');
+            const hoverSound = document.getElementById('card-hover-sound');
+            const reqList = document.querySelector('.req-list');
+
+            // Lógica de animación para botones de descarga
+            const downloadActionButtons = document.querySelectorAll('.download-button:not(.is-disabled)');
+            const downloadPage = document.querySelector('.download-page');
+            const downloadContainer = document.querySelector('.download-container');
+            let stepsView = null;
+
+            // Función para dibujar el icono de Play animado en Canvas
+            function animatePlayIcon() {
+                const canvas = document.getElementById('canvas-play-icon');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                let angle = 0;
+                let rotation = 0;
+                function draw() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    const centerX = canvas.width / 2;
+                    const centerY = canvas.height / 2;
+                    const size = 30 + Math.sin(angle) * 5; // Efecto de pulso
+
+                    // Triángulo neón
+                    ctx.beginPath();
+                    ctx.moveTo(centerX - size/1.5, centerY - size);
+                    ctx.lineTo(centerX + size, centerY);
+                    ctx.lineTo(centerX - size/1.5, centerY + size);
+                    ctx.closePath();
+
+                    ctx.strokeStyle = '#39ff14';
+                    ctx.lineWidth = 3;
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = '#39ff14';
+                    ctx.stroke();
+                    
+                    angle += 0.05;
+                    rotation += 0.02;
+                    requestAnimationFrame(draw);
+                }
+                draw();
+            }
+
+            // Función para crear la GUI de pasos dinámicamente
+            function createStepsGUI(isMobile = false) {
+                if (stepsView) {
+                    // Actualizar el texto según si es APK móvil o desktop
+                    const step1Desc = stepsView.querySelector('#step-1-desc');
+                    const step3Desc = stepsView.querySelector('#step-3-desc');
+                    if (step1Desc) step1Desc.innerHTML = isMobile ? 'Abre el archivo <code>.apk</code> descargado e instálalo (permite instalar apps de fuentes desconocidas).' : 'Abre el archivo <code>.exe</code> o <code>.zip</code> que acabas de descargar.';
+                    if (step3Desc) step3Desc.innerHTML = isMobile ? 'Accede a GChat, revisa la tienda y personaliza tus cosméticos desde cualquier lugar.' : 'Selecciona tu versión favorita, instala los mods y entra al campo de batalla.';
+                    return;
+                }
+
+                stepsView = document.createElement('div');
+                stepsView.className = 'download-steps-view';
+                stepsView.innerHTML = `
+ <div class="steps-header">
+    <h2 class="neon-title"><i class="fas fa-rocket"></i> ¡TU DESCARGA HA COMENZADO!</h2>
+    <p class="subtitle-text">Sigue estos sencillos pasos para empezar en minutos.</p>
+</div>
+<div class="steps-grid">
+    <div class="step-card">
+        <div class="step-number">1</div>
+        <div class="step-icon-wrapper">
+            <i class="fas fa-download" style="font-size: 3.5rem; color: #00ffff; filter: drop-shadow(0 0 10px #00ffff);"></i>
+        </div>
+        <h3>Instala la App</h3>
+        <p class="card-description" id="step-1-desc">${isMobile ? 'Abre el archivo <code>.apk</code> descargado e instálalo (permite instalar apps de fuentes desconocidas).' : 'Abre el archivo <code>.exe</code> o <code>.zip</code> que acabas de descargar.'}</p>
+    </div>
+    <div class="step-card">
+        <div class="step-number">2</div>
+        <div class="step-icon-wrapper">
+            <i class="fas fa-user" style="font-size: 3.5rem; color: #ff00ff; filter: drop-shadow(0 0 10px #ff00ff);"></i>
+        </div>
+        <h3>Inicia Sesión</h3>
+        <p class="card-description">Usa tus credenciales de GLauncher para sincronizar tus cosméticos y amigos.</p>
+    </div>
+    <div class="step-card">
+        <div class="step-number">3</div>
+        <div class="step-icon-wrapper">
+            <i class="fas fa-gamepad" style="font-size: 3.5rem; color: #00ff00; filter: drop-shadow(0 0 10px #00ff00);"></i>
+        </div>
+        <h3>¡Disfruta GLauncher!</h3>
+        <p class="card-description" id="step-3-desc">${isMobile ? 'Accede a GChat, revisa la tienda y personaliza tus cosméticos desde cualquier lugar.' : 'Selecciona tu versión favorita, instala los mods y entra al campo de batalla.'}</p>
+    </div>
+</div>
+<div class="steps-actions" style="margin-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+    <button id="back-to-downloads" class="auth-button">
+        <i class="fas fa-arrow-left"></i> Volver a la selección
+    </button>
+    <p class="disclaimer-text">
+        ¿Problemas con la descarga? <a href="https://www.youtube.com/@zyrovent" target="_blank" class="neon-hover-text">Canal de Soporte en YouTube</a>
+    </p>
+</div>
+                `;
+
+                // Insertar antes del disclaimer final pero después del contenedor principal
+                downloadPage.insertBefore(stepsView, downloadContainer.nextSibling);
+
+                // Asignar evento al botón de volver (ahora que existe)
+                stepsView.querySelector('#back-to-downloads').addEventListener('click', () => {
+                    document.body.classList.remove('is-downloading-active');
+                    stepsView.style.display = 'none';
+                    downloadContainer.style.display = 'block';
+                });
+            }
+
+            downloadActionButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const href = button.getAttribute('href') || '';
+                    const isApk = href.toLowerCase().endsWith('.apk');
+
+                    // Crear o actualizar la GUI
+                    createStepsGUI(isApk);
+                    
+                    downloadContainer.style.display = 'none';
+                    stepsView.style.display = 'block';
+                    document.body.classList.add('is-downloading-active');
+                    
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                    // Iniciamos la animación de Canvas
+                    setTimeout(animatePlayIcon, 100);
+                    
+                    if (window.showNotification) {
+                        window.showNotification(isApk ? '¡Descarga de GLauncher Mobile iniciada!' : '¡Descarga preparada! Sigue las instrucciones.', 'success');
+                    }
+                });
+            });
+
+            // Objeto con los textos de los requisitos para cada plataforma
+            const requirementsData = {
+                desktop: [
+                    '<strong>SO:</strong> Windows 7/8/10/11 (64-bit) o Linux/macOS reciente.',
+                    '<strong>CPU:</strong> Mínimo Dual Core 1.8 GHz.',
+                    '<strong>RAM:</strong> 2 GB asignados (Mínimo).',
+                    '<strong>Java:</strong> Java 8 o superior.'
+                ],
+                mobile: [
+                    '<strong>SO:</strong> Android 8.0 (Oreo) o superior.',
+                    '<strong>Arquitectura:</strong> ARM64 (aarch64) recomendada.',
+                    '<strong>RAM:</strong> 2 GB de RAM mínima (3 GB recomendada).',
+                    '<strong>Espacio libre:</strong> 150 MB para la app y datos en caché.',
+                    '<strong>Conexión:</strong> Internet estable para sincronizar GCoins, amigos y GChat.'
+                ]
+            };
+
+            // Función para actualizar la lista de requisitos con animación
+            function updateRequirements(platform) {
+                const requirements = requirementsData[platform];
+                reqList.innerHTML = ''; // Limpiar la lista actual
+                requirements.forEach((reqText, index) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<i class="fas fa-check text-neon-green"></i> ${reqText}`;
+                    li.style.animationDelay = `${index * 0.1}s`; // Re-aplicar el retraso de la animación
+                    reqList.appendChild(li);
+                });
+            }
+
+            // Configurar volumen bajo para los sonidos de UI
+            tabSound.volume = 0.3;
+            hoverSound.volume = 0.2;
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Reproducir sonido de cambio de pestaña
+                    tabSound.currentTime = 0;
+                    tabSound.play();
+
+                    const currentActiveContent = document.querySelector('.tab-content.active');
+                    const tabId = button.dataset.tab;
+                    const nextActiveContent = document.getElementById(tabId);
+
+                    if (currentActiveContent === nextActiveContent) return; // No hacer nada si se hace clic en la pestaña activa
+
+                    // Quitar clase 'active' de todos los botones y contenidos
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+
+                    // Añadir clase 'active' al botón presionado
+                    button.classList.add('active');
+
+                    // Actualizar la lista de requisitos según la pestaña seleccionada
+                    updateRequirements(tabId);
+
+                    // Actualizar título de la versión activa
+                    const versionTitle = document.getElementById('version-display-title');
+                    const versionDesc = document.getElementById('version-display-desc');
+                    if (versionTitle && versionDesc) {
+                        if (tabId === 'mobile') {
+                            versionTitle.innerHTML = 'VERSIÓN MÁS RECIENTE: V1.0 (Mobile Android)';
+                            versionTitle.className = 'box-title text-neon-green';
+                            versionDesc.textContent = 'Lanzamiento oficial de GLauncher Mobile para Android (ARM64). Incluye GChat en tiempo real, sincronización de cosméticos, gestión de perfil y tienda de GCoins.';
+                        } else {
+                            versionTitle.innerHTML = 'VERSIÓN MÁS RECIENTE: V1.1 (Escritorio)';
+                            versionTitle.className = 'box-title text-neon-green';
+                            versionDesc.textContent = 'Esta versión incluye cambios en la GUI de Inicio, GMusic, Ajustes y Mi Cuenta. También fueron solucionados los errores que impedían la descarga de mods y modloaders.';
+                        }
+                    }
+
+                    // Iniciar transición de salida en el contenido actual
+                    if (currentActiveContent) {
+                        currentActiveContent.classList.add('is-exiting');
+                        currentActiveContent.classList.remove('active');
+                    }
+
+                    // Mostrar el nuevo contenido después de la animación de salida
+                    setTimeout(() => {
+                        if (currentActiveContent) currentActiveContent.classList.remove('is-exiting');
+                        nextActiveContent.classList.add('active');
+                    }, 150); // Debe coincidir con la duración de la transición de opacidad
+                });
+            });
+
+            // Añadir sonido de hover a las tarjetas
+            downloadCards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    hoverSound.currentTime = 0;
+                    hoverSound.play();
+                });
+            });
+
+            // Cargar los requisitos iniciales para escritorio
+            updateRequirements('desktop');
+
+            // Auto-seleccionar la pestaña móvil si se accede desde un teléfono o con hash #mobile
+            const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const wantsMobile = window.location.hash.toLowerCase() === '#mobile' || isMobileDevice;
+
+            if (wantsMobile) {
+                const mobileBtn = document.querySelector('.tab-button[data-tab="mobile"]');
+                if (mobileBtn) {
+                    mobileBtn.click();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

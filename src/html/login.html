@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GLauncher - Iniciar Sesión</title>
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <link rel="stylesheet" href="../css/login-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../css/styles.css"> 
+    <style>
+        /* Estilos para el autocompletado de usuarios */
+        .suggestions-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 10, 20, 0.95);
+            border: 1px solid var(--neon-blue);
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            z-index: var(--z-dropdown, 2000);
+            max-height: 150px;
+            overflow-y: auto;
+            box-shadow: 0 4px 15px rgba(0, 243, 255, 0.2);
+        }
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.2s;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .suggestion-item:last-child { border-bottom: none; }
+        .suggestion-item:hover {
+            background: rgba(0, 243, 255, 0.15);
+        }
+        /* Estilos para centrar el contenido del paso del código */
+        #code-entry-section {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .suggestion-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Spinner de Carga, Notificaciones y Pantalla Offline -->
+    <div id="loader-overlay" class="loader-overlay"><div class="spinner"></div></div>
+    <div id="notification-container"></div>
+    <div id="offline-overlay" class="offline-overlay"><div class="offline-content"><i class="fas fa-wifi"></i><h2>Sin Conexión</h2><p>Revisa tu red e inténtalo de nuevo.</p></div></div>
+
+    <header class="header">
+        <div class="logo-container">
+            <img src="../assets/images/favicon.png" alt="Logo de GLauncher" class="logo">
+            <img src="../assets/images/minecraft_title.png" alt="Título de GLauncher" class="logo-title-img">
+        </div>
+        <nav class="auth-buttons">
+            <a href="../../index.html" class="auth-button">Inicio</a> 
+            <a href="noticias.html" class="auth-button">Noticias</a>
+            <a href="shop.html" class="auth-button">Tienda</a>
+            <a href="download.html" class="auth-button">Descargas</a>
+            <a href="dashboard.html" class="auth-button">Dashboard</a>
+            <a href="login.html" class="auth-button active">Iniciar Sesión</a>
+            <a href="register.html" class="auth-button">Registrar</a>
+            <a href="https://www.youtube.com/@zyrovent" target="_blank" class="auth-button youtube-button" title="Visita mi canal de YouTube">
+                <i class="fab fa-youtube"></i> Canal
+            </a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="auth-container">
+            <div class="auth-horizontal-card">
+                <!-- Panel Lateral Izquierdo: Información y Beneficios -->
+                <aside class="auth-info-panel">
+                    <div>
+                        <div class="auth-brand-area">
+                            <img src="../assets/images/favicon.png" alt="Logo de GLauncher" class="auth-brand-logo">
+                            <span class="auth-brand-title">GLAUNCHER</span>
+                        </div>
+                        <h3 class="auth-info-heading">Bienvenido a tu universo Minecraft</h3>
+                        <p class="auth-info-subtext">Accede a tu cuenta sincronizada para disfrutar del launcher más rápido, optimizado y con soporte para mods y amigos.</p>
+                        
+                        <ul class="auth-features-list">
+                            <li class="auth-feature-item">
+                                <div class="auth-feature-icon"><i class="fas fa-shield-alt"></i></div>
+                                <div><strong>Seguridad 2FA</strong><br><span style="color:#94a3b8;">Protección mediante código único contra accesos no deseados.</span></div>
+                            </li>
+                            <li class="auth-feature-item">
+                                <div class="auth-feature-icon icon-pink"><i class="fas fa-comments"></i></div>
+                                <div><strong>GChat & Amigos</strong><br><span style="color:#94a3b8;">Mensajería en tiempo real, GIFs y estados en vivo.</span></div>
+                            </li>
+                            <li class="auth-feature-item">
+                                <div class="auth-feature-icon icon-green"><i class="fas fa-gem"></i></div>
+                                <div><strong>Cosméticos & GCoins</strong><br><span style="color:#94a3b8;">Tu inventario y saldo disponibles al instante.</span></div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="auth-info-footer">
+                        <i class="fas fa-check-circle text-neon-green"></i> Versión Web & Móvil 100% Sincronizada
+                    </div>
+                </aside>
+
+                <!-- Panel Derecho: Formulario de Acceso -->
+                <div class="auth-form-panel">
+                    <div class="auth-mode-tabs">
+                        <a href="login.html" class="auth-mode-tab active"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
+                        <a href="register.html" class="auth-mode-tab"><i class="fas fa-user-plus"></i> Registrarse</a>
+                    </div>
+
+                    <div class="auth-header-wrap" style="text-align: left; margin-bottom: 20px;">
+                        <h2 style="justify-content: flex-start;"><i class="fas fa-sign-in-alt text-neon-blue"></i> Iniciar Sesión</h2>
+                        <p class="auth-welcome-sub" style="margin-bottom: 0;">Ingresa tu usuario y contraseña para continuar.</p>
+                    </div>
+                    
+                    <form id="login-form">
+                        
+                        <div id="credentials-section">
+                            <div class="form-group">
+                                <input type="text" id="username_login" name="username" class="neon-input-field" placeholder=" " required autocomplete="username">
+                                <label for="username_login"><i class="fas fa-user"></i> Usuario</label>
+                            </div>
+                            
+                            <div class="form-group" style="position: relative;">
+                                <input type="password" id="password_login" name="password" class="neon-input-field" placeholder=" " required autocomplete="current-password">
+                                <label for="password_login"><i class="fas fa-key"></i> Contraseña</label>
+                                <i class="fas fa-eye password-toggle" id="toggle-password-login" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #ccc; z-index: 10;"></i>
+                            </div>
+                            
+                            <div class="form-group" style="text-align: right; margin-top: -10px; margin-bottom: 18px;">
+                                <a href="#" id="forgot-password-link" class="neon-hover-text" style="font-size: 0.88em;">¿Olvidaste tu contraseña?</a>
+                            </div>
+
+                            <!-- Captcha Propio GLauncher -->
+                            <div class="captcha-box-wrapper" id="login-captcha-box">
+                                <div class="captcha-box-header">
+                                    <span><i class="fas fa-robot"></i> Verificación de Seguridad</span>
+                                    <span style="font-size: 0.75em; color: var(--text-color-dark);">Anti-bot</span>
+                                </div>
+                                <div class="captcha-display-area">
+                                    <canvas id="login-captcha-canvas" class="captcha-canvas" width="220" height="48" title="Código de seguridad"></canvas>
+                                    <button type="button" id="login-refresh-captcha" class="captcha-refresh-btn" title="Generar nuevo código" aria-label="Nuevo código">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                </div>
+                                <div class="form-group captcha-input-group">
+                                    <input type="text" id="login-captcha-input" class="neon-input-field" placeholder=" " maxlength="6" autocomplete="off" required>
+                                    <label for="login-captcha-input"><i class="fas fa-check-shield"></i> Escribe el código de arriba</label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="auth-button-action btn-cyan-glow">
+                                <i class="fas fa-chevron-right"></i> Continuar
+                            </button>
+                        </div>
+                        
+                        <div id="code-entry-section">
+                            <div class="code-entry-content">
+                                <p class="code-flow-info">
+                                    <i class="fas fa-shield-alt text-neon-pink"></i> Por tu seguridad, ingresa el código de 6 dígitos que creaste al registrarte.
+                                </p>
+                                <div class="form-group">
+                                    <input type="text" id="security-code" name="code" class="neon-input-field" placeholder=" " maxlength="6" autocomplete="off">
+                                    <label for="security-code"><i class="fas fa-keypad"></i> Código de Seguridad</label>
+                                </div>
+                                
+                                <button type="button" id="verify-code-button" class="auth-button-action btn-cyan-glow">
+                                    <i class="fas fa-unlock-alt"></i> Verificar y Acceder
+                                </button>
+                                
+                                <a href="#" id="go-back-login" class="neon-hover-text" style="display: block; margin-top: 15px; text-align: center;">
+                                    <i class="fas fa-arrow-left"></i> Volver atrás
+                                </a>
+                            </div>
+                        </div>
+
+                    </form>
+                    
+                    <!-- Formulario de Recuperación de Contraseña Avanzado -->
+                    <form id="reset-password-form" style="display: none;">
+                        <h3 style="color: var(--neon-blue); margin-bottom: 8px; text-align: center;">
+                            <i class="fas fa-user-shield"></i> Recuperar Cuenta
+                        </h3>
+                        <p style="color: var(--text-color-dark); font-size: 0.88em; margin-bottom: 20px; text-align: center;">
+                            Ingresa tu usuario, tu PIN de seguridad (6 dígitos) y tu correo Gmail para recibir tu código de recuperación.
+                        </p>
+                        
+                        <div class="form-group" style="position: relative;">
+                            <input type="text" id="reset-username" class="neon-input-field" placeholder=" " required autocomplete="username">
+                            <label for="reset-username"><i class="fas fa-user"></i> Tu Nombre de Usuario</label>
+                        </div>
+
+                        <div class="form-group" style="position: relative;">
+                            <input type="text" id="reset-security-pin" class="neon-input-field" placeholder=" " required maxlength="6" pattern="\d{6}" autocomplete="off">
+                            <label for="reset-security-pin"><i class="fas fa-keypad"></i> PIN de Seguridad (6 dígitos)</label>
+                        </div>
+
+                        <div class="form-group" style="position: relative;">
+                            <input type="email" id="reset-email" class="neon-input-field" placeholder=" " required autocomplete="email">
+                            <label for="reset-email"><i class="fas fa-envelope"></i> Correo Gmail</label>
+                        </div>
+
+                        <div id="reset-step-code-area" style="display: none;">
+                            <div class="form-group" style="position: relative;">
+                                <input type="text" id="reset-token-input" class="neon-input-field" placeholder=" " maxlength="6" autocomplete="one-time-code">
+                                <label for="reset-token-input"><i class="fas fa-key"></i> Código de 6 dígitos recibido en Gmail</label>
+                            </div>
+
+                            <div class="form-group" style="position: relative;">
+                                <input type="password" id="reset-new-password" class="neon-input-field" placeholder=" ">
+                                <label for="reset-new-password"><i class="fas fa-lock"></i> Nueva Contraseña</label>
+                                <i class="fas fa-eye password-toggle" id="toggle-reset-password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #ccc; z-index: 10;"></i>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="reset-submit-btn" class="auth-button-action btn-cyan-glow">
+                            <i class="fas fa-paper-plane"></i> Enviar Código al Gmail
+                        </button>
+                        <a href="#" id="cancel-reset-link" class="neon-hover-text" style="display: block; margin-top: 15px; text-align: center;">
+                            <i class="fas fa-arrow-left"></i> Volver a Iniciar Sesión
+                        </a>
+                    </form>
+
+                    <div class="social-login-options">
+                        <p class="social-login-divider"><span>O continúa con</span></p>
+                        <a href="https://glauncher-api.onrender.com/login/google" role="button" class="social-login-button google" title="Google" id="btn-login-google"><i class="fab fa-google"></i></a>
+                        <a href="https://glauncher-api.onrender.com/login/microsoft" role="button" class="social-login-button microsoft" title="Microsoft" id="btn-login-microsoft"><i class="fab fa-microsoft"></i></a>
+                    </div>
+                    
+                    <p class="auth-footer-text" style="margin-top: 18px; text-align: center;">
+                        ¿Aún no tienes cuenta? <a href="register.html" class="neon-hover-text">¡Regístrate gratis!</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>GLauncher &copy; 2026. Todos los derechos reservados.</p>
+        <p>Desarrollador Principal: <a href="https://www.youtube.com/@zyrovent" target="_blank" class="neon-hover-text">◈𝐙𝐘𝐑𝐎𝐕𝐄𝐍𝐓◈</a></p>
+    </footer>
+
+    <!-- Barra de Navegación Inferior (Solo para Móviles) -->
+    <nav class="bottom-nav">
+        <a href="../../index.html"><i class="fas fa-home"></i><span>Inicio</span></a>
+        <a href="shop.html"><i class="fa-solid fa-shop"></i><span>Tienda</span></a>
+        <a href="noticias.html"><i class="fas fa-newspaper"></i><span>Noticias</span></a>
+        <a href="download.html"><i class="fas fa-download"></i><span>Descargas</span></a>
+        <a href="login.html" class="active"><i class="fas fa-user-circle"></i><span>Perfil</span></a>
+    </nav>
+
+    <!-- Banner de Consentimiento de Cookies -->
+    <div id="cookie-banner" class="cookie-consent-banner">
+        <p class="cookie-text">
+            Utilizamos cookies para mejorar tu experiencia en nuestro sitio. Al continuar, aceptas nuestro uso de cookies. <a href="privacy-policy.html">Leer más</a>.
+        </p>
+        <button id="accept-cookie-btn" class="auth-button-action cookie-accept-btn" style="background-color: var(--neon-green); box-shadow: var(--shadow-green);">Aceptar</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/global-script.js"></script>
+    <!-- Script específico para la página de login -->
+    <script src="../js/login-script.js"></script>
+</body>
+</html>

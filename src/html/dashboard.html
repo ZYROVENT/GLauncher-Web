@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Accede a tu perfil de GLauncher. Gestiona tus amigos, cosméticos, logros, estadísticas y ajustes de cuenta en un solo lugar.">
+    <title>GLauncher | Dashboard</title>
+    <!-- Estilos optimizados para carga asíncrona -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></noscript>
+    <link rel="stylesheet" href="../css/styles.css">  
+    <link rel="stylesheet" href="../css/dashboard-styles.css">
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <style>
+        /* Ajustes base integrados de responsividad del Dashboard */
+        @media (max-width: 992px) {
+            .dashboard-main-content {
+                padding: 10px;
+                padding-bottom: 85px !important; /* Espacio para barra de navegación inferior móvil */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Spinner de Carga, Notificaciones y Pantalla Offline -->
+    <div id="notification-container"></div>
+    <div id="offline-overlay" class="offline-overlay"><div class="offline-content"><i class="fas fa-wifi"></i><h2>Sin Conexión</h2><p>Revisa tu red e inténtalo de nuevo.</p></div></div>
+
+
+        <header class="header">
+        <div class="logo-container">
+            <img src="../assets/images/favicon.png" alt="Logo de GLauncher" class="logo">
+            <img src="../assets/images/minecraft_title.png" alt="Título de GLauncher" class="logo-title-img">
+        </div>
+        <nav class="auth-buttons">
+            <a href="../../index.html" class="auth-button">Inicio</a> 
+            <a href="noticias.html" class="auth-button">Noticias</a>
+            <a href="shop.html" class="auth-button">Tienda</a>
+            <a href="download.html" class="auth-button">Descargas</a>
+            <a href="dashboard.html" class="auth-button active">Dashboard</a>
+            <a href="login.html" class="auth-button">Iniciar Sesión</a>
+            <a href="register.html" class="auth-button">Registrar</a>
+            <a href="https://www.youtube.com/@zyrovent" target="_blank" class="auth-button youtube-button" title="Visita mi canal de YouTube">
+                <i class="fab fa-youtube"></i> Canal
+            </a>
+        </nav>
+    </header>
+
+    <main class="dashboard-main-content">
+        <div class="dashboard-container">
+            
+
+            <nav class="floating-nav">
+                <div class="nav-profile-section">
+                    <img id="nav-avatar" src="../assets/images/avatars/default-avatar.png" alt="Foto de perfil" class="nav-avatar">
+                    <span id="nav-username">Cargando...</span>
+                    <div id="user-role-container" class="user-role-container" style="display: none;">
+                        <i class="fas fa-gem"></i> <!-- Icono por defecto, se cambiará con JS -->
+                        <span id="user-role"></span>
+                    </div>
+                    <!-- Nuevo Menú de Estado -->
+                    <div class="status-menu-container">
+                        <div id="status-display" class="status-display">
+                            <span id="status-indicator" class="status-indicator online"></span>
+                            <span id="status-text">Disponible</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div id="status-options" class="status-options"></div>
+                    </div>
+                    <!-- Contenedor para usuario no logueado -->
+                    <div id="nav-guest-section" class="nav-guest-section" style="display: none;">
+                        <span>¡Bienvenido, Invitado!</span>
+                        <p>Inicia sesión para ver tu perfil y estadísticas.</p>
+                        <a href="login.html" class="action-btn">Iniciar Sesión</a>
+                    </div>
+                </div>
+                <div class="nav-links-section">
+                    <a href="#" class="floating-nav-item active" data-target="gchat-section"><i class="fas fa-comments"></i> GChat</a>
+                    <a href="#" class="floating-nav-item" data-target="friends-section"><i class="fas fa-user-friends"></i> Amigos</a>
+                    <a href="#" class="floating-nav-item" data-target="achievements-section"><i class="fas fa-trophy"></i> Logros</a>
+                    <a href="#" class="floating-nav-item" data-target="stats-section"><i class="fas fa-chart-line"></i> Estadísticas</a>
+                    <a href="#" class="floating-nav-item" data-target="settings-section"><i class="fas fa-cogs"></i> Ajustes</a>
+                    <a href="admin.html" id="admin-nav-button" class="floating-nav-item" style="display: none;"><i class="fas fa-user-shield"></i> Admin</a>
+                </div>
+                <div class="nav-actions-section">
+                    <button id="launch-game-btn" class="launch-button"><i class="fas fa-play"></i> Iniciar Juego</button>
+                    <button id="logout-btn" class="logout-button" title="Cerrar Sesión"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </nav>
+            
+            <section class="dashboard-content-area">
+                <!-- SECCIÓN DE GCHAT -->
+                <section id="gchat-section" class="content-section active">
+                    <div class="gchat-section-header-wrap">
+                        <h2 class="section-header"><i class="fas fa-comments"></i> GChat - Mensajería Privada</h2>
+                    </div>
+                    <div class="gchat-container" id="gchat-container">
+                        <!-- Panel de Conversaciones / Amigos -->
+                        <div id="gchat-sidebar" class="gchat-sidebar">
+                            <div class="gchat-sidebar-header">
+                                <div class="gchat-sidebar-title">
+                                    <i class="fas fa-inbox"></i> Conversaciones
+                                </div>
+                                <span class="gchat-conversations-badge" id="gchat-conversations-count"><i class="fas fa-users"></i></span>
+                            </div>
+                            <div class="gchat-search-container">
+                                <i class="fas fa-search gchat-search-icon"></i>
+                                <input type="text" id="gchat-search-input" placeholder="Filtrar amigo..." autocomplete="off">
+                            </div>
+                            <div id="gchat-conversation-list">
+                                <!-- Las conversaciones se cargarán aquí -->
+                            </div>
+                        </div>
+
+                        <!-- Panel de Conversación Activa -->
+                        <div id="gchat-main" class="gchat-main">
+                            <!-- Header de conversación activa (para desktop y móvil) -->
+                            <div id="gchat-active-header" class="gchat-active-header" style="display: none;">
+                                <button type="button" id="gchat-back-to-list-btn" class="gchat-back-btn" title="Volver a chats">
+                                    <i class="fas fa-arrow-left"></i>
+                                </button>
+                                <div class="gchat-active-user-info">
+                                    <img id="gchat-active-avatar" src="../assets/images/avatars/default-avatar.png" alt="Avatar" class="gchat-active-avatar">
+                                    <div class="gchat-active-details">
+                                        <div class="gchat-active-name-wrap">
+                                            <span id="gchat-active-name">Usuario</span>
+                                            <span id="gchat-active-status-dot" class="status-indicator online"></span>
+                                        </div>
+                                        <span id="gchat-active-status-label" class="gchat-active-status-label">En línea</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="gchat-welcome-screen" class="gchat-welcome-screen">
+                                <div class="gchat-welcome-badge"><i class="fas fa-comments"></i></div>
+                                <h3>Tu Centro de Mensajes</h3>
+                                <p>Selecciona a un amigo de la lista para empezar a conversar en tiempo real, compartir GIFs o responder mensajes.</p>
+                            </div>
+                            <div id="gchat-messages-container" class="gchat-messages-container" style="display: none;">
+                                <!-- Los mensajes se cargarán aquí -->
+                            </div>
+
+                            <!-- Panel de Fluent Emojis 3D -->
+                            <div id="gchat-emoji-picker" class="gchat-emoji-picker" hidden>
+                                <div class="gchat-picker-header">
+                                    <div class="gchat-picker-tabs">
+                                        <button type="button" class="gchat-emoji-cat-btn active" data-cat="all"><i class="fas fa-smile"></i> Todos</button>
+                                        <button type="button" class="gchat-emoji-cat-btn" data-cat="smileys"><i class="fas fa-laugh-beam"></i> Caras</button>
+                                        <button type="button" class="gchat-emoji-cat-btn" data-cat="gestures"><i class="fas fa-thumbs-up"></i> Gestos</button>
+                                        <button type="button" class="gchat-emoji-cat-btn" data-cat="hearts"><i class="fas fa-heart"></i> Corazones</button>
+                                        <button type="button" class="gchat-emoji-cat-btn" data-cat="gaming"><i class="fas fa-gamepad"></i> Gaming</button>
+                                    </div>
+                                    <input type="search" id="gchat-emoji-search" class="gchat-picker-search-input" placeholder="Buscar emoji..." autocomplete="off">
+                                </div>
+                                <div id="gchat-emoji-grid" class="gchat-emoji-grid">
+                                    <!-- Emojis Fluent generados dinámicamente -->
+                                </div>
+                            </div>
+
+                            <div id="gchat-gif-picker" class="gchat-gif-picker" hidden>
+                                <div class="gchat-picker-header">
+                                    <div class="gchat-picker-tabs">
+                                        <button type="button" class="gchat-gif-tag-btn active" data-tag="trending"><i class="fas fa-fire"></i> Tendencias</button>
+                                        <button type="button" class="gchat-gif-tag-btn" data-tag="minecraft"><i class="fas fa-cube"></i> Minecraft</button>
+                                        <button type="button" class="gchat-gif-tag-btn" data-tag="gaming"><i class="fas fa-gamepad"></i> Gaming</button>
+                                        <button type="button" class="gchat-gif-tag-btn" data-tag="funny"><i class="fas fa-laugh"></i> Risa</button>
+                                        <button type="button" class="gchat-gif-tag-btn" data-tag="anime"><i class="fas fa-dragon"></i> Anime</button>
+                                    </div>
+                                    <div class="gchat-gif-search">
+                                        <input type="search" id="gchat-gif-query" placeholder="Buscar en GIPHY..." maxlength="100" autocomplete="off">
+                                        <button type="button" id="gchat-gif-search-btn" class="action-btn" aria-label="Buscar GIF">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="gchat-gif-results" class="gchat-gif-results" aria-live="polite"></div>
+                            </div>
+                            <div id="gchat-replying" class="gchat-replying" hidden>
+                                <div><strong id="gchat-replying-author"></strong><span id="gchat-replying-content"></span></div>
+                                <button type="button" id="gchat-reply-cancel" class="action-btn" aria-label="Cancelar respuesta">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <form id="gchat-input-form" class="gchat-input-form" style="display: none;">
+                                <button type="button" id="gchat-emoji-toggle" class="action-btn" aria-label="Elegir Emoji" title="Emojis Fluent 3D">
+                                    <i class="fas fa-smile"></i>
+                                </button>
+                                <button type="button" id="gchat-gif-toggle" class="action-btn" aria-label="Elegir GIF" title="Enviar GIF">
+                                    <i class="fas fa-film"></i>
+                                </button>
+                                <input type="text" id="gchat-message-input" maxlength="1000" placeholder="Escribe un mensaje..." autocomplete="off">
+                                <button type="submit" class="action-btn save-btn" aria-label="Enviar mensaje">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECCIÓN DE AMIGOS & BÚSQUEDA -->
+                <section id="friends-section" class="content-section">
+                    <h2 class="section-header"><i class="fas fa-user-friends"></i> Mis Amigos y Búsqueda</h2>
+                    <div class="friends-list-container">
+                        <div class="friends-search-bar" style="display: flex; gap: 10px; width: 100%; max-width: 550px;">
+                            <input type="text" id="friend-search-input" class="neon-input-field" placeholder="Escribe el nombre de usuario a buscar o añadir...">
+                            <button id="friend-search-btn" class="action-btn save-btn" style="flex-shrink: 0;"><i class="fas fa-search"></i> Buscar</button>
+                        </div>
+                        <div id="search-results-box" style="display: none; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; border: 1px solid var(--neon-blue);">
+                            <h4 style="color: var(--neon-blue); margin-bottom: 10px;"><i class="fas fa-search"></i> Resultado de Búsqueda</h4>
+                            <div id="search-results-list" class="friends-list"></div>
+                        </div>
+                        <div id="friends-list" class="friends-list"></div>
+                    </div>
+                </section>
+
+                <!-- SECCIÓN DE ESTADÍSTICAS -->
+                <section id="stats-section" class="content-section">
+                    <h2 class="section-header"><i class="fas fa-database"></i> Registros y Analítica</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card stat-pink">
+                            <i class="fas fa-coins"></i>
+                            <p id="stat-gcoins" class="stat-main-value">0</p>
+                            <p class="text-color-dark">GCoins</p>
+                        </div>
+                        <div class="stat-card stat-blue">
+                            <i class="fas fa-calendar-alt"></i>
+                            <p id="stat-register-date" class="stat-main-value">--/--/----</p>
+                            <p class="text-color-dark">Miembro Desde</p>
+                        </div>
+                        <div class="stat-card stat-green">
+                            <i class="fas fa-gem"></i>
+                            <p id="stat-cosmetics" class="stat-main-value">0</p>
+                            <p class="text-color-dark">Cosméticos</p>
+                        </div>
+                        <div class="stat-card stat-yellow">
+                            <i class="fas fa-hourglass-half"></i>
+                            <p id="stat-playtime" class="stat-main-value">0h</p>
+                            <p class="text-color-dark">Tiempo de Juego</p>
+                        </div>
+                    </div>
+                    <article class="player-progression-card" aria-labelledby="player-progression-title">
+                        <div class="player-progression-heading">
+                            <div>
+                                <p class="player-progression-eyebrow">PROGRESO DEL JUGADOR</p>
+                                <h3 id="player-progression-title"><span id="player-level">Nivel --</span><span id="player-rank">JUGADOR GLOBAL</span></h3>
+                            </div>
+                            <i class="fas fa-trophy" aria-hidden="true"></i>
+                        </div>
+                        <div class="player-progression-track" role="progressbar" aria-label="Experiencia del nivel" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                            <div id="player-xp-fill"></div>
+                        </div>
+                        <p id="player-xp-label" class="player-progression-xp">0 / 100 XP para el siguiente nivel</p>
+                        <div id="level-reward-panel" class="level-reward-panel" hidden>
+                            <div>
+                                <strong id="level-reward-title">Recompensa disponible</strong>
+                                <p id="level-reward-description">Elige un cosmético de la tienda.</p>
+                            </div>
+                            <div class="level-reward-actions">
+                                <select id="level-reward-item" aria-label="Cosmético de recompensa"></select>
+                                <button id="claim-level-reward" class="action-btn save-btn" type="button">Reclamar gratis</button>
+                            </div>
+                            <p id="level-reward-status" class="level-reward-status" aria-live="polite"></p>
+                        </div>
+                    </article>
+                    <section class="cosmetics-inventory-card" aria-labelledby="cosmetics-inventory-title">
+                        <div class="cosmetics-inventory-heading">
+                            <div>
+                                <p class="player-progression-eyebrow">TU COLECCIÓN</p>
+                                <h3 id="cosmetics-inventory-title">Cosméticos</h3>
+                            </div>
+                            <span id="cosmetics-inventory-count">0 objetos</span>
+                        </div>
+                        <div id="cosmetics-inventory-grid" class="cosmetics-inventory-grid" aria-live="polite">
+                            <p class="placeholder-content">Cargando inventario...</p>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- SECCIÓN DE LOGROS -->
+                <section id="achievements-section" class="content-section">
+                    <h2 class="section-header"><i class="fas fa-trophy"></i> Mis Logros</h2>
+                    <div class="achievements-filter-controls">
+                        <button class="filter-btn active" data-filter="all">Todos</button>
+                        <button class="filter-btn" data-filter="unlocked">Desbloqueados</button>
+                        <button class="filter-btn" data-filter="locked">Bloqueados</button>
+                        <button class="filter-btn" data-filter="recommended">Recomendados</button>
+                    </div>
+                    <div id="achievements-grid" class="achievements-grid">
+                        <!-- Los logros se generarán dinámicamente aquí -->
+                    </div>
+                </section>
+
+                <!-- SECCIÓN DE AJUSTES -->
+                <section id="settings-section" class="content-section">
+                    <h2 class="section-header"><i class="fas fa-cogs"></i> Ajustes de Cuenta</h2>
+                    
+                    <div class="settings-layout">
+                        <!-- Menú Lateral -->
+                        <aside class="settings-sidebar">
+                            <button class="settings-nav-btn active" data-panel="profile-panel"><i class="fas fa-user-circle"></i> Perfil Público</button>
+                            <button class="settings-nav-btn" data-panel="email-panel"><i class="fas fa-envelope"></i> Correo Gmail</button>
+                            <button class="settings-nav-btn" data-panel="security-panel"><i class="fas fa-shield-alt"></i> Seguridad</button>
+                            <button class="settings-nav-btn" data-panel="privacy-panel"><i class="fas fa-user-secret"></i> Privacidad</button>
+                            <button class="settings-nav-btn" data-panel="danger-panel" style="color: var(--neon-pink);"><i class="fas fa-exclamation-triangle"></i> Zona de Peligro</button>
+                        </aside>
+
+                        <!-- Contenido -->
+                        <div class="settings-content">
+                            
+                            <!-- Panel Perfil -->
+                            <div id="profile-panel" class="settings-panel active">
+                                <form id="account-settings-form" class="settings-card">
+                                    <h3><i class="fas fa-id-card"></i> Información Básica</h3>
+                                    <div class="form-group avatar-upload-group">
+                                        <div class="avatar-preview-container" style="display: flex; align-items: center; gap: 20px;">
+                                            <img id="settings-avatar-preview" src="../assets/images/avatars/default-avatar.png" alt="Vista previa de foto de perfil" class="nav-avatar" style="width: 80px; height: 80px;">
+                                            <div>
+                                                <label for="avatar-change-file" class="action-btn save-btn" style="cursor: pointer; display: inline-block;">
+                                                    <i class="fas fa-camera"></i> Subir Nueva Foto
+                                                </label>
+                                                <p style="font-size: 0.8em; color: #888; margin-top: 5px;">Máximo 2MB. JPG, PNG o GIF.</p>
+                                            </div>
+                                            <input type="file" id="avatar-change-file" name="avatar_file" accept="image/png, image/jpeg, image/gif" style="display: none;">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="username-change">Nombre de Usuario</label>
+                                        <input type="text" id="username-change" class="neon-input-field" placeholder="Tu nombre visible">
+                                    </div>
+                                    <button type="submit" class="action-btn save-btn" id="save-profile-btn"><i class="fas fa-save"></i> Guardar Perfil</button>
+                                </form>
+                            </div>
+
+                            <!-- Panel Correo Gmail -->
+                            <div id="email-panel" class="settings-panel">
+                                <form id="change-email-form" class="settings-card">
+                                    <h3><i class="fas fa-envelope-open-text"></i> Cambiar Correo Gmail</h3>
+                                    <p style="color: var(--text-color-dark); font-size: 0.88em; margin-bottom: 20px;">
+                                        Por tu seguridad, primero debes autorizar el cambio con tu contraseña actual. Luego enviaremos un código de verificación a la nueva cuenta de Gmail para completar el cambio.
+                                    </p>
+
+                                    <!-- Paso 1: Clave actual y Nuevo Gmail -->
+                                    <div id="change-email-step1">
+                                        <div class="form-group">
+                                            <label for="current-email-display"><i class="fas fa-at"></i> Correo Gmail Actual</label>
+                                            <input type="text" id="current-email-display" class="neon-input-field" readonly style="opacity: 0.75; cursor: not-allowed;" value="Cargando...">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="change-email-password"><i class="fas fa-lock"></i> Contraseña Actual (Confirmación requerida)</label>
+                                            <input type="password" id="change-email-password" class="neon-input-field" placeholder="Escribe tu contraseña actual para autorizar" required autocomplete="current-password">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="change-email-new"><i class="fas fa-envelope"></i> Nueva Dirección Gmail</label>
+                                            <input type="email" id="change-email-new" class="neon-input-field" placeholder="nuevo_correo@gmail.com" required autocomplete="email">
+                                        </div>
+
+                                        <button type="submit" class="action-btn save-btn" id="btn-request-email-change">
+                                            <i class="fas fa-paper-plane"></i> Autorizar y Enviar Código
+                                        </button>
+                                    </div>
+
+                                    <!-- Paso 2: Validación del Código recibido en el nuevo Gmail -->
+                                    <div id="change-email-step2" style="display: none;">
+                                        <div class="code-flow-info" style="margin-bottom: 18px; padding: 12px; background: rgba(0,255,204,0.06); border: 1px solid rgba(0,255,204,0.25); border-radius: 8px;">
+                                            <p style="margin: 0; color: var(--neon-cyan); font-size: 0.9em;">
+                                                <i class="fas fa-info-circle"></i> Hemos enviado un código de verificación a: <strong id="pending-new-email-text" style="color: #fff;"></strong>. Escríbelo a continuación para aplicar el cambio definitivo.
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="change-email-otp"><i class="fas fa-key"></i> Código de Verificación (6 dígitos)</label>
+                                            <input type="text" id="change-email-otp" class="neon-input-field" placeholder="Ej: 123456" maxlength="6" autocomplete="one-time-code">
+                                        </div>
+
+                                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                            <button type="button" class="action-btn save-btn" id="btn-verify-email-change">
+                                                <i class="fas fa-check-circle"></i> Confirmar y Cambiar Gmail
+                                            </button>
+                                            <button type="button" class="action-btn" id="btn-cancel-email-change" style="background: rgba(255,255,255,0.1); color: #fff;">
+                                                <i class="fas fa-arrow-left"></i> Cancelar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Panel Seguridad -->
+                            <div id="security-panel" class="settings-panel">
+                                <form id="security-settings-form" class="settings-card">
+                                    <h3><i class="fas fa-lock"></i> Seguridad de la Cuenta</h3>
+                                    <div class="form-group">
+                                        <label for="current-password-input">Contraseña Actual</label>
+                                        <input type="password" id="current-password-input" class="neon-input-field" placeholder="Ingresa tu contraseña actual" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="new-password-input">Nueva Contraseña</label>
+                                        <input type="password" id="new-password-input" class="neon-input-field" placeholder="Mínimo 6 caracteres" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="confirm-new-password-input">Confirmar Nueva Contraseña</label>
+                                        <input type="password" id="confirm-new-password-input" class="neon-input-field" placeholder="Repite la nueva contraseña" required>
+                                    </div>
+                                    <button type="submit" class="action-btn save-btn" id="update-password-btn"><i class="fas fa-key"></i> Actualizar Contraseña</button>
+                                </form>
+                            </div>
+
+                            <!-- Panel Privacidad -->
+                            <div id="privacy-panel" class="settings-panel">
+                                <div class="settings-card">
+                                    <h3><i class="fas fa-user-shield"></i> Privacidad y Visibilidad</h3>
+                                    <div class="setting-toggle">
+                                        <div>
+                                            <strong style="color: var(--text-color-light);">Mostrar estado en línea</strong>
+                                            <p style="font-size: 0.8em; color: var(--text-color-dark);">Permite a otros jugadores ver si estás conectado.</p>
+                                        </div>
+                                        <label class="toggle-switch"><input type="checkbox" id="privacy-online-toggle" checked><span class="slider"></span></label>
+                                    </div>
+                                    <div class="setting-toggle">
+                                        <div>
+                                            <strong style="color: var(--text-color-light);">Permitir solicitudes de amistad</strong>
+                                            <p style="font-size: 0.8em; color: var(--text-color-dark);">Recibir invitaciones de otros usuarios de GLauncher.</p>
+                                        </div>
+                                        <label class="toggle-switch"><input type="checkbox" id="privacy-requests-toggle" checked><span class="slider"></span></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Panel Peligro -->
+                            <div id="danger-panel" class="settings-panel">
+                                <div class="settings-card" style="border-color: var(--neon-pink);">
+                                    <h3 style="color: var(--neon-pink);"><i class="fas fa-skull-crossbones"></i> Zona de Peligro</h3>
+                                    <p style="margin-bottom: 15px; color: var(--text-color-dark);">Esta acción es permanente e irreversible. Perderás tu progreso, GCoins y cosméticos asociados.</p>
+                                    <button type="button" class="action-btn" id="delete-account-btn" style="background: var(--neon-pink); color: white;"><i class="fas fa-user-slash"></i> Eliminar Definitivamente</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal Informativo de Lanzamiento de GLauncher.exe -->
+    <div id="launch-fallback-modal" class="launch-modal-overlay">
+        <div class="launch-modal-card">
+            <div class="launch-modal-header">
+                <h3><i class="fas fa-gamepad text-neon-green"></i> Abriendo GLauncher.exe</h3>
+                <button class="close-modal-btn" id="close-launch-modal" title="Cerrar">&times;</button>
+            </div>
+            <div class="launch-modal-body">
+                <p style="color: var(--text-color-light); margin-bottom: 12px; font-size: 0.95em;">
+                    Hemos enviado la orden a tu equipo para iniciar <strong>GLauncher.exe</strong>.
+                </p>
+                <div class="launch-steps">
+                    <div class="step-item">
+                        <i class="fas fa-check-circle text-neon-green"></i>
+                        <span style="color: var(--text-color-dark);">Si el navegador te pide permiso para abrir el enlace o protocolo, selecciona <strong>"Permitir siempre"</strong>.</span>
+                    </div>
+                    <div class="step-item">
+                        <i class="fas fa-download text-neon-blue"></i>
+                        <span style="color: var(--text-color-dark);">¿No tienes la app instalada o no se abre? Descarga el instalador oficial de GLauncher.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="launch-modal-actions">
+                <a href="download.html" class="action-btn save-btn"><i class="fas fa-download"></i> Descargar GLauncher.exe</a>
+                <button type="button" class="action-btn" id="cancel-launch-modal" style="background: rgba(255,255,255,0.1); color: #fff;">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Banner de Consentimiento de Cookies -->
+    <div id="cookie-banner" class="cookie-consent-banner">
+        <p class="cookie-text">
+            Utilizamos cookies para mejorar tu experiencia en nuestro sitio. Al continuar, aceptas nuestro uso de cookies. <a href="/privacy-policy.html">Leer más</a>.
+        </p>
+        <button id="accept-cookie-btn" class="auth-button-action cookie-accept-btn" style="background-color: var(--neon-green); box-shadow: var(--shadow-green);">Aceptar</button>
+    </div>
+
+    <!-- Barra de Navegación Inferior (Solo para Móviles) -->
+    <nav class="bottom-nav">
+        <a href="../../index.html"><i class="fas fa-home"></i><span>Inicio</span></a>
+        <a href="shop.html"><i class="fa-solid fa-shop"></i><span>Tienda</span></a>
+        <a href="noticias.html"><i class="fas fa-newspaper"></i><span>Noticias</span></a>
+        <a href="download.html"><i class="fas fa-download"></i><span>Descargas</span></a>
+        <a href="dashboard.html" class="active"><i class="fas fa-user-circle"></i><span>Tu Perfil</span></a>
+    </nav>
+
+    <!-- Librería Pusher para Realtime -->
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+    <!-- Librería Lenis para Smooth Scroll -->
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    <!-- Supabase SDK y Configuración -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/global-script.js"></script>
+    <script src="../js/dashboard-script.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- 1. Navegación Principal del Dashboard ---
+            const navItems = document.querySelectorAll('.floating-nav-item');
+            const sections = document.querySelectorAll('.content-section');
+
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const targetId = item.getAttribute('data-target');
+                    if (!targetId) return;
+                    e.preventDefault();
+
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    item.classList.add('active');
+
+                    sections.forEach(section => {
+                        section.classList.remove('active');
+                        if (section.id === targetId) section.classList.add('active');
+                    });
+                });
+            });
+
+            // --- 2. Navegación Interna de Ajustes (Fix solicitado) ---
+            const settingsBtns = document.querySelectorAll('.settings-nav-btn');
+            const settingsPanels = document.querySelectorAll('.settings-panel');
+
+            settingsBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const panelId = btn.getAttribute('data-panel');
+
+                    settingsBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    settingsPanels.forEach(panel => {
+                        panel.classList.remove('active');
+                        if (panel.id === panelId) panel.classList.add('active');
+                    });
+                });
+            });
+
+            // --- 3. Vista previa de Cambio de Avatar ---
+            const avatarInput = document.getElementById('avatar-change-file');
+            const settingsPreview = document.getElementById('settings-avatar-preview');
+            const navAvatar = document.getElementById('nav-avatar');
+
+            if (avatarInput) {
+                avatarInput.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            settingsPreview.src = e.target.result;
+                            if (navAvatar) navAvatar.src = e.target.result;
+                            if (window.showNotification) window.showNotification('Previsualización de avatar cargada.', 'info');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+        });
+    </script>
+</body>
+</html>

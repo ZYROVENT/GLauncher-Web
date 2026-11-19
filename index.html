@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0d1117">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="GLauncher">
+    <meta name="application-name" content="GLauncher">
+    <meta name="author" content="ZYROVENT">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    
+    <!-- Título y Descripción SEO Principales -->
+    <title>GLauncher - El Launcher de Minecraft Definitivo | PvP, Mods y Rendimiento</title>
+    <meta name="description" content="Descarga GLauncher gratis. El mejor launcher de Minecraft optimizado para PvP, FPS altos, soporte de mods (Forge, Fabric), cosméticos exclusivos, multicuenta y música integrada.">
+    <meta name="keywords" content="GLauncher, Launcher de Minecraft, Minecraft Launcher, Descargar Minecraft Gratis, Minecraft PvP, Launcher FPS Boost, Minecraft Mods, Forge, Fabric, GLauncher Web, ZYROVENT, Minecraft Launcher Ligero">
+    <link rel="canonical" href="https://glauncher.vercel.app/">
+
+    <!-- Open Graph (Facebook, Discord, WhatsApp, Telegram) -->
+    <meta property="og:site_name" content="GLauncher">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://glauncher.vercel.app/">
+    <meta property="og:title" content="GLauncher - Launcher de Minecraft Optimizado para PvP y Rendimiento">
+    <meta property="og:description" content="El launcher de Minecraft definitivo con máxima optimización de FPS, mods, cosméticos, música integrada y sistema de amigos.">
+    <meta property="og:image" content="https://glauncher.vercel.app/src/assets/images/glauncher%20logo.png">
+    <meta property="og:image:alt" content="Logo oficial de GLauncher">
+    <meta property="og:locale" content="es_ES">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@GLauncher">
+    <meta name="twitter:creator" content="@ZYROVENT">
+    <meta name="twitter:title" content="GLauncher - Launcher de Minecraft Definitivo">
+    <meta name="twitter:description" content="El launcher de Minecraft definitivo con optimización PvP, mods, cosméticos y música. ¡Descárgalo gratis!">
+    <meta name="twitter:image" content="https://glauncher.vercel.app/src/assets/images/glauncher%20logo.png">
+
+    <!-- Datos Estructurados JSON-LD (Schema.org) para Google Search -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://glauncher.vercel.app/#website",
+          "url": "https://glauncher.vercel.app/",
+          "name": "GLauncher",
+          "alternateName": ["GLauncher Minecraft", "GLauncher MC", "GLauncher PvP", "GLauncher Web"],
+          "description": "Sitio web oficial de GLauncher, el launcher de Minecraft optimizado para PvP y alto rendimiento.",
+          "inLanguage": "es-ES"
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://glauncher.vercel.app/#organization",
+          "name": "GLauncher",
+          "url": "https://glauncher.vercel.app/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://glauncher.vercel.app/src/assets/images/glauncher%20logo.png"
+          }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "GLauncher",
+          "operatingSystem": "Windows, Linux, macOS, Android",
+          "applicationCategory": "GameApplication",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "description": "El launcher de Minecraft definitivo optimizado para PvP, mods y rendimiento extremo en PCs de bajos recursos.",
+          "author": {
+            "@type": "Person",
+            "name": "ZYROVENT"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "¿Qué es GLauncher?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "GLauncher es un launcher moderno y ultra optimizado para Minecraft que ofrece soporte para mods, perfiles, cosméticos y aumento significativo de FPS."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Quién creó GLauncher?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "GLauncher fue creado y es desarrollado por ZYROVENT."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿GLauncher es gratis?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Sí, GLauncher es completamente gratuito para toda la comunidad de Minecraft."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <!-- Estilos optimizados para carga asíncrona -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></noscript>
+    <link rel="stylesheet" href="src/css/styles.css">
+    <link rel="icon" type="image/png" href="src/assets/images/favicon.png">
+    <link rel="stylesheet" href="src/css/index-styles.css">
+    <link href="https://fonts.cdnfonts.com/css/minecraftia" rel="stylesheet">
+    <style>
+        /* Estilos para la transición suave del contenido del panel */
+        .feature-display-panel img,
+        .feature-display-panel h3,
+        .feature-display-panel p {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Estado cuando se está actualizando (oculto) */
+        .feature-display-panel.updating img,
+        .feature-display-panel.updating h3,
+        .feature-display-panel.updating p {
+            opacity: 0;
+            transform: translateY(20px);
+            transition-delay: 0s;
+        }
+
+        /* Retrasos para que el texto aparezca en cascada */
+        .feature-display-panel h3 { transition-delay: 0.1s; }
+        .feature-display-panel p { transition-delay: 0.2s; }
+
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        .feature-card.active, .feature-card:hover {
+            border-color: var(--neon-blue, #00f3ff);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+            transform: translateY(-5px);
+        }
+
+        /* Estilos para el efecto de escritura (Typewriter) */
+        #typewriter-text {
+            font-family: 'MinecraftTitle', 'Minecraftia', sans-serif; /* Forzar fuente */
+            color: var(--neon-green);
+            font-weight: bold;
+            text-shadow: 4px 4px 0 #000000, 0 0 10px var(--neon-green);
+        }
+        .cursor {
+            display: inline-block;
+            animation: blink 1s infinite;
+            color: var(--neon-green);
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Estilos para el Slider de Imágenes Automático */
+        .image-slider-section {
+            width: 90%;
+            max-width: 1200px;
+            margin: 40px auto;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+            background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro para resaltar */
+            padding: 10px;
+        }
+        .slider-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .slide-item {
+            min-width: 100%;
+        }
+        .slide-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            max-height: 500px;
+        }
+    </style>
+</head>
+<!-- Librería para la animación de confeti -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+<body>
+
+    <header class="header">
+        <div class="logo-container">
+            <img src="src/assets/images/favicon.png" alt="Logo de GLauncher" class="logo">
+            <img src="src/assets/images/minecraft_title.png" alt="Título de GLauncher" class="logo-title-img">
+        </div>
+        <nav class="auth-buttons">
+            <a href="index.html" class="auth-button active">Inicio</a> 
+            <a href="src/html/noticias.html" class="auth-button">Noticias</a>
+            <a href="src/html/shop.html" class="auth-button">Tienda</a>
+            <a href="src/html/download.html" class="auth-button">Descargas</a>
+            <a href="dev.html" class="auth-button dev-nav-btn" title="Documentación y Estilos GSS para Desarrolladores"><i class="fas fa-code"></i> Devs / GSS</a>
+            <a href="src/html/dashboard.html" class="auth-button">Dashboard</a>
+            <a href="src/html/login.html" class="auth-button">Iniciar Sesión</a>
+            <a href="src/html/register.html" class="auth-button">Registrar</a>
+            <a href="https://www.youtube.com/@zyrovent" target="_blank" class="auth-button youtube-button" title="Visita mi canal de YouTube">
+                <i class="fab fa-youtube"></i> Canal
+            </a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <!-- SECCIÓN DEL CONTADOR DE NAVIDAD (MOVIDA AQUÍ) -->
+        <section id="christmas-countdown-section" style="position: relative; z-index: 1;">
+            <canvas id="snow-canvas"></canvas>
+
+            <div id="christmas-countdown">
+              <div class="countdown-header">
+                <h3 id="countdown-title">¿Cuánto falta para Navidad?</h3>
+                <button id="toggle-snow-btn" class="snow-toggle-btn" title="Activar/Desactivar Nieve"><i class="fas fa-snowflake"></i></button>
+              </div>
+              <p class="countdown-target-date" id="countdown-target-date">Para el 25 de Diciembre de 2026</p>
+              <div id="timer">
+                <div><span id="days">0</span>Días</div>
+                <div><span id="hours">0</span>Horas</div>
+                <div><span id="minutes">0</span>Minutos</div>
+                <div><span id="seconds">0</span>Segundos</div>
+              </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN HERO RENOVADA -->
+        <section class="launcher-section" id="inicio">
+            <div class="hero-glow-backdrop"></div>
+            <div class="intro-container hero-glass-card">
+                <div class="hero-top-bar">
+                    <div class="hero-chip-badge">
+                        <span class="chip-pulse-dot"></span>
+                        <i class="fas fa-bolt"></i> GLauncher v2.0 • Android BETA & Windows x86/x64
+                    </div>
+                    <div class="hero-status-tag">
+                        <i class="fas fa-shield-alt"></i> 100% Gratuito & Seguro
+                    </div>
+                </div>
+                
+                <div class="launcher-content-area">
+                    <div class="launcher-text-left">
+                        <h1 class="main-headline">
+                            El Launcher Definitivo para 
+                            <span class="gradient-text-cyan">PvP</span> y 
+                            <span class="gradient-text-green">Rendimiento</span><br>
+                            para <span id="typewriter-text" class="typewriter-highlight"></span><span class="cursor">|</span>
+                        </h1>
+                        <p class="project-description mb-30">
+                            Juega Minecraft con la máxima fluidez, cero lag y <strong>64 MB de consumo de RAM</strong>. Soporte completo de mods (Forge/Fabric), personalización total con <strong>.GSS</strong>, reproductor de música en segundo plano y multicuenta instantánea.
+                        </p>
+
+                        <!-- Grupo de Botones de Acción -->
+                        <div class="hero-actions-group">
+                            <a href="src/html/download.html" class="hero-cta-btn primary-cta">
+                                <i class="fas fa-download"></i>
+                                <div class="cta-btn-text">
+                                    <span class="cta-title">Descargar Gratis</span>
+                                    <span class="cta-subtitle">Windows, Linux & Android</span>
+                                </div>
+                            </a>
+
+                            <a href="dev.html" class="hero-cta-btn secondary-cta">
+                                <i class="fas fa-code"></i>
+                                <div class="cta-btn-text">
+                                    <span class="cta-title">Temas .GSS</span>
+                                    <span class="cta-subtitle">Personalización v7.0</span>
+                                </div>
+                            </a>
+
+                            <a href="src/html/dashboard.html" class="hero-cta-btn tertiary-cta" title="Abrir Web Dashboard">
+                                <i class="fas fa-user-circle"></i>
+                                <div class="cta-btn-text">
+                                    <span class="cta-title">Dashboard</span>
+                                    <span class="cta-subtitle">Panel Web</span>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Micro-badges de características -->
+                        <div class="hero-feature-pills">
+                            <span class="hero-pill"><i class="fas fa-microchip text-neon-green"></i> 64MB RAM</span>
+                            <span class="hero-pill"><i class="fas fa-tachometer-alt text-neon-blue"></i> FPS Boost</span>
+                            <span class="hero-pill"><i class="fas fa-palette text-neon-pink"></i> Temas .GSS</span>
+                            <span class="hero-pill"><i class="fas fa-music text-neon-green"></i> GMusic</span>
+                            <span class="hero-pill"><i class="fas fa-ban text-neon-blue"></i> Sin Anuncios</span>
+                        </div>
+                    </div>
+
+                    <div class="launcher-visual-right">
+                        <div class="hero-showcase-box">
+                            <div class="hero-floating-aura"></div>
+                            
+                            <!-- Badges Flotantes 3D -->
+                            <div class="floating-badge badge-top-left">
+                                <i class="fas fa-rocket"></i> +120 FPS Boost
+                            </div>
+                            <div class="floating-badge badge-top-right">
+                                <i class="fas fa-palette"></i> .GSS v7.0 Ready
+                            </div>
+                            <div class="floating-badge badge-bottom-left">
+                                <i class="fas fa-memory"></i> 64 MB RAM
+                            </div>
+                            <div class="floating-badge badge-bottom-right">
+                                <i class="fas fa-music"></i> GMusic Audio
+                            </div>
+
+                            <img src="src/assets/images/favicon.png" alt="Logo de GLauncher" class="launcher-gui-img hero-main-logo" width="360" height="360">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NUEVA SECCIÓN DE ESTADÍSTICAS ANIMADAS -->
+        <section class="live-stats-section">
+            <div class="live-stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number" data-target="150">0</span>
+                    <span class="stat-label">Descargas Totales</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="25">0</span>
+                    <span class="stat-label">Usuarios Activos</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="10000">0</span>
+                    <span class="stat-label">Mods Soportados</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="99">0</span>
+                    <span class="stat-label">% Uptime</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DE CARACTERÍSTICAS PRINCIPALES RENOVADA -->
+        <section class="features-section" id="caracteristicas">
+            <h2 class="section-title"><span>Características Principales</span></h2>
+            <p class="section-subtitle" style="text-align: center; color: var(--text-color-dark); margin-top: -30px; margin-bottom: 40px; font-size: 1.05rem;">
+                Descubre por qué GLauncher es la opción más rápida, ligera y personalizable para jugar Minecraft.
+            </p>
+
+            <div class="features-interactive-container">
+                <!-- Panel de Visualización Enriquecido -->
+                <div class="feature-display-panel">
+                    <div class="feature-badge-container">
+                        <span id="feature-display-badge" class="feature-pill-badge">GSS v7.0</span>
+                    </div>
+
+                    <div class="feature-image-frame">
+                        <img id="feature-display-image" src="src/assets/images/glauncher logo.png" alt="Vista previa de característica" class="feature-display-img" loading="lazy">
+                    </div>
+
+                    <h3 id="feature-display-title">Personalización Máxima con .GSS</h3>
+                    <div id="feature-display-description" class="feature-desc-text">
+                        Control visual absoluto. Con <strong>GLauncher StyleSheet (.gss v7.0)</strong> puedes diseñar, editar y aplicar temas visuales personalizados con variables CSS, animaciones fluidas, paletas neón y fondos dinámicos.
+                    </div>
+
+                    <div class="feature-action-container" style="margin-top: 20px;">
+                        <a id="feature-display-link" href="dev.html" class="feature-doc-btn">
+                            <i class="fas fa-book-open"></i> Ver Documentación .GSS
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Cuadrícula de Tarjetas de Características -->
+                <div class="features-grid">
+                    <!-- 1. Tarjeta GSS (Destacada) -->
+                    <div class="feature-card active featured-card" 
+                         data-title="Personalización Máxima con .GSS" 
+                         data-badge="GSS v7.0 Exclusivo"
+                         data-description="Control visual absoluto. Con <strong>GLauncher StyleSheet (.gss v7.0)</strong> puedes diseñar, editar y aplicar temas personalizados con variables CSS, animaciones fluidas, paletas neón y fondos dinámicos. ¡Crea tu propio estilo o importa temas de otros creadores!" 
+                         data-image="src/assets/images/glauncher logo.png"
+                         data-link="dev.html"
+                         data-link-text="Ver Documentación .GSS">
+                        <span class="card-tag"><i class="fas fa-star"></i> Exclusivo</span>
+                        <i class="fas fa-palette feature-icon"></i>
+                        <h4>Personalización .GSS</h4>
+                        <p class="feature-mini-desc">Temas visuales, estilos y HUD a tu gusto con GLauncher StyleSheet.</p>
+                    </div>
+
+                    <!-- 2. Soporte de Mods -->
+                    <div class="feature-card" 
+                         data-title="Soporte de Mods (Forge, Fabric, Quilt, NeoForge)" 
+                         data-badge="Mods & Modpacks"
+                         data-description="Instala y gestiona fácilmente tus mods favoritos. Compatible con <strong>Forge, Fabric, NeoForge y Quilt</strong>. GLauncher detecta versiones automáticamente para garantizar máxima compatibilidad sin errores de arranque." 
+                         data-image="src/assets/images/features/feature-mods.png">
+                        <i class="fas fa-puzzle-piece feature-icon"></i>
+                        <h4>Soporte de Mods</h4>
+                        <p class="feature-mini-desc">Compatibilidad total con Forge, Fabric, Quilt y NeoForge.</p>
+                    </div>
+
+                    <!-- 3. Consumo Ligero -->
+                    <div class="feature-card" 
+                         data-title="Consumo Ultraligero (64 MB RAM)" 
+                         data-badge="FPS & Rendimiento"
+                         data-description="Ultraligero y ultraeficiente. Diseñado para consumir tan solo <strong>64 MB de RAM</strong> en segundo plano, liberando memoria y recursos de tu procesador para que Minecraft alcance sus máximos FPS en PvP y supervivencia." 
+                         data-image="src/assets/images/features/feature-performance.png">
+                        <i class="fas fa-rocket feature-icon"></i>
+                        <h4>Consumo Ligero (64MB)</h4>
+                        <p class="feature-mini-desc">Optimización extrema de memoria RAM para PCs y laptops de bajos recursos.</p>
+                    </div>
+
+                    <!-- 4. Multi-Cuenta -->
+                    <div class="feature-card" 
+                         data-title="Multi-Cuenta y Perfiles Rápidos" 
+                         data-badge="Gestión de Cuentas"
+                         data-description="Cambia entre tus cuentas de Minecraft (Premium de Microsoft y No-Premium) con un solo clic. Guarda tus skins y configuraciones para saltar de servidor en segundos." 
+                         data-image="src/assets/images/features/feature-accounts.png">
+                        <i class="fas fa-users feature-icon"></i>
+                        <h4>Multi-Cuenta</h4>
+                        <p class="feature-mini-desc">Cambio rápido entre cuentas de Microsoft y No-Premium.</p>
+                    </div>
+
+                    <!-- 5. GMusic -->
+                    <div class="feature-card" 
+                         data-title="GMusic y Reproductor Integrado" 
+                         data-badge="Música en Juego"
+                         data-description="Escucha tus temas favoritos sin abrir navegadores pesados que reduzcan tus FPS. Busca música directamente en el launcher con bajo consumo de red y audio de alta fidelidad." 
+                         data-image="src/assets/images/features/feature-music.png">
+                        <i class="fas fa-music feature-icon"></i>
+                        <h4>GMusic & Audio</h4>
+                        <p class="feature-mini-desc">Música integrada en segundo plano sin ralentizar tu juego.</p>
+                    </div>
+
+                    <!-- 6. Chat Global -->
+                    <div class="feature-card" 
+                         data-title="Chat Global y Sistema de Amigos" 
+                         data-badge="Social & Comunidad"
+                         data-description="Comunícate con la comunidad hispanohablante en salas globales, encuentra compañeros de equipo para PvP, gestiona amigos y chatea en tiempo real con GChat." 
+                         data-image="src/assets/images/features/feature-chat.png">
+                        <i class="fas fa-comments feature-icon"></i>
+                        <h4>Chat Global & Amigos</h4>
+                        <p class="feature-mini-desc">Salas de chat en tiempo real y sistema social de amigos.</p>
+                    </div>
+
+                    <!-- 7. Interfaz Modular -->
+                    <div class="feature-card" 
+                         data-title="Interfaz Modular Moderna" 
+                         data-badge="UI / UX"
+                         data-description="Estructura moderna construida con Node.js, Electron, HTML5 y CSS3. Soporta personalización fluida y compatibilidad con sistemas x86 (32 bits) y 64 bits." 
+                         data-image="src/assets/images/features/feature-gui.png">
+                        <i class="fas fa-layer-group feature-icon"></i>
+                        <h4>Interfaz Modular</h4>
+                        <p class="feature-mini-desc">Diseño limpio y moderno pensado para la mejor experiencia de usuario.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+		
+        <!-- Sección de Comparativa Renovada -->
+        <section class="comparison-section" id="comparativa">
+            <h2 class="section-title"><span>Nuestra Comparativa</span></h2>
+            <p class="section-subtitle" style="text-align: center; color: var(--text-color-dark); margin-top: -30px; margin-bottom: 40px; font-size: 1.05rem;">
+                Analizamos los launchers más populares del mercado frente a GLauncher. Calidad, seguridad y rendimiento sin compromisos.
+            </p>
+            
+            <div class="comparison-table-container">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th class="col-feature">Característica</th>
+                            <th class="col-glauncher">
+                                <div class="table-header-brand">
+                                    <span class="winner-badge"><i class="fas fa-crown"></i> Recomendado</span>
+                                    <span class="brand-name">GLauncher</span>
+                                </div>
+                            </th>
+                            <th>TLauncher</th>
+                            <th>Prism Launcher</th>
+                            <th>Lunar Client</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-label="Característica"><i class="fas fa-palette"></i> Personalización Visual</td>
+                            <td class="td-winner"><strong><i class="fas fa-check-circle check-icon"></i> .GSS v7.0 (Total y Gratuita)</strong></td>
+                            <td><i class="fas fa-times-circle cross-icon"></i> Muy Limitada</td>
+                            <td><i class="fas fa-check check-icon"></i> Solo interfaz básica</td>
+                            <td><i class="fas fa-times-circle cross-icon"></i> Temas de pago</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Característica"><i class="fas fa-memory"></i> Consumo de Memoria RAM</td>
+                            <td class="td-winner"><strong><i class="fas fa-bolt check-icon"></i> Solo 64 MB (Ultra Ligero)</strong></td>
+                            <td><i class="fas fa-times-circle cross-icon"></i> 350 MB - 500 MB</td>
+                            <td><i class="fas fa-check check-icon"></i> ~200 MB</td>
+                            <td><i class="fas fa-times-circle cross-icon"></i> 400 MB+</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Característica"><i class="fas fa-rocket"></i> Rendimiento & FPS</td>
+                            <td class="td-winner"><strong><i class="fas fa-rocket check-icon"></i> Máximo (Optimización PvP)</strong></td>
+                            <td><i class="fas fa-minus warning-icon"></i> Estándar</td>
+                            <td><i class="fas fa-check check-icon"></i> Muy Bueno</td>
+                            <td><i class="fas fa-rocket check-icon"></i> Alto</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Característica"><i class="fas fa-shield-alt"></i> Seguridad & Privacidad</td>
+                            <td class="td-winner"><strong><i class="fas fa-check-circle check-icon"></i> 100% Limpio (Sin Spyware)</strong></td>
+                            <td><i class="fas fa-exclamation-triangle warning-icon"></i> Dudosa (Adware/Spyware)</td>
+                            <td><i class="fas fa-check-circle check-icon"></i> Código Abierto</td>
+                            <td><i class="fas fa-check-circle check-icon"></i> Privativo Seguro</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Característica"><i class="fas fa-puzzle-piece"></i> Soporte de Modloaders</td>
+                            <td class="td-winner"><strong><i class="fas fa-check-circle check-icon"></i> Forge, Fabric, NeoForge, Quilt</strong></td>
+                            <td>Forge, Fabric, OptiFine</td>
+                            <td>Todos los loaders</td>
+                            <td><i class="fas fa-times-circle cross-icon"></i> Solo mods internos</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Característica"><i class="fas fa-users"></i> Cuentas Soportadas</td>
+                            <td class="td-winner"><strong><i class="fas fa-check-circle check-icon"></i> Microsoft y No-Premium</strong></td>
+                            <td>No-Premium y Mojang</td>
+                            <td>Requiere configuración</td>
+                            <td><i class="fas fa-times-circle cross-icon"></i> Solo Microsoft Premium</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Característica"><i class="fas fa-music"></i> Música Integrada (GMusic)</td>
+                            <td class="td-winner"><strong><i class="fas fa-check-circle check-icon"></i> Sí (YouTube en 2° plano sin lag)</strong></td>
+                            <td><i class="fas fa-times-circle cross-icon"></i> No disponible</td>
+                            <td><i class="fas fa-times-circle cross-icon"></i> No disponible</td>
+                            <td><i class="fas fa-times-circle cross-icon"></i> No disponible</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Característica"><i class="fas fa-comments"></i> Chat Global y Amigos</td>
+                            <td class="td-winner"><strong><i class="fas fa-check-circle check-icon"></i> GChat + Amigos en tiempo real</strong></td>
+                            <td><i class="fas fa-times-circle cross-icon"></i> No</td>
+                            <td><i class="fas fa-times-circle cross-icon"></i> No</td>
+                            <td><i class="fas fa-check check-icon"></i> Lunar Friends</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Característica"><i class="fas fa-laptop"></i> Compatibilidad x86 / Canaimas</td>
+                            <td class="td-winner"><strong><i class="fas fa-check-circle check-icon"></i> Sí (Nativo 32-bit y 64-bit)</strong></td>
+                            <td><i class="fas fa-check check-icon"></i> Sí</td>
+                            <td><i class="fas fa-check check-icon"></i> Sí</td>
+                            <td><i class="fas fa-times-circle cross-icon"></i> Solo 64-bit</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Característica"><i class="fas fa-ban"></i> Publicidad Molesta</td>
+                            <td class="td-winner"><strong><i class="fas fa-check-circle check-icon"></i> 0% Anuncios (Limpio)</strong></td>
+                            <td><i class="fas fa-exclamation-triangle warning-icon"></i> Anuncios intrusivos</td>
+                            <td><i class="fas fa-check-circle check-icon"></i> Sin Anuncios</td>
+                            <td><i class="fas fa-shopping-cart warning-icon"></i> Tienda integrada</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECCIÓN SOBRE EL PROYECTO -->
+        <section class="about-section">
+            <h2 class="section-title"><span>Sobre el Proyecto</span></h2>
+            <div class="about-container">
+                <!-- Tarjeta del Creador -->
+                <div class="about-card creator-card">
+                    <div class="creator-header">
+                        <img src="src/assets/images/avatars/channel.png" alt="◈𝐙𝐘𝐑𝐎𝐕𝐄𝐍𝐓◈" class="creator-img" loading="lazy">
+                        <div class="creator-badges">
+                            <span class="badge developer">Desarrollador</span>
+                            <span class="badge founder">Fundador</span>
+                        </div>
+                    </div>
+                    <h3>◈𝐙𝐘𝐑𝐎𝐕𝐄𝐍𝐓◈</h3>
+                    <p class="creator-role">Lead Developer & UI Designer</p>
+                    <p class="creator-bio">Apasionado por Minecraft, optimización y diseño de software. Creando la mejor plataforma libre para la comunidad de jugadores.</p>
+                </div>
+
+                <!-- Misión y Visión -->
+                <div class="about-content">
+                    <div class="info-box mission-box">
+                        <h4><i class="fas fa-rocket"></i> Nuestra Misión</h4>
+                        <p>Proporcionar a la comunidad hispanohablante un launcher de Minecraft gratuito, seguro y ultra optimizado, eliminando las barreras de entrada para jugadores con equipos de bajos recursos.</p>
+                    </div>
+                    <div class="info-box vision-box">
+                        <h4><i class="fas fa-eye"></i> Visión</h4>
+                        <p>Ser el estándar de launchers PvP y supervivencia, fomentando una comunidad limpia, sin pay-to-win y con libertad total de personalización visual.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DE PREGUNTAS FRECUENTES RENOVADA (ACORDEÓN INTERACTIVO) -->
+        <section id="faq-section" class="faq-section">
+            <h2 class="section-title"><span>Preguntas Frecuentes</span></h2>
+            <p class="section-subtitle" style="text-align: center; color: var(--text-color-dark); margin-top: -30px; margin-bottom: 40px; font-size: 1.05rem;">
+                Resolvemos todas tus dudas sobre GLauncher, instalación, seguridad y personalización.
+            </p>
+
+            <div class="faq-accordion-container">
+                <!-- FAQ 1 -->
+                <div class="faq-accordion-item active">
+                    <button class="faq-question-btn">
+                        <span><i class="fas fa-question-circle faq-icon"></i> ¿Qué es GLauncher y qué lo hace diferente?</span>
+                        <i class="fas fa-chevron-down faq-arrow"></i>
+                    </button>
+                    <div class="faq-answer-content" style="max-height: 200px;">
+                        <p>GLauncher es un launcher de Minecraft de alto rendimiento construido con Node.js y Electron. A diferencia de otros launchers pesados, consume tan solo <strong>64 MB de memoria RAM</strong>, incluye el motor de personalización <strong>.GSS v7.0</strong>, reproductor de música <strong>GMusic</strong> sin pérdida de FPS, y chat global en tiempo real.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="faq-accordion-item">
+                    <button class="faq-question-btn">
+                        <span><i class="fas fa-user-shield faq-icon"></i> ¿Quién es el creador de GLauncher?</span>
+                        <i class="fas fa-chevron-down faq-arrow"></i>
+                    </button>
+                    <div class="faq-answer-content">
+                        <p>El proyecto es desarrollado y mantenido por <strong>◈𝐙𝐘𝐑𝐎𝐕𝐄𝐍𝐓◈</strong>, desarrollador de software y diseñador de interfaz. Puedes seguir las novedades y tutoriales en su canal oficial de YouTube.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="faq-accordion-item">
+                    <button class="faq-question-btn">
+                        <span><i class="fas fa-paint-brush faq-icon"></i> ¿Cómo funciona la personalización con .GSS (GLauncher StyleSheet)?</span>
+                        <i class="fas fa-chevron-down faq-arrow"></i>
+                    </button>
+                    <div class="faq-answer-content">
+                        <p><strong>.GSS (GLauncher StyleSheet v7.0)</strong> es una tecnología basada en CSS que permite modificar la apariencia visual del launcher al 100%: colores neón, animaciones, tipografías personalizadas y fondos dinámicos. Puedes consultar la guía completa y ejemplos en la sección de <a href="dev.html" style="color: var(--neon-green); font-weight: bold;">Documentación para Desarrolladores</a>.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 4 -->
+                <div class="faq-accordion-item">
+                    <button class="faq-question-btn">
+                        <span><i class="fas fa-shield-alt faq-icon"></i> ¿GLauncher es 100% seguro y libre de virus?</span>
+                        <i class="fas fa-chevron-down faq-arrow"></i>
+                    </button>
+                    <div class="faq-answer-content">
+                        <p><strong>Totalmente seguro.</strong> GLauncher no contiene spyware, malware, mineros ocultos ni adware comercial. El código está auditado y optimizado para proteger las credenciales y datos de cada jugador.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 5 -->
+                <div class="faq-accordion-item">
+                    <button class="faq-question-btn">
+                        <span><i class="fas fa-gamepad faq-icon"></i> ¿Puedo jugar sin tener una cuenta Premium de Minecraft?</span>
+                        <i class="fas fa-chevron-down faq-arrow"></i>
+                    </button>
+                    <div class="faq-answer-content">
+                        <p><strong>Sí.</strong> GLauncher soporta tanto cuentas oficiales de <strong>Microsoft (Premium)</strong> como cuentas <strong>No-Premium</strong>. Podrás elegir tu nombre de usuario, cambiar de skin y saltar a tus servidores favoritos al instante.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 6 -->
+                <div class="faq-accordion-item">
+                    <button class="faq-question-btn">
+                        <span><i class="fas fa-microchip faq-icon"></i> ¿Funciona en Canaimas, laptops escolares o PCs de 32 bits?</span>
+                        <i class="fas fa-chevron-down faq-arrow"></i>
+                    </button>
+                    <div class="faq-answer-content">
+                        <p><strong>¡Absolutamente!</strong> GLauncher fue optimizado especialmente para funcionar sin errores en procesadores <strong>x86 (32 bits)</strong> y <strong>x64 (64 bits)</strong>, permitiendo jugar fluidamente en laptops Canaima, netbooks de oficina y ordenadores antiguos con 2 GB o 4 GB de RAM.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 7 -->
+                <div class="faq-accordion-item">
+                    <button class="faq-question-btn">
+                        <span><i class="fas fa-puzzle-piece faq-icon"></i> ¿Cómo instalo mods como OptiFine, Sodium o Iris?</span>
+                        <i class="fas fa-chevron-down faq-arrow"></i>
+                    </button>
+                    <div class="faq-answer-content">
+                        <p>GLauncher incluye selector automático de modloaders: <strong>Forge, Fabric, NeoForge y Quilt</strong>. Simplemente selecciona la versión que deseas y coloca tus archivos <code>.jar</code> en la carpeta de mods generada.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 8 -->
+                <div class="faq-accordion-item">
+                    <button class="faq-question-btn">
+                        <span><i class="fas fa-headset faq-icon"></i> ¿Dónde puedo pedir ayuda o reportar un error?</span>
+                        <i class="fas fa-chevron-down faq-arrow"></i>
+                    </button>
+                    <div class="faq-answer-content">
+                        <p>Puedes escribirnos directamente a nuestro correo de soporte <code>glauncherforminecraft@gmail.com</code>, contactar por teléfono/WhatsApp al <code>0424-7200506</code> o dejar tu comentario en el canal de YouTube de ◈𝐙𝐘𝐑𝐎𝐕𝐄𝐍𝐓◈.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Soporte -->
+        <section class="support-section" style="padding: 50px 20px; text-align: center; background-color: var(--secondary-bg-color); margin-bottom: 35px; border-radius: 12px; max-width: 900px; margin-left: auto; margin-right: auto; border: 1px solid rgba(0, 243, 255, 0.15);">
+            <h2 class="section-title"><span>Soporte</span></h2>
+            <div class="support-container" style="display: flex; flex-direction: column; gap: 15px; align-items: center; font-size: 1.1em;">
+                <a href="tel:04247200506" class="support-item" style="color: var(--text-color-light); text-decoration: none; padding: 12px 20px; border: 1px solid rgba(57, 255, 20, 0.4); border-radius: 8px; background: rgba(0,0,0,0.3); display: flex; align-items: center; gap: 10px; width: 100%; max-width: 340px; justify-content: center; box-sizing: border-box; transition: transform 0.2s ease;">
+                    <i class="fas fa-phone-alt" style="color: var(--neon-green);"></i>
+                    <span>0424-7200506</span>
+                </a>
+                <a href="mailto:glauncherforminecraft@gmail.com" class="support-item" style="color: var(--text-color-light); text-decoration: none; padding: 12px 20px; border: 1px solid rgba(0, 255, 255, 0.4); border-radius: 8px; background: rgba(0,0,0,0.3); display: flex; align-items: center; gap: 10px; width: 100%; max-width: 340px; justify-content: center; word-break: break-all; box-sizing: border-box; transition: transform 0.2s ease;">
+                    <i class="fas fa-envelope" style="color: var(--neon-blue);"></i>
+                    <span style="font-size: 0.85em;">glauncherforminecraft@gmail.com</span>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>GLauncher &copy; 2026. Todos los derechos reservados.</p>
+        <p>Desarrollador Principal: <a href="https://www.youtube.com/@zyrovent" target="_blank" class="neon-hover-text">◈𝐙𝐘𝐑𝐎𝐕𝐄𝐍𝐓◈</a></p>
+        <nav class="footer-nav" style="margin-top: 10px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <a href="dev.html" class="neon-hover-text" style="color: var(--neon-green); font-weight: bold;"><i class="fas fa-code"></i> Docs para Desarrolladores (.GSS)</a>
+            <a href="src/html/privacy-policy.html" class="neon-hover-text">Política de Privacidad</a>
+            <a href="src/html/terms-and-conditions.html" class="neon-hover-text">Términos y Condiciones</a>
+        </nav>
+    </footer>
+
+    <!-- Barra de Navegación Inferior (Solo para Móviles) -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="active"><i class="fas fa-home"></i><span>Inicio</span></a>
+        <a href="dev.html"><i class="fas fa-code"></i><span>Devs</span></a>
+        <a href="src/html/shop.html"><i class="fa-solid fa-shop"></i><span>Tienda</span></a>
+        <a href="src/html/download.html"><i class="fas fa-download"></i><span>Descargas</span></a>
+        <a href="src/html/dashboard.html"><i class="fas fa-user-circle"></i><span>Perfil</span></a>
+    </nav>
+
+    <!-- Banner de Consentimiento de Cookies -->
+    <div id="cookie-banner" class="cookie-consent-banner">
+        <p class="cookie-text">
+            Utilizamos cookies para mejorar tu experiencia en nuestro sitio. Al continuar, aceptas nuestro uso de cookies. <a href="src/html/privacy-policy.html">Leer más</a>.
+        </p>
+        <button id="accept-cookie-btn" class="auth-button-action cookie-accept-btn" style="background-color: var(--neon-green); box-shadow: var(--shadow-green);">Aceptar</button>
+    </div>
+
+    <!-- Librería Lenis para Smooth Scroll -->
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+
+    <script src="src/js/global-script.js" defer></script>
+    <!-- Scripts específicos para la página de inicio -->
+    <script src="src/js/index-script.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const featureCards = document.querySelectorAll('.feature-card');
+            const displayPanel = document.querySelector('.feature-display-panel');
+            const displayImage = document.getElementById('feature-display-image');
+            const displayTitle = document.getElementById('feature-display-title');
+            const displayDesc = document.getElementById('feature-display-description');
+            const displayBadge = document.getElementById('feature-display-badge');
+            const displayLink = document.getElementById('feature-display-link');
+
+            const activateCard = (card) => {
+                featureCards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+
+                if (displayPanel) {
+                    displayPanel.classList.add('updating');
+
+                    setTimeout(() => {
+                        if (displayImage) {
+                            displayImage.src = card.getAttribute('data-image') || 'src/assets/images/favicon.png';
+                            displayImage.alt = card.getAttribute('data-title') || 'Característica';
+                        }
+                        if (displayTitle) displayTitle.textContent = card.getAttribute('data-title');
+                        if (displayDesc) displayDesc.innerHTML = card.getAttribute('data-description');
+                        if (displayBadge) displayBadge.textContent = card.getAttribute('data-badge') || 'GLauncher';
+
+                        const linkUrl = card.getAttribute('data-link');
+                        const linkText = card.getAttribute('data-link-text');
+                        if (displayLink) {
+                            if (linkUrl) {
+                                displayLink.href = linkUrl;
+                                displayLink.innerHTML = `<i class="fas fa-book-open"></i> ${linkText || 'Ver Más'}`;
+                                displayLink.style.display = 'inline-flex';
+                            } else {
+                                displayLink.style.display = 'none';
+                            }
+                        }
+                        
+                        displayPanel.classList.remove('updating');
+                    }, 200);
+                }
+            };
+
+            featureCards.forEach(card => {
+                card.addEventListener('mouseenter', () => activateCard(card));
+                card.addEventListener('click', () => activateCard(card));
+            });
+
+            // --- Lógica del Acordeón de Preguntas Frecuentes ---
+            const faqItems = document.querySelectorAll('.faq-accordion-item');
+            faqItems.forEach(item => {
+                const questionBtn = item.querySelector('.faq-question-btn');
+                const answer = item.querySelector('.faq-answer-content');
+
+                if (item.classList.contains('active') && answer) {
+                    answer.style.maxHeight = answer.scrollHeight + 40 + 'px';
+                }
+
+                questionBtn?.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+                    
+                    faqItems.forEach(otherItem => {
+                        otherItem.classList.remove('active');
+                        const otherAnswer = otherItem.querySelector('.faq-answer-content');
+                        if (otherAnswer) otherAnswer.style.maxHeight = null;
+                    });
+
+                    if (!isActive) {
+                        item.classList.add('active');
+                        if (answer) answer.style.maxHeight = answer.scrollHeight + 40 + 'px';
+                    }
+                });
+            });
+
+            // --- Lógica del Efecto de Escritura (Typewriter) ---
+            const textElement = document.getElementById('typewriter-text');
+            const words = ["Canaimas", "Laptops", "PCs", "Móviles", "Para Todos"];
+            let wordIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+
+            function type() {
+                const currentWord = words[wordIndex];
+                
+                if (isDeleting) {
+                    textElement.textContent = currentWord.substring(0, charIndex - 1);
+                    charIndex--;
+                } else {
+                    textElement.textContent = currentWord.substring(0, charIndex + 1);
+                    charIndex++;
+                }
+
+                let typeSpeed = isDeleting ? 100 : 200;
+
+                if (!isDeleting && charIndex === currentWord.length) {
+                    typeSpeed = 2000; // Pausa al terminar de escribir
+                    isDeleting = true;
+                } else if (isDeleting && charIndex === 0) {
+                    isDeleting = false;
+                    wordIndex = (wordIndex + 1) % words.length;
+                    typeSpeed = 500; // Pausa antes de empezar la siguiente palabra
+                }
+
+                setTimeout(type, typeSpeed);
+            }
+
+            // Iniciar el efecto
+            type();
+
+            // --- Lógica del Slideshow de Fondo ---
+            const slides = document.querySelectorAll('.hero-slide');
+            let currentSlide = 0;
+
+            setInterval(() => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }, 5000); // Cambia cada 5000ms (5 segundos)
+
+            // --- Lógica del Nuevo Slider de Imágenes ---
+            const sliderTrack = document.querySelector('.slider-track');
+            const slidesItems = document.querySelectorAll('.slide-item');
+            let slideItemIndex = 0;
+
+            if (sliderTrack && slidesItems.length > 0) {
+                setInterval(() => {
+                    slideItemIndex++;
+                    if (slideItemIndex >= slidesItems.length) {
+                        slideItemIndex = 0;
+                    }
+                    sliderTrack.style.transform = `translateX(-${slideItemIndex * 100}%)`;
+                }, 5000);
+            }
+
+            // --- Lógica de Estadísticas Animadas ---
+            const stats = document.querySelectorAll('.stat-number');
+            
+            const animateStats = (entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const counter = entry.target;
+                        const target = +counter.getAttribute('data-target');
+                        const speed = 200; // Cuanto más bajo, más rápido
+                        
+                        const updateCount = () => {
+                            const count = +counter.innerText;
+                            const inc = target / speed;
+
+                            if (count < target) {
+                                counter.innerText = Math.ceil(count + inc);
+                                setTimeout(updateCount, 20);
+                            } else {
+                                counter.innerText = target + (target > 100 ? '+' : '%');
+                            }
+                        };
+                        updateCount();
+                        observer.unobserve(counter);
+                    }
+                });
+            };
+
+            const statsObserver = new IntersectionObserver(animateStats, {
+                threshold: 0.5
+            });
+
+            stats.forEach(stat => {
+                statsObserver.observe(stat);
+            });
+
+            // --- Inicialización de Lenis (Smooth Scroll) ---
+            const lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                direction: 'vertical',
+                gestureDirection: 'vertical',
+                smooth: true,
+                mouseMultiplier: 1,
+                smoothTouch: false,
+                touchMultiplier: 2,
+            });
+
+            function raf(time) {
+                lenis.raf(time);
+                requestAnimationFrame(raf);
+            }
+            requestAnimationFrame(raf);
+        });
+    </script>
+</body>
+</html>

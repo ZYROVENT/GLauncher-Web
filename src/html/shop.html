@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GLauncher — Tienda Oficial & Recompensas</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/shop-styles.css">
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <link href="https://fonts.cdnfonts.com/css/minecraftia" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+    <!-- Spinner de Carga, Notificaciones y Pantalla Offline -->
+    <div id="loader-overlay" class="loader-overlay"><div class="spinner"></div></div>
+    <div id="notification-container"></div>
+    <div id="offline-overlay" class="offline-overlay"><div class="offline-content"><i class="fas fa-wifi"></i><h2>Sin Conexión</h2><p>Revisa tu red e inténtalo de nuevo.</p></div></div>
+
+    <header class="header">
+        <div class="logo-container">
+            <img src="../assets/images/favicon.png" alt="Logo de GLauncher" class="logo">
+            <img src="../assets/images/minecraft_title.png" alt="Título de GLauncher" class="logo-title-img">
+        </div>
+        <nav class="auth-buttons">
+            <a href="../../index.html" class="auth-button">Inicio</a> 
+            <a href="noticias.html" class="auth-button">Noticias</a>
+            <a href="shop.html" class="auth-button active">Tienda</a>
+            <a href="download.html" class="auth-button">Descargas</a>
+            <a href="../../dev.html" class="auth-button" style="border-color: var(--neon-green); color: var(--neon-green);"><i class="fas fa-code"></i> Devs / GSS</a>
+            <a href="dashboard.html" class="auth-button">Dashboard</a>
+            <a href="login.html" class="auth-button">Iniciar Sesión</a>
+            <a href="register.html" class="auth-button">Registrar</a>
+            <a href="https://www.youtube.com/@zyrovent" target="_blank" class="auth-button youtube-button" title="Visita mi canal de YouTube">
+                <i class="fab fa-youtube"></i> Canal
+            </a>
+        </nav>
+    </header>
+
+    <main class="main-content shop-page">
+        <!-- HEADER DE TIENDA Y SALDO DEL USUARIO -->
+        <div class="shop-hero-banner">
+            <div class="shop-hero-text">
+                <div class="shop-badge"><i class="fas fa-gem"></i> Tienda Oficial GLauncher</div>
+                <h1 class="shop-main-title">Economía, Recompensas & <span class="text-neon-green">GCoins</span></h1>
+                <p class="shop-subtitle">Obtén GCoins, reclama recompensas diarias gratuitas y apoya el desarrollo del launcher.</p>
+            </div>
+
+            <!-- TARJETA DE SALDO DE GCOINS EN TIEMPO REAL -->
+            <div class="user-economy-card">
+                <div class="economy-user-info">
+                    <img id="shop-user-avatar" src="https://crafatar.com/avatars/steve?size=100&overlay" alt="Avatar" class="economy-avatar">
+                    <div>
+                        <span id="shop-username" class="economy-username">Invitado</span>
+                        <span id="shop-user-role" class="economy-role">No Autenticado</span>
+                    </div>
+                </div>
+
+                <div class="economy-balance-box">
+                    <span class="balance-label"><i class="fas fa-coins text-neon-green"></i> Saldo Actual</span>
+                    <span id="gcoin-amount" class="balance-number">0 <i class="fas fa-coins text-neon-green"></i></span>
+                </div>
+
+                <div id="shop-auth-hint" class="shop-auth-hint">
+                    <a href="login.html" class="btn-micro-login"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="shop-grid-layout">
+            
+            <!-- COLUMNA PRINCIPAL (Paquetes de GCoins y Sección en Desarrollo) -->
+            <div class="main-shop-content">
+
+                <!-- 1. SECCIÓN DE COSMÉTICOS (EN DESARROLLO) -->
+                <section class="shop-section in-dev-section">
+                    <div class="dev-banner-card">
+                        <div class="dev-banner-header">
+                            <span class="dev-status-badge"><i class="fas fa-hammer"></i> En Desarrollo Activo</span>
+                            <span class="dev-version-tag">Próximamente en v2.1</span>
+                        </div>
+                        <div class="dev-banner-body">
+                            <div class="dev-icon-circle">
+                                <i class="fas fa-tshirt"></i>
+                            </div>
+                            <div class="dev-banner-info">
+                                <h3>Catálogo de Cosméticos & Capas 3D</h3>
+                                <p>
+                                    Estamos rediseñando el sistema completo de renderizado de cosméticos para Minecraft con soporte de <strong>Capas Animadas HD, Alas Ender, Mascotas y Efectos de Partículas PvP</strong> sincronizados en tiempo real mediante el motor <strong>.GSS</strong>.
+                                </p>
+                                <div class="dev-pills-list">
+                                    <span class="dev-pill"><i class="fas fa-check"></i> Capas HD Personalizadas</span>
+                                    <span class="dev-pill"><i class="fas fa-check"></i> Alas y Sombreros 3D</span>
+                                    <span class="dev-pill"><i class="fas fa-check"></i> Integración con .GSS</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. PAQUETES DE GCOINS -->
+                <section class="shop-section">
+                    <h3 class="section-title"><span><i class="fas fa-coins"></i> Paquetes de GCoins</span></h3>
+                    <p class="section-desc">Adquiere GCoins para apoyar el desarrollo y utilizarlos en la ruleta y futuras funciones.</p>
+                    
+                    <div class="gcoin-packages-grid">
+                        <!-- Pack 1 -->
+                        <div class="gcoin-package-card">
+                            <div class="pack-icon-wrapper"><i class="fas fa-coins"></i></div>
+                            <h4 class="pack-title">Pack Principiante</h4>
+                            <div class="pack-gcoins">500 <span class="currency">GC</span></div>
+                            <div class="pack-bonus">+0 GC Bonus</div>
+                            <div class="pack-price">$1.99 USD</div>
+                            <a href="https://wa.me/584247200506?text=Hola,%20deseo%20adquirir%20el%20Pack%20Principiante%20(500%20GC)%20en%20GLauncher" target="_blank" class="pack-buy-btn">
+                                <i class="fas fa-shopping-cart"></i> Adquirir Pack
+                            </a>
+                        </div>
+
+                        <!-- Pack 2 (Popular) -->
+                        <div class="gcoin-package-card popular-pack">
+                            <div class="pack-ribbon"><i class="fas fa-star"></i> Popular</div>
+                            <div class="pack-icon-wrapper"><i class="fas fa-gem"></i></div>
+                            <h4 class="pack-title">Pack Aventurero</h4>
+                            <div class="pack-gcoins">1,500 <span class="currency">GC</span></div>
+                            <div class="pack-bonus bonus-green">+200 GC Extra</div>
+                            <div class="pack-price">$4.99 USD</div>
+                            <a href="https://wa.me/584247200506?text=Hola,%20deseo%20adquirir%20el%20Pack%20Aventurero%20(1500%20GC)%20en%20GLauncher" target="_blank" class="pack-buy-btn btn-popular">
+                                <i class="fas fa-bolt"></i> Adquirir Pack
+                            </a>
+                        </div>
+
+                        <!-- Pack 3 -->
+                        <div class="gcoin-package-card">
+                            <div class="pack-icon-wrapper"><i class="fas fa-fire"></i></div>
+                            <h4 class="pack-title">Pack Maestro PvP</h4>
+                            <div class="pack-gcoins">5,000 <span class="currency">GC</span></div>
+                            <div class="pack-bonus bonus-green">+1,000 GC Extra</div>
+                            <div class="pack-price">$12.99 USD</div>
+                            <a href="https://wa.me/584247200506?text=Hola,%20deseo%20adquirir%20el%20Pack%20Maestro%20PvP%20(5000%20GC)%20en%20GLauncher" target="_blank" class="pack-buy-btn">
+                                <i class="fas fa-shopping-cart"></i> Adquirir Pack
+                            </a>
+                        </div>
+
+                        <!-- Pack 4 (Supremo) -->
+                        <div class="gcoin-package-card supreme-pack">
+                            <div class="pack-ribbon ribbon-gold"><i class="fas fa-crown"></i> Mejor Valor</div>
+                            <div class="pack-icon-wrapper"><i class="fas fa-crown"></i></div>
+                            <h4 class="pack-title">Pack Supremo</h4>
+                            <div class="pack-gcoins">12,000 <span class="currency">GC</span></div>
+                            <div class="pack-bonus bonus-pink">+3,500 GC Extra</div>
+                            <div class="pack-price">$24.99 USD</div>
+                            <a href="https://wa.me/584247200506?text=Hola,%20deseo%20adquirir%20el%20Pack%20Supremo%20(12000%20GC)%20en%20GLauncher" target="_blank" class="pack-buy-btn btn-gold">
+                                <i class="fas fa-crown"></i> Adquirir Pack
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- COLUMNA LATERAL (Interacción: Regalo Diario & Ruleta) -->
+            <aside class="sidebar-shop">
+                <!-- Tarjeta de Regalo Diario -->
+                <div class="interactive-shop-card daily-reward-card">
+                    <div class="card-header-bar">
+                        <span class="card-badge green"><i class="fas fa-clock"></i> Cada 24 Horas</span>
+                    </div>
+                    <h3 class="interactive-title"><i class="fas fa-gift text-neon-green"></i> Regalo Diario</h3>
+                    
+                    <div class="chest-animation-area">
+                        <i id="daily-chest-icon" class="fas fa-gift chest-icon"></i>
+                    </div>
+
+                    <p id="daily-status-text" class="interactive-desc">¡Haz clic para abrir tu recompensa de 50 GCoins!</p>
+                    <button id="claim-daily-btn" class="interactive-action-btn btn-green">
+                        <i class="fas fa-hand-holding-usd"></i> Reclamar +50 GC
+                    </button>
+                </div>
+
+                <!-- Tarjeta de la Ruleta -->
+                <div class="interactive-shop-card roulette-card">
+                    <div class="card-header-bar">
+                        <span class="card-badge pink"><i class="fas fa-trophy"></i> Suerte Diaria</span>
+                    </div>
+                    <h3 class="interactive-title"><i class="fas fa-dharmachakra text-neon-pink"></i> Ruleta de la Suerte</h3>
+                    <p class="interactive-desc">Gira la ruleta y gana hasta 1,000 GCoins.</p>
+                    
+                    <div class="wheel-container">
+                        <div class="wheel-arrow"></div>
+                        <div class="wheel" id="roulette-wheel">
+                            <span class="wheel-number" style="transform: rotate(30deg) translate(95px) rotate(90deg);">100</span>
+                            <span class="wheel-number" style="transform: rotate(90deg) translate(95px) rotate(90deg);">50</span>
+                            <span class="wheel-number" style="transform: rotate(150deg) translate(95px) rotate(90deg);">500</span>
+                            <span class="wheel-number" style="transform: rotate(210deg) translate(95px) rotate(90deg);">0</span>
+                            <span class="wheel-number" style="transform: rotate(270deg) translate(95px) rotate(90deg);">200</span>
+                            <span class="wheel-number" style="transform: rotate(330deg) translate(95px) rotate(90deg);">1K</span>
+                        </div>
+                    </div>
+                    
+                    <button id="spin-btn" class="interactive-action-btn btn-pink">
+                        <i class="fas fa-sync-alt"></i> GIRAR RULETA
+                    </button>
+                    <p id="roulette-result" class="roulette-result-msg"></p>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>GLauncher &copy; 2026. Todos los derechos reservados.</p>
+        <p>Desarrollador Principal: <a href="https://www.youtube.com/@zyrovent" target="_blank" class="neon-hover-text">◈𝐙𝐘𝐑𝐎𝐕𝐄𝐍𝐓◈</a></p>
+        <nav class="footer-nav" style="margin-top: 10px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <a href="../../dev.html" class="neon-hover-text" style="color: var(--neon-green); font-weight: bold;"><i class="fas fa-code"></i> Docs para Desarrolladores (.GSS)</a>
+            <a href="privacy-policy.html" class="neon-hover-text">Política de Privacidad</a>
+            <a href="terms-and-conditions.html" class="neon-hover-text">Términos y Condiciones</a>
+        </nav>
+    </footer>
+
+    <!-- Barra de Navegación Inferior (Solo para Móviles) -->
+    <nav class="bottom-nav">
+        <a href="../../index.html"><i class="fas fa-home"></i><span>Inicio</span></a>
+        <a href="../../dev.html"><i class="fas fa-code"></i><span>Devs</span></a>
+        <a href="shop.html" class="active"><i class="fa-solid fa-shop"></i><span>Tienda</span></a>
+        <a href="download.html"><i class="fas fa-download"></i><span>Descargas</span></a>
+        <a href="dashboard.html"><i class="fas fa-user-circle"></i><span>Perfil</span></a>
+    </nav>
+
+    <!-- Audios de efectos -->
+    <audio id="roulette-spin-sound" src="../assets/sounds/minecraft_click.mp3" preload="auto"></audio>
+    <audio id="roulette-win-sound" src="../assets/sounds/click_sound.mp3" preload="auto"></audio>
+
+    <!-- Librerías y Scripts -->
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    <script src="../js/global-script.js"></script>
+    <script src="../js/shop-script.js"></script>
+</body>
+</html>
