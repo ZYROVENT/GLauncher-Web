@@ -1815,16 +1815,16 @@ input:checked + .slider:before {
         border-bottom: 1px solid rgba(0, 243, 255, 0.2);
         padding: 12px 10px;
         position: sticky;
-        top: 0;
-        z-index: 1000;
+        top: 55px; /* Debajo del header principal fijo (55px en móvil) */
+        z-index: 990; /* Por debajo del header oficial (z-index: 1000) */
         transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
         background: rgba(10, 14, 22, 0.95);
         backdrop-filter: blur(14px);
     }
 
-    /* Ocultar barra superior al hacer scroll hacia abajo en celular */
+    /* Ocultar barra superior al hacer scroll hacia abajo en celular sin tapar el header */
     .floating-nav.nav-hidden {
-        transform: translateY(-110%);
+        transform: translateY(-130%);
         opacity: 0;
         pointer-events: none;
     }
