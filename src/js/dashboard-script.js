@@ -374,17 +374,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 Number.isFinite(value) ? Math.max(min, Math.min(max, value)) : fallback;
             container.style.minWidth = 'min(280px, 100%)';
             container.style.position = 'relative';
+            const isBack = config.layer === 'back';
             Object.assign(image.style, {
                 position: 'absolute',
-                zIndex: '2',
+                zIndex: isBack ? '0' : '2',
                 pointerEvents: 'none',
-                maxWidth: '58px',
-                maxHeight: '58px',
+                maxWidth: '90px',
+                maxHeight: '90px',
                 height: 'auto',
                 objectFit: 'contain',
-                left: `${clamp(config.x, 82, 88, 85)}%`,
-                top: `${clamp(config.y, 42, 58, 50)}%`,
-                width: `${clamp(config.size, 8, 20, 18)}%`,
+                left: `${clamp(config.x, 0, 100, 85)}%`,
+                top: `${clamp(config.y, 0, 100, 50)}%`,
+                width: `${clamp(config.size, 5, 50, 18)}%`,
                 transform: `translate(-50%, -50%) rotate(${clamp(config.rotation, -180, 180, 0)}deg)`
             });
             container.style.paddingRight = '78px';

@@ -1351,11 +1351,37 @@
 
 .sticker-preview {
     height: auto;
-    max-height: 72%;
+    max-height: 95%;
+    max-width: 50%;
 }
 
-.sticker-preview {
-    max-width: 20%;
+.sticker-top-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sticker-action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-select {
+    width: 100%;
+    min-height: 38px;
+    padding: 7px 10px;
+    border: 1px solid rgba(142, 161, 184, .25);
+    border-radius: 7px;
+    background: #0b111a;
+    color: #eef8ff;
+    font: inherit;
+    font-size: .8rem;
+}
+
+.admin-select:focus-visible {
+    border-color: var(--neon-blue);
+    outline: 2px solid rgba(0, 243, 255, .25);
 }
 
 .visual-controls .font-control {
