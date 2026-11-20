@@ -129,6 +129,7 @@ body.is-loading {
 body {
     opacity: 1;
     transition: opacity 0.5s ease-in-out;
+    padding-bottom: 95px; /* Espacio para barra flotante inferior en PC y móvil */
 }
 
 html, body {
@@ -219,9 +220,8 @@ h1, h2, h3, h4 {
     display: block;
 }
 
-.auth-buttons {
-    display: flex;
-    gap: 10px;
+.header .auth-buttons {
+    display: none;
 }
 
 /* Estilos Minecraft Bedrock para los botones */
@@ -275,31 +275,45 @@ h1, h2, h3, h4 {
 }
 
 /* ==================================================================================
- * 3.1. BARRA DE NAVEGACIÓN INFERIOR (MÓVIL - MATERIAL FLOATING ISLAND ESTILO IPHONE)
+ * 3.1. BARRA DE NAVEGACIÓN INFERIOR FLOTANTE (PC Y MÓVIL - FLOATING DOCK / ISLAND)
  * ==================================================================================
  */
 .bottom-nav {
-    display: none; /* Oculto por defecto en escritorio */
+    display: flex;
     position: fixed;
-    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(18px + env(safe-area-inset-bottom, 0px));
     left: 50%;
     transform: translateX(-50%);
-    width: calc(100% - 28px);
-    max-width: 440px;
-    background: #10141d; /* Material opaco sólido, sin blur */
+    width: auto;
+    min-width: 480px;
+    max-width: 650px;
+    background: rgba(14, 18, 27, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border: 1.5px solid rgba(0, 243, 255, 0.35);
-    border-radius: 36px;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.85), 0 0 15px rgba(0, 243, 255, 0.15);
+    border-radius: 40px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85), 0 0 20px rgba(0, 243, 255, 0.15);
     z-index: var(--z-mobile-nav, 1050);
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    padding: 7px 12px;
+    gap: 8px;
+    padding: 8px 18px;
     transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), 
                 padding 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
-                width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
-                border-radius 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+                border-color 0.3s ease,
                 box-shadow 0.3s ease;
-    will-change: transform, width, padding;
+    will-change: transform, padding;
+}
+
+@media (max-width: 600px) {
+    .bottom-nav {
+        min-width: 0;
+        width: calc(100% - 24px);
+        max-width: 440px;
+        padding: 7px 12px;
+        justify-content: space-between;
+        gap: 0;
+    }
 }
 
 .bottom-nav a {
