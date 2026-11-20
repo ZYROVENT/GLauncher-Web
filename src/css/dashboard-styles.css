@@ -668,9 +668,29 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
     gap: 6px;
-    max-height: 190px;
-    overflow-y: auto;
-    padding: 4px;
+    max-height: 220px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    overscroll-behavior-y: contain;
+    padding: 6px 4px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--neon-pink) rgba(255, 255, 255, 0.08);
+}
+
+.gchat-emoji-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.gchat-emoji-grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.gchat-emoji-grid::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--neon-pink), var(--neon-blue));
+    border-radius: 4px;
 }
 
 .gchat-emoji-item {
@@ -1972,8 +1992,12 @@ input:checked + .slider:before {
     }
 
     .gchat-emoji-grid {
-        grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
-        max-height: 160px;
+        grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+        max-height: 190px;
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+        overscroll-behavior-y: contain;
     }
 
     .gchat-message {

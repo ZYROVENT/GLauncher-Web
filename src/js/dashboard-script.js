@@ -375,18 +375,21 @@ document.addEventListener('DOMContentLoaded', () => {
             container.style.minWidth = 'min(280px, 100%)';
             container.style.position = 'relative';
             const isBack = config.layer === 'back';
+            const scaleX = Number.isFinite(config.scale_x) ? config.scale_x : 1;
+            const scaleY = Number.isFinite(config.scale_y) ? config.scale_y : 1;
+            container.style.overflow = 'visible';
             Object.assign(image.style, {
                 position: 'absolute',
                 zIndex: isBack ? '0' : '2',
                 pointerEvents: 'none',
-                maxWidth: '90px',
-                maxHeight: '90px',
+                maxWidth: 'none',
+                maxHeight: 'none',
                 height: 'auto',
-                objectFit: 'contain',
-                left: `${clamp(config.x, 0, 100, 85)}%`,
-                top: `${clamp(config.y, 0, 100, 50)}%`,
-                width: `${clamp(config.size, 5, 50, 18)}%`,
-                transform: `translate(-50%, -50%) rotate(${clamp(config.rotation, -180, 180, 0)}deg)`
+                objectFit: 'fill',
+                left: `${clamp(config.x, -300, 400, 50)}%`,
+                top: `${clamp(config.y, -300, 400, 50)}%`,
+                width: `${clamp(config.size, 1, 500, 100)}%`,
+                transform: `translate(-50%, -50%) rotate(${clamp(config.rotation, -180, 180, 0)}deg) scale(${scaleX}, ${scaleY})`
             });
             container.style.paddingRight = '78px';
             container.style.minHeight = '72px';

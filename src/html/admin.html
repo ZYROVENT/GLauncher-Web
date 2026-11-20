@@ -84,11 +84,17 @@
                     </label>
                     <div class="admin-field admin-full-width">
                         <span class="field-heading"><i class="fas fa-palette"></i> Apariencia de la burbuja</span>
-                        <div class="visual-controls">
-                            <label>Fondo <input id="bubble-background" type="color" value="#182848"><output>Color base</output></label>
+                        <div class="bubble-mode-toggle" style="margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--neon-blue); font-size: 0.88rem; font-weight: 700;">
+                                <input type="checkbox" id="bubble-transparent-bg" style="width: 18px; height: 18px; accent-color: var(--neon-blue); cursor: pointer;">
+                                <span>Ocultar diseño CSS por defecto (Fondo y bordes transparentes para usar solo imagen PNG)</span>
+                            </label>
+                        </div>
+                        <div class="visual-controls" id="visual-controls-container">
+                            <label id="lbl-bubble-background">Fondo <input id="bubble-background" type="color" value="#182848"><output>Color base</output></label>
                             <label>Texto <input id="bubble-text-color" type="color" value="#ffffff"><output>Color del mensaje</output></label>
-                            <label>Borde <input id="bubble-border-color" type="color" value="#8fd3ff"><output>Contorno</output></label>
-                            <label class="range-control">Redondeo <input id="bubble-radius" type="range" min="0" max="36" value="16"><output id="bubble-radius-value">16 px</output></label>
+                            <label id="lbl-bubble-border">Borde <input id="bubble-border-color" type="color" value="#8fd3ff"><output>Contorno</output></label>
+                            <label id="lbl-bubble-radius" class="range-control">Redondeo <input id="bubble-radius" type="range" min="0" max="36" value="16"><output id="bubble-radius-value">16 px</output></label>
                             <label class="font-control">Fuente
                                 <select id="bubble-font">
                                     <option value="">Predeterminada</option>
@@ -138,14 +144,17 @@
                         <label>
                             <span><i class="fas fa-layer-group"></i> Capa (Z-Index)</span>
                             <select id="sticker-layer" class="admin-select">
-                                <option value="front">Al frente (Sobre el texto y fondo)</option>
-                                <option value="back">Al fondo (Detrás del texto)</option>
+                                <option value="back">Al fondo (Marco/Fondo de burbuja)</option>
+                                <option value="front">Al frente (Decoración sobre el texto)</option>
                             </select>
                         </label>
-                        <label><span><i class="fas fa-expand-alt"></i> Tamaño <output id="sticker-size-value">18%</output></span><input id="sticker-size" type="range" min="5" max="50" value="18"></label>
+                        <label><span><i class="fas fa-expand-alt"></i> Tamaño General <output id="sticker-size-value">100%</output></span><input id="sticker-size" type="range" min="1" max="500" value="100"></label>
+                        <label><span><i class="fas fa-arrows-alt-h"></i> Estirar Horizontal (X) <output id="sticker-scale-x-value">1.0x</output></span><input id="sticker-scale-x" type="range" min="0.2" max="5" step="0.05" value="1"></label>
+                        <label><span><i class="fas fa-arrows-alt-v"></i> Estirar Vertical (Y) <output id="sticker-scale-y-value">1.0x</output></span><input id="sticker-scale-y" type="range" min="0.2" max="5" step="0.05" value="1"></label>
                         <label><span><i class="fas fa-sync-alt"></i> Rotación <output id="sticker-rotation-value">0°</output></span><input id="sticker-rotation" type="range" min="-180" max="180" value="0"></label>
                         <div class="sticker-action-buttons">
                             <button id="reset-sticker-pos" class="admin-secondary-button" type="button"><i class="fas fa-bullseye"></i> Centrar</button>
+                            <button id="reset-sticker-scale" class="admin-secondary-button" type="button"><i class="fas fa-compress-arrows-alt"></i> Reset Escala</button>
                             <button id="remove-sticker" class="admin-secondary-button remove-sticker-button" type="button" disabled><i class="fas fa-trash"></i> Quitar sticker</button>
                         </div>
                     </div>

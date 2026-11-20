@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let editingBubbleId = null;
     let selectedStickerFile = null;
     let localStickerUrl = null;
-    let stickerConfig = { image_url: '', x: 85, y: 50, size: 18, rotation: 0, layer: 'front' };
+    let stickerConfig = { image_url: '', x: 50, y: 50, size: 100, rotation: 0, layer: 'back', scale_x: 1, scale_y: 1 };
     let pointerAction = null;
     let catalogBubbles = [];
     let activeCatalogFilter = 'all';
@@ -54,12 +54,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function applyBubbleCss(cssCode) {
         preview.removeAttribute('style');
+        const textElement = preview.querySelector('.bubble-preview-text');
+        if (textElement) textElement.removeAttribute('style');
         if (!validateCss(cssCode)) return false;
         for (const declaration of cssCode.split(';')) {
             const match = declaration.trim().match(/^([a-z-]+)\s*:\s*(.+)$/i);
-            if (match) preview.style.setProperty(match[1].toLowerCase(), match[2].trim());
+            if (match) {
+                const prop = match[1].toLowerCase();
+                const val = match[2].trim();
+                preview.style.setProperty(prop, val);
+                if (['color', 'font-family', 'font-size', 'font-style', 'font-weight', 'letter-spacing', 'line-height', 'text-shadow'].includes(prop)) {
+                    if (textElement) textElement.style.setProperty(prop, val);
+                }
+            }
         }
-        preview.querySelector('.bubble-preview-text').textContent = '¡Hola! Esta es mi nueva burbuja.';
+        if (textElement) textElement.textContent = '¡Hola! Esta es mi nueva burbuja.';
         return true;
     }
 
@@ -104,21 +113,42 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('remove-sticker').disabled = !hasSticker;
         if (!hasSticker) return;
 
+        const scaleX = Number.isFinite(stickerConfig.scale_x) ? stickerConfig.scale_x : 1;
+        const scaleY = Number.isFinite(stickerConfig.scale_y) ? stickerConfig.scale_y : 1;
+
         if (stickerImage.getAttribute('src') !== imageUrl) stickerImage.src = imageUrl;
         stickerImage.style.left = `${stickerConfig.x}%`;
         stickerImage.style.top = `${stickerConfig.y}%`;
         stickerImage.style.width = `${stickerConfig.size}%`;
-        stickerImage.style.transform = `translate(-50%, -50%) rotate(${stickerConfig.rotation}deg)`;
+        stickerImage.style.objectFit = 'fill';
+        stickerImage.style.transform = `translate(-50%, -50%) rotate(${stickerConfig.rotation}deg) scale(${scaleX}, ${scaleY})`;
         stickerImage.style.zIndex = stickerConfig.layer === 'back' ? '0' : '2';
 
-        resizeHandle.style.left = `calc(${stickerConfig.x}% + ${stickerConfig.size / 2}%)`;
-        resizeHandle.style.top = `calc(${stickerConfig.y}% + ${stickerConfig.size / 2}%)`;
-        document.getElementById('sticker-size').value = String(stickerConfig.size);
-        document.getElementById('sticker-size-value').value = `${stickerConfig.size}%`;
-        document.getElementById('sticker-rotation').value = String(stickerConfig.rotation);
-        document.getElementById('sticker-rotation-value').value = `${stickerConfig.rotation}°`;
+        resizeHandle.style.left = `calc(${stickerConfig.x}% + ${(stickerConfig.size * scaleX) / 2}%)`;
+        resizeHandle.style.top = `calc(${stickerConfig.y}% + ${(stickerConfig.size * scaleY) / 2}%)`;
+
+        const sizeInput = document.getElementById('sticker-size');
+        if (sizeInput) sizeInput.value = String(stickerConfig.size);
+        const sizeOutput = document.getElementById('sticker-size-value');
+        if (sizeOutput) sizeOutput.value = `${stickerConfig.size}%`;
+
+        const rotInput = document.getElementById('sticker-rotation');
+        if (rotInput) rotInput.value = String(stickerConfig.rotation);
+        const rotOutput = document.getElementById('sticker-rotation-value');
+        if (rotOutput) rotOutput.value = `${stickerConfig.rotation}°`;
+
+        const scaleXInput = document.getElementById('sticker-scale-x');
+        if (scaleXInput) scaleXInput.value = String(scaleX);
+        const scaleXOutput = document.getElementById('sticker-scale-x-value');
+        if (scaleXOutput) scaleXOutput.value = `${scaleX.toFixed(2)}x`;
+
+        const scaleYInput = document.getElementById('sticker-scale-y');
+        if (scaleYInput) scaleYInput.value = String(scaleY);
+        const scaleYOutput = document.getElementById('sticker-scale-y-value');
+        if (scaleYOutput) scaleYOutput.value = `${scaleY.toFixed(2)}x`;
+
         const layerSelect = document.getElementById('sticker-layer');
-        if (layerSelect) layerSelect.value = stickerConfig.layer || 'front';
+        if (layerSelect) layerSelect.value = stickerConfig.layer || 'back';
     }
 
     function setStickerFile(file) {
@@ -134,8 +164,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (localStickerUrl) URL.revokeObjectURL(localStickerUrl);
         selectedStickerFile = file;
         localStickerUrl = URL.createObjectURL(file);
-        stickerConfig = { ...stickerConfig, x: 85, y: 50, size: 18, rotation: 0, layer: stickerConfig.layer || 'front' };
-        stickerFeedback.textContent = `${file.name} · puedes moverlo libremente por la burbuja y cambiar su capa.`;
+        stickerConfig = {
+            ...stickerConfig,
+            x: 50,
+            y: 50,
+            size: 100,
+            rotation: 0,
+            layer: stickerConfig.layer || 'back',
+            scale_x: 1,
+            scale_y: 1
+        };
+        stickerFeedback.textContent = `${file.name} · puedes moverlo fuera de los límites, rotarlo y estirarlo libremente en X/Y.`;
         renderSticker();
     }
 
@@ -144,11 +183,13 @@ document.addEventListener('DOMContentLoaded', () => {
             Number.isFinite(value) ? Math.max(min, Math.min(max, value)) : fallback;
         stickerConfig = {
             image_url: typeof config.image_url === 'string' ? config.image_url : '',
-            x: clamp(config.x, 0, 100, 85),
-            y: clamp(config.y, 0, 100, 50),
-            size: clamp(config.size, 5, 50, 18),
+            x: clamp(config.x, -300, 400, 50),
+            y: clamp(config.y, -300, 400, 50),
+            size: clamp(config.size, 1, 500, 100),
             rotation: clamp(config.rotation, -180, 180, 0),
-            layer: config.layer === 'back' ? 'back' : 'front'
+            layer: config.layer === 'front' ? 'front' : 'back',
+            scale_x: clamp(config.scale_x, 0.1, 10, 1),
+            scale_y: clamp(config.scale_y, 0.1, 10, 1)
         };
         renderSticker();
     }
@@ -436,6 +477,28 @@ document.addEventListener('DOMContentLoaded', () => {
         stickerFeedback.textContent = 'El sticker se quitará al guardar los cambios.';
     });
 
+    const transparentBgCheckbox = document.getElementById('bubble-transparent-bg');
+    if (transparentBgCheckbox) {
+        transparentBgCheckbox.addEventListener('change', event => {
+            const isTransparent = event.target.checked;
+            if (isTransparent) {
+                updateCssProperty({
+                    'background': 'transparent',
+                    'border': 'none',
+                    'box-shadow': 'none'
+                }, ['background-color', 'background-image', 'border-color', 'border-style', 'border-width']);
+            } else {
+                const bg = document.getElementById('bubble-background').value || '#182848';
+                const border = document.getElementById('bubble-border-color').value || '#8fd3ff';
+                updateCssProperty({
+                    'background-color': bg,
+                    'border': `2px solid ${border}`,
+                    'box-shadow': '0 0 12px rgba(0, 243, 255, 0.25)'
+                }, ['background']);
+            }
+        });
+    }
+
     document.getElementById('bubble-background').addEventListener('input', event => {
         updateCssProperty({ 'background-color': event.target.value }, ['background', 'background-image']);
     });
@@ -456,10 +519,24 @@ document.addEventListener('DOMContentLoaded', () => {
         else updateCssProperty({}, ['font-family']);
     });
     document.getElementById('sticker-size').addEventListener('input', event => {
-        stickerConfig.size = Math.min(50, Math.max(5, Number(event.target.value)));
+        stickerConfig.size = Math.min(500, Math.max(1, Number(event.target.value)));
         document.getElementById('sticker-size-value').value = `${stickerConfig.size}%`;
         renderSticker();
     });
+    const scaleXInput = document.getElementById('sticker-scale-x');
+    if (scaleXInput) {
+        scaleXInput.addEventListener('input', event => {
+            stickerConfig.scale_x = Number(event.target.value);
+            renderSticker();
+        });
+    }
+    const scaleYInput = document.getElementById('sticker-scale-y');
+    if (scaleYInput) {
+        scaleYInput.addEventListener('input', event => {
+            stickerConfig.scale_y = Number(event.target.value);
+            renderSticker();
+        });
+    }
     document.getElementById('sticker-rotation').addEventListener('input', event => {
         stickerConfig.rotation = Number(event.target.value);
         document.getElementById('sticker-rotation-value').value = `${stickerConfig.rotation}°`;
@@ -468,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const layerSelect = document.getElementById('sticker-layer');
     if (layerSelect) {
         layerSelect.addEventListener('change', event => {
-            stickerConfig.layer = event.target.value === 'back' ? 'back' : 'front';
+            stickerConfig.layer = event.target.value === 'front' ? 'front' : 'back';
             renderSticker();
         });
     }
@@ -477,6 +554,14 @@ document.addEventListener('DOMContentLoaded', () => {
         resetPosBtn.addEventListener('click', () => {
             stickerConfig.x = 50;
             stickerConfig.y = 50;
+            renderSticker();
+        });
+    }
+    const resetScaleBtn = document.getElementById('reset-sticker-scale');
+    if (resetScaleBtn) {
+        resetScaleBtn.addEventListener('click', () => {
+            stickerConfig.scale_x = 1;
+            stickerConfig.scale_y = 1;
             renderSticker();
         });
     }
@@ -497,11 +582,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!pointerAction || event.pointerId !== pointerAction.pointerId) return;
         const bounds = preview.getBoundingClientRect();
         if (pointerAction.type === 'move') {
-            stickerConfig.x = Math.max(0, Math.min(100, ((event.clientX - bounds.left) / bounds.width) * 100));
-            stickerConfig.y = Math.max(0, Math.min(100, ((event.clientY - bounds.top) / bounds.height) * 100));
+            stickerConfig.x = Math.max(-300, Math.min(400, ((event.clientX - bounds.left) / bounds.width) * 100));
+            stickerConfig.y = Math.max(-300, Math.min(400, ((event.clientY - bounds.top) / bounds.height) * 100));
         } else {
             const delta = event.clientX - pointerAction.startX + event.clientY - pointerAction.startY;
-            stickerConfig.size = Math.max(5, Math.min(50, pointerAction.startSize + (delta / bounds.width) * 100));
+            stickerConfig.size = Math.max(1, Math.min(500, pointerAction.startSize + (delta / bounds.width) * 100));
             document.getElementById('sticker-size-value').value = `${Math.round(stickerConfig.size)}%`;
         }
         renderSticker();

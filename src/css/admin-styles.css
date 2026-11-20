@@ -235,9 +235,9 @@
 
 .sticker-drop-zone {
     position: relative;
-    width: min(100%, 430px);
-    height: 158px;
-    overflow: hidden;
+    width: min(100%, 460px);
+    height: 220px;
+    overflow: visible;
     border: 1px dashed rgba(0, 243, 255, .42);
     border-radius: 12px;
     background:
@@ -1334,7 +1334,7 @@
     max-width: 92%;
     padding: 14px 16px;
     overflow-wrap: anywhere;
-    overflow: hidden;
+    overflow: visible;
     box-sizing: border-box;
     transform: translate(-50%, -50%);
 }
@@ -1351,8 +1351,8 @@
 
 .sticker-preview {
     height: auto;
-    max-height: 95%;
-    max-width: 50%;
+    max-height: none;
+    max-width: none;
 }
 
 .sticker-top-actions {
