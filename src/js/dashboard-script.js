@@ -345,9 +345,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function addBubbleSticker(container, config) {
         container.querySelector('.gchat-bubble-sticker')?.remove();
         if (!config || typeof config.image_url !== 'string') {
-            container.style.paddingRight = '';
-            container.style.minHeight = '';
-            container.style.minWidth = '';
+            container.style.position = '';
+            container.style.overflow = '';
             return;
         }
         try {
@@ -357,9 +356,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 : 'https://ouqpeojilykkrmatijxp.supabase.co';
             if (imageUrl.protocol !== 'https:' || imageUrl.origin !== storageOrigin ||
                 !/^\/storage\/v1\/object\/public\/cosmetic-stickers\/[a-z0-9][a-z0-9_-]{1,63}\.webp$/.test(imageUrl.pathname)) {
-                container.style.paddingRight = '';
-                container.style.minHeight = '';
-                container.style.minWidth = '';
                 return;
             }
 
@@ -372,32 +368,46 @@ document.addEventListener('DOMContentLoaded', () => {
             image.referrerPolicy = 'no-referrer';
             const clamp = (value, min, max, fallback) =>
                 Number.isFinite(value) ? Math.max(min, Math.min(max, value)) : fallback;
-            container.style.minWidth = 'min(280px, 100%)';
             container.style.position = 'relative';
+            container.style.overflow = 'visible';
             const isBack = config.layer === 'back';
             const scaleX = Number.isFinite(config.scale_x) ? config.scale_x : 1;
             const scaleY = Number.isFinite(config.scale_y) ? config.scale_y : 1;
-            container.style.overflow = 'visible';
-            Object.assign(image.style, {
-                position: 'absolute',
-                zIndex: isBack ? '0' : '2',
-                pointerEvents: 'none',
-                maxWidth: 'none',
-                maxHeight: 'none',
-                height: 'auto',
-                objectFit: 'fill',
-                left: `${clamp(config.x, -300, 400, 50)}%`,
-                top: `${clamp(config.y, -300, 400, 50)}%`,
-                width: `${clamp(config.size, 1, 500, 100)}%`,
-                transform: `translate(-50%, -50%) rotate(${clamp(config.rotation, -180, 180, 0)}deg) scale(${scaleX}, ${scaleY})`
-            });
-            container.style.paddingRight = '78px';
-            container.style.minHeight = '72px';
+
+            if (isBack) {
+                // Auto-escalación responsiva para modo fondo/marco:
+                // Se expande exactamente cubriendo o encuadrando toda la burbuja sin importar la longitud del texto
+                Object.assign(image.style, {
+                    position: 'absolute',
+                    zIndex: '0',
+                    pointerEvents: 'none',
+                    left: `${clamp(config.x, -300, 400, 50)}%`,
+                    top: `${clamp(config.y, -300, 400, 50)}%`,
+                    width: `${clamp(config.size, 1, 500, 100)}%`,
+                    height: '100%',
+                    objectFit: 'fill',
+                    maxWidth: 'none',
+                    maxHeight: 'none',
+                    transform: `translate(-50%, -50%) rotate(${clamp(config.rotation, -180, 180, 0)}deg) scale(${scaleX}, ${scaleY})`
+                });
+            } else {
+                // Modo sticker frontal decorativo
+                Object.assign(image.style, {
+                    position: 'absolute',
+                    zIndex: '2',
+                    pointerEvents: 'none',
+                    maxWidth: 'none',
+                    maxHeight: 'none',
+                    height: 'auto',
+                    objectFit: 'contain',
+                    left: `${clamp(config.x, -300, 400, 85)}%`,
+                    top: `${clamp(config.y, -300, 400, 50)}%`,
+                    width: `${clamp(config.size, 1, 500, 25)}%`,
+                    transform: `translate(-50%, -50%) rotate(${clamp(config.rotation, -180, 180, 0)}deg) scale(${scaleX}, ${scaleY})`
+                });
+            }
             container.append(image);
         } catch (error) {
-            container.style.paddingRight = '';
-            container.style.minHeight = '';
-            container.style.minWidth = '';
             console.warn('[Cosmetics] Sticker URL no válida:', error);
         }
     }
@@ -414,6 +424,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
         cosmeticProperties.forEach(property => message.style.removeProperty(property));
         const text = message.querySelector('p');
+        if (text) {
+            text.style.position = 'relative';
+            text.style.zIndex = '1';
+        }
         if (!bubble) {
             if (text) cosmeticProperties.forEach(property => text.style.removeProperty(property));
             addBubbleSticker(message, null);
