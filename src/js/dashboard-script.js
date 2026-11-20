@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const userRole = document.getElementById('user-role');
         const userRoleContainer = document.getElementById('user-role-container');
 
-        if (navAvatar) setAvatarSource(navAvatar, userData.avatar_url || userData.profile_picture_url);
+        if (navAvatar) setAvatarSource(navAvatar, userData.avatar_url || userData.profile_picture_url, userData.username);
         if (navUsername) navUsername.textContent = userData.username || 'Usuario';
         if (userRole) userRole.textContent = userData.role || 'Jugador';
         if (userRoleContainer) userRoleContainer.style.display = 'block';
@@ -236,6 +236,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!url || url === DEFAULT_AVATAR_URL || url.includes('default-avatar.png')) {
             return `https://crafatar.com/avatars/${encodeURIComponent(username || 'steve')}?size=100&overlay=true`;
         }
+        return url;
+    }
+
     function setAvatarSource(image, source, username) {
         if (!image) return;
         const fallback = getValidAvatar('', username);
@@ -244,13 +247,6 @@ document.addEventListener('DOMContentLoaded', () => {
             image.src = fallback;
         };
         image.src = getValidAvatar(source, username);
-    }
-        if (!image) return;
-        image.onerror = () => {
-            image.onerror = null;
-            image.src = DEFAULT_AVATAR_URL;
-        };
-        image.src = source || DEFAULT_AVATAR_URL;
     }
 
     // --- POBLAR ESTADÍSTICAS ---
