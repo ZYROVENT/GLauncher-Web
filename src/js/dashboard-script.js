@@ -1208,6 +1208,67 @@ document.addEventListener('DOMContentLoaded', () => {
             renderEmojis(activeCat, e.target.value);
         });
 
+        // --- Sistema de GIFs Favoritos (Robar GIFs) ---
+        function getFavoriteGifs() {
+            try {
+                return JSON.parse(localStorage.getItem('glauncher_favorite_gifs') || '[]');
+            } catch {
+                return [];
+            }
+        }
+
+        function toggleFavoriteGif(gifUrl) {
+            let favs = getFavoriteGifs();
+            const exists = favs.includes(gifUrl);
+            if (exists) {
+                favs = favs.filter(url => url !== gifUrl);
+                window.showNotification('GIF eliminado de tus favoritos.', 'info');
+            } else {
+                favs.unshift(gifUrl);
+                if (favs.length > 50) favs.pop();
+                window.showNotification('¡GIF robado y guardado en tus favoritos! ⭐', 'success');
+            }
+            localStorage.setItem('glauncher_favorite_gifs', JSON.stringify(favs));
+            // Actualizar botones visibles en el chat
+            document.querySelectorAll(`.gchat-gif-steal-btn[data-gif-url="${CSS.escape(gifUrl)}"]`).forEach(btn => {
+                btn.classList.toggle('is-fav', !exists);
+                btn.title = !exists ? 'En Favoritos (clic para quitar)' : 'Robar GIF / Guardar en Favoritos';
+            });
+            // Si la pestaña de favoritos está abierta, recargarla
+            const activeTab = document.querySelector('.gchat-gif-tag-btn.active');
+            if (activeTab?.dataset.tag === 'favorites') {
+                renderFavoriteGifs();
+            }
+        }
+
+        function renderFavoriteGifs() {
+            gifResults.replaceChildren();
+            const favs = getFavoriteGifs();
+            if (!favs.length) {
+                const empty = document.createElement('p');
+                empty.className = 'placeholder-content';
+                empty.innerHTML = '<i class="fas fa-star" style="color: #f1c40f;"></i> Aún no tienes GIFs favoritos.<br><small style="color: #aeb8c8;">Mantén presionado o dale a la estrella en el GIF de otra persona para robártelo.</small>';
+                gifResults.appendChild(empty);
+                return;
+            }
+            for (const url of favs) {
+                const button = document.createElement('button');
+                button.className = 'gchat-gif-option';
+                button.type = 'button';
+                button.setAttribute('aria-label', 'Enviar GIF Favorito');
+                const image = document.createElement('img');
+                image.src = url;
+                image.alt = 'GIF Favorito';
+                image.loading = 'lazy';
+                button.appendChild(image);
+                button.addEventListener('click', () => {
+                    document.getElementById('gchat-message-input').value = url;
+                    inputForm.requestSubmit();
+                });
+                gifResults.appendChild(button);
+            }
+        }
+
         // Toggle del panel de emojis
         emojiToggle?.addEventListener('click', () => {
             if (!emojiPicker) return;
@@ -1233,6 +1294,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.preventDefault();
                 searchGifs();
             }
+        });
+
+        // Tabs de categorías y favoritos de GIFs
+        document.querySelectorAll('.gchat-gif-tag-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.gchat-gif-tag-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const tag = btn.dataset.tag;
+                if (tag === 'favorites') {
+                    gifQuery.value = '';
+                    renderFavoriteGifs();
+                } else if (tag === 'trending') {
+                    gifQuery.value = '';
+                    searchGifs('trending');
+                } else {
+                    gifQuery.value = tag;
+                    searchGifs(tag);
+                }
+            });
         });
 
         // 1. Poblar conversaciones con amigos
@@ -1368,12 +1448,46 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const gifUrl = isGiphyUrl(content) ? content : null;
             if (gifUrl) {
+                const gifWrap = document.createElement('div');
+                gifWrap.className = 'gchat-gif-wrapper';
                 const image = document.createElement('img');
                 image.src = gifUrl;
                 image.alt = 'GIF';
                 image.loading = 'lazy';
                 image.referrerPolicy = 'no-referrer';
-                messageEl.appendChild(image);
+
+                // Botón flotante para robar / agregar a favoritos
+                const isFav = getFavoriteGifs().includes(gifUrl);
+                const stealBtn = document.createElement('button');
+                stealBtn.className = `gchat-gif-steal-btn${isFav ? ' is-fav' : ''}`;
+                stealBtn.type = 'button';
+                stealBtn.dataset.gifUrl = gifUrl;
+                stealBtn.title = isFav ? 'En Favoritos (clic para quitar)' : 'Robar GIF / Guardar en Favoritos';
+                stealBtn.innerHTML = '<i class="fas fa-star"></i>';
+                stealBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleFavoriteGif(gifUrl);
+                });
+
+                // Mantener presionado (Long-press en celular / touch) para robar
+                let pressTimer = null;
+                const startPress = () => {
+                    pressTimer = setTimeout(() => {
+                        gifWrap.classList.add('show-steal-btn');
+                        toggleFavoriteGif(gifUrl);
+                    }, 500);
+                };
+                const cancelPress = () => {
+                    if (pressTimer) clearTimeout(pressTimer);
+                };
+
+                gifWrap.addEventListener('pointerdown', startPress);
+                gifWrap.addEventListener('pointerup', cancelPress);
+                gifWrap.addEventListener('pointerleave', cancelPress);
+                gifWrap.addEventListener('pointercancel', cancelPress);
+
+                gifWrap.append(image, stealBtn);
+                messageEl.appendChild(gifWrap);
             } else {
                 const text = document.createElement('p');
                 text.textContent = content;
