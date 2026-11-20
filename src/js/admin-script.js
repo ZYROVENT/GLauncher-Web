@@ -115,37 +115,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const scaleX = Number.isFinite(stickerConfig.scale_x) ? stickerConfig.scale_x : 1;
         const scaleY = Number.isFinite(stickerConfig.scale_y) ? stickerConfig.scale_y : 1;
+        const isBack = stickerConfig.layer === 'back';
 
         if (stickerImage.getAttribute('src') !== imageUrl) stickerImage.src = imageUrl;
-        stickerImage.style.left = `${stickerConfig.x}%`;
-        stickerImage.style.top = `${stickerConfig.y}%`;
-        stickerImage.style.width = `${stickerConfig.size}%`;
-        stickerImage.style.objectFit = 'fill';
+
+        if (isBack) {
+            // En modo marco/fondo ocupa de borde a borde de la burbuja
+            stickerImage.style.left = `${stickerConfig.x}%`;
+            stickerImage.style.top = `${stickerConfig.y}%`;
+            stickerImage.style.width = `${stickerConfig.size}%`;
+            stickerImage.style.height = `${stickerConfig.size}%`;
+            stickerImage.style.objectFit = 'fill';
+            stickerImage.style.zIndex = '0';
+        } else {
+            // Modo sticker frontal
+            stickerImage.style.left = `${stickerConfig.x}%`;
+            stickerImage.style.top = `${stickerConfig.y}%`;
+            stickerImage.style.width = `${stickerConfig.size}%`;
+            stickerImage.style.height = 'auto';
+            stickerImage.style.objectFit = 'contain';
+            stickerImage.style.zIndex = '2';
+        }
+
         stickerImage.style.transform = `translate(-50%, -50%) rotate(${stickerConfig.rotation}deg) scale(${scaleX}, ${scaleY})`;
-        stickerImage.style.zIndex = stickerConfig.layer === 'back' ? '0' : '2';
 
         resizeHandle.style.left = `calc(${stickerConfig.x}% + ${(stickerConfig.size * scaleX) / 2}%)`;
         resizeHandle.style.top = `calc(${stickerConfig.y}% + ${(stickerConfig.size * scaleY) / 2}%)`;
 
         const sizeInput = document.getElementById('sticker-size');
-        if (sizeInput) sizeInput.value = String(stickerConfig.size);
+        if (sizeInput) sizeInput.value = String(Math.round(stickerConfig.size));
         const sizeOutput = document.getElementById('sticker-size-value');
-        if (sizeOutput) sizeOutput.value = `${stickerConfig.size}%`;
+        if (sizeOutput) sizeOutput.textContent = `${Math.round(stickerConfig.size)}%`;
 
         const rotInput = document.getElementById('sticker-rotation');
         if (rotInput) rotInput.value = String(stickerConfig.rotation);
         const rotOutput = document.getElementById('sticker-rotation-value');
-        if (rotOutput) rotOutput.value = `${stickerConfig.rotation}°`;
+        if (rotOutput) rotOutput.textContent = `${stickerConfig.rotation}°`;
 
         const scaleXInput = document.getElementById('sticker-scale-x');
         if (scaleXInput) scaleXInput.value = String(scaleX);
         const scaleXOutput = document.getElementById('sticker-scale-x-value');
-        if (scaleXOutput) scaleXOutput.value = `${scaleX.toFixed(2)}x`;
+        if (scaleXOutput) scaleXOutput.textContent = `${scaleX.toFixed(2)}x`;
 
         const scaleYInput = document.getElementById('sticker-scale-y');
         if (scaleYInput) scaleYInput.value = String(scaleY);
         const scaleYOutput = document.getElementById('sticker-scale-y-value');
-        if (scaleYOutput) scaleYOutput.value = `${scaleY.toFixed(2)}x`;
+        if (scaleYOutput) scaleYOutput.textContent = `${scaleY.toFixed(2)}x`;
 
         const layerSelect = document.getElementById('sticker-layer');
         if (layerSelect) layerSelect.value = stickerConfig.layer || 'back';

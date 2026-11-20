@@ -375,8 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const scaleY = Number.isFinite(config.scale_y) ? config.scale_y : 1;
 
             if (isBack) {
-                // Auto-escalación responsiva para modo fondo/marco:
-                // Se expande exactamente cubriendo o encuadrando toda la burbuja sin importar la longitud del texto
+                // Marco/Fondo decorativo: se ajusta perfectamente a toda la burbuja
                 Object.assign(image.style, {
                     position: 'absolute',
                     zIndex: '0',
@@ -384,14 +383,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     left: `${clamp(config.x, -300, 400, 50)}%`,
                     top: `${clamp(config.y, -300, 400, 50)}%`,
                     width: `${clamp(config.size, 1, 500, 100)}%`,
-                    height: '100%',
+                    height: `${clamp(config.size, 1, 500, 100)}%`,
                     objectFit: 'fill',
                     maxWidth: 'none',
                     maxHeight: 'none',
                     transform: `translate(-50%, -50%) rotate(${clamp(config.rotation, -180, 180, 0)}deg) scale(${scaleX}, ${scaleY})`
                 });
             } else {
-                // Modo sticker frontal decorativo
+                // Sticker frontal
                 Object.assign(image.style, {
                     position: 'absolute',
                     zIndex: '2',
@@ -427,12 +426,30 @@ document.addEventListener('DOMContentLoaded', () => {
         if (text) {
             text.style.position = 'relative';
             text.style.zIndex = '1';
+            text.style.textShadow = '0 1px 3px rgba(0, 0, 0, 0.9), 0 0 5px rgba(0, 0, 0, 0.7)';
         }
         if (!bubble) {
             if (text) cosmeticProperties.forEach(property => text.style.removeProperty(property));
             addBubbleSticker(message, null);
             return;
         }
+
+        // Si el bubble tiene CSS de ocultar fondo (background: transparent / none)
+        // Sobreescribimos el background predeterminado de .gchat-message.sent
+        if (bubble.css_code) {
+            if (/background\s*:\s*transparent|background\s*:\s*none|background-color\s*:\s*transparent/i.test(bubble.css_code)) {
+                message.style.setProperty('background', 'transparent', 'important');
+                message.style.setProperty('background-color', 'transparent', 'important');
+                message.style.setProperty('background-image', 'none', 'important');
+            }
+            if (/border\s*:\s*none|border-width\s*:\s*0/i.test(bubble.css_code)) {
+                message.style.setProperty('border', 'none', 'important');
+            }
+            if (/box-shadow\s*:\s*none/i.test(bubble.css_code)) {
+                message.style.setProperty('box-shadow', 'none', 'important');
+            }
+        }
+
         applyCosmeticCss(message, bubble.css_code);
         if (!text) return;
         const declarations = document.createElement('span').style;
@@ -441,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .forEach(property => {
                 const value = declarations.getPropertyValue(property);
                 if (value) text.style.setProperty(property, value);
-                else text.style.removeProperty(property);
+                else if (property !== 'text-shadow') text.style.removeProperty(property);
             });
         addBubbleSticker(message, bubble.sticker_config);
     }
