@@ -496,12 +496,19 @@
     border-bottom-left-radius: 2px;
 }
 
-.gchat-gif-wrapper {
+.gchat-gif-option-wrap {
     position: relative;
-    display: inline-block;
-    max-width: min(260px, 100%);
-    border-radius: 8px;
     overflow: hidden;
+    border-radius: 8px;
+}
+
+.gchat-gif-option-wrap .gchat-gif-steal-btn {
+    opacity: 0;
+}
+
+.gchat-gif-option-wrap:hover .gchat-gif-steal-btn,
+.gchat-gif-option-wrap .gchat-gif-steal-btn.is-fav {
+    opacity: 1;
 }
 
 .gchat-gif-steal-btn {

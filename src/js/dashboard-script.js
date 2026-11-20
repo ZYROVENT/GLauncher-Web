@@ -1469,7 +1469,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     toggleFavoriteGif(gifUrl);
                 });
 
-                // Mantener presionado (Long-press en celular / touch) para robar
+                // Click derecho en PC para robar / guardar en favoritos
+                gifWrap.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    toggleFavoriteGif(gifUrl);
+                });
                 let pressTimer = null;
                 const startPress = () => {
                     pressTimer = setTimeout(() => {
@@ -1592,19 +1596,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (const gif of data.data || []) {
                     const url = gif.images?.fixed_height?.url;
                     if (!isGiphyUrl(url)) continue;
-                    const button = document.createElement('button');
-                    button.className = 'gchat-gif-option';
-                    button.type = 'button';
-                    button.setAttribute('aria-label', 'Enviar GIF');
+                    const button = document.createElement('div');
+                    button.className = 'gchat-gif-option-wrap';
+                    button.style.position = 'relative';
+
+                    const sendBtn = document.createElement('button');
+                    sendBtn.className = 'gchat-gif-option';
+                    sendBtn.type = 'button';
+                    sendBtn.setAttribute('aria-label', 'Enviar GIF');
                     const image = document.createElement('img');
                     image.src = url;
                     image.alt = gif.title || 'GIF';
                     image.loading = 'lazy';
-                    button.appendChild(image);
-                    button.addEventListener('click', () => {
+                    sendBtn.appendChild(image);
+                    sendBtn.addEventListener('click', () => {
                         document.getElementById('gchat-message-input').value = url;
                         inputForm.requestSubmit();
                     });
+
+                    // Botón para añadir a favoritos directamente desde el buscador
+                    const isFav = getFavoriteGifs().includes(url);
+                    const favStarBtn = document.createElement('button');
+                    favStarBtn.className = `gchat-gif-steal-btn${isFav ? ' is-fav' : ''}`;
+                    favStarBtn.type = 'button';
+                    favStarBtn.dataset.gifUrl = url;
+                    favStarBtn.title = isFav ? 'Quitar de Favoritos' : 'Guardar en Favoritos ⭐';
+                    favStarBtn.innerHTML = '<i class="fas fa-star"></i>';
+                    favStarBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        toggleFavoriteGif(url);
+                        favStarBtn.classList.toggle('is-fav', getFavoriteGifs().includes(url));
+                    });
+
+                    button.append(sendBtn, favStarBtn);
                     gifResults.appendChild(button);
                 }
                 if (!gifResults.childElementCount) {
