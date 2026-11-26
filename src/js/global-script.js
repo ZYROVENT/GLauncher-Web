@@ -2,28 +2,29 @@
  * GLAUNCHER - Global UI Sound Script
  * Este script añade efectos de sonido de clic a varios elementos interactivos del sitio.
  */
-document.addEventListener('DOMContentLoaded', () => {
 
-    // ========================================================
-    // A. LÓGICA DE CAPTURA DE TOKEN DESDE URL (PARA OAUTH)
-    // ========================================================
-    // Esta sección se encarga de manejar los tokens que llegan en la URL
-    // después de un inicio de sesión social (Google, Microsoft, etc.).
+// ========================================================
+// A. CAPTURA DEL TOKEN DESDE LA URL (OAUTH GOOGLE / MICROSOFT)
+// ========================================================
+// Se ejecuta ya, sin esperar a DOMContentLoaded: dashboard-script.js es defer y
+// corre ANTES de ese evento, así que leía localStorage sin el token y devolvía
+// al usuario al login justo después de autenticarse.
+(function capturarTokenDeLaUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     const tokenFromUrl = urlParams.get('token');
+    if (!tokenFromUrl) return;
 
-    if (tokenFromUrl) {
-        // 1. Guardar el token en el almacenamiento local para usarlo en las peticiones
-        localStorage.setItem('glauncher_token', tokenFromUrl);
+    localStorage.setItem('glauncher_token', tokenFromUrl);
 
-        // 2. Limpiar la URL para que el token no quede visible ni se reutilice al recargar
-        // Usamos history.replaceState para no recargar la página y no añadir al historial de navegación.
-        const newUrl = window.location.pathname;
-        window.history.replaceState({}, document.title, newUrl);
-        
-        // 3. Opcional: mostrar una notificación de éxito
+    // Se limpia la URL para que el token no quede visible ni se reutilice al recargar.
+    window.history.replaceState({}, document.title, window.location.pathname);
+
+    document.addEventListener('DOMContentLoaded', () => {
         if (window.showNotification) window.showNotification('Autenticación exitosa.', 'success');
-    }
+    }, { once: true });
+})();
+
+document.addEventListener('DOMContentLoaded', () => {
 
     // ========================================================
     // B. GESTIÓN GLOBAL DE ESTADO DE SESIÓN (LOGIN / DASHBOARD)
